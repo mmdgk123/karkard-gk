@@ -27,8 +27,8 @@ body{font-family:'IRANSansX',system-ui,sans-serif;background:var(--bg);color:var
 .theme-toggle{width:40px;height:40px;border-radius:14px;border:1.5px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px}
 .theme-toggle:active{transform:scale(.9)}
 .ver{font-size:10px;font-weight:700;color:var(--gold);border:1px solid var(--gold);border-radius:99px;padding:2px 9px;opacity:.9;white-space:nowrap}
-.creator{position:fixed;bottom:calc(82px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);z-index:29;font-size:10px;font-weight:600;color:var(--text2);opacity:.65;text-decoration:none;background:var(--card);border:1px solid var(--border);border-radius:99px;padding:3px 12px;white-space:nowrap;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.creator b{color:var(--gold);font-weight:800}
+.creator-top{display:block;width:fit-content;margin:8px auto 0;font-size:10px;font-weight:600;color:var(--text2);opacity:.8;text-decoration:none;background:var(--card);border:1px solid var(--border);border-radius:99px;padding:3px 12px;white-space:nowrap}
+.creator-top b{color:var(--gold);font-weight:800}
 .card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;margin-bottom:12px}
 .proj-card{cursor:pointer}
 .proj-card:active{transform:scale(.98)}
@@ -70,7 +70,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 .chk input{width:20px;height:20px;accent-color:var(--gold)}
 .chk small{color:var(--text2);font-weight:400}
 .bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--nav-bg);backdrop-filter:blur(14px);border-top:1px solid var(--border);display:flex;padding:10px 4px calc(10px + env(safe-area-inset-bottom));transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform}
-body.kb .bottomnav,body.kb .fab,body.kb .creator{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
 .navbtn{flex:1;background:none;border:none;color:var(--text2);font-family:inherit;font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px;cursor:pointer;border-radius:12px}
 .navbtn .ic{font-size:21px}
 .navbtn.on{color:var(--gold)}
@@ -117,7 +117,8 @@ body.kb .bottomnav,body.kb .fab,body.kb .creator{opacity:0!important;visibility:
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v26</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v27</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <a class="creator-top" href="https://t.me/mmdGK" target="_blank" rel="noopener">👨‍💻 سازنده: <b>mmdGK</b></a>
 </div>
 
 <!-- ─── Tab 1: new project + backup ─── -->
@@ -240,7 +241,7 @@ body.kb .bottomnav,body.kb .fab,body.kb .creator{opacity:0!important;visibility:
   <div class="card">
     <div class="proj-name" id="c-title">🧰 ثبت هزینه</div>
     <div class="grid2">
-      <div><label class="lbl">دسته</label><select class="inp" id="c-cat"><option>مصالح</option><option>کرایه حمل</option><option>ابزار</option><option>متفرقه</option></select></div>
+      <div><label class="lbl">دسته</label><select class="inp" id="c-cat"><option selected>غذا</option><option>مصالح</option><option>کرایه حمل</option><option>ابزار</option><option>متفرقه</option></select></div>
       <div><label class="lbl">پروژه (اختیاری)</label><select class="inp" id="c-proj"></select></div>
     </div>
     <div class="grid2">
@@ -265,7 +266,6 @@ body.kb .bottomnav,body.kb .fab,body.kb .creator{opacity:0!important;visibility:
 </section>
 
 <button class="fab hide" id="fab" onclick="openSheet('add')">+</button>
-<a class="creator" href="https://t.me/mmdGK" target="_blank" rel="noopener">👨‍💻 سازنده: <b>mmdGK</b></a>
 
 <nav class="bottomnav">
   <button class="navbtn on" id="nb-new" onclick="go('new')"><span class="ic">➕</span>جدید</button>
@@ -1009,6 +1009,7 @@ function editCost(id){
 }
 function cancelCostEdit(){
   costEditId=null;
+  document.getElementById('c-cat').value='غذا';
   document.getElementById('c-date').value=todayJalali();
   document.getElementById('c-amount').value='';
   document.getElementById('c-desc').value='';
