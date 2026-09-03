@@ -100,7 +100,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v12</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v13</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
 </div>
 
 <!-- ─── Tab 1: new project + backup ─── -->
@@ -255,11 +255,11 @@ const faD=s=>String(s??'').replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
 const mOf=e=>(+e.pages||0)*3;
 const ITEMS={cooler:{t:'❄️ کولر',u:'عدد'},chand:{t:'💡 لوستر',u:'عدد'},halogen:{t:'🔆 هالوژن',u:'عدد'},linear:{t:'➖ لاین',u:'متر'}};
 const IKEYS=Object.keys(ITEMS);
-const PKEYS=['page','cooler','chand','halogen','linear'];
-const PLBL={page:'مبلغ هر صفحه',cooler:'مبلغ هر دریچه کولر',chand:'مبلغ هر دریچه لوستر',halogen:'مبلغ هر هالوژن',linear:'مبلغ هر متر لاین نوری'};
-function blankPrices(){return {page:0,cooler:0,chand:0,halogen:0,linear:0};}
+const PKEYS=['meter','cooler','chand','halogen','linear'];
+const PLBL={meter:'مبلغ هر متر کناف',cooler:'مبلغ هر دریچه کولر',chand:'مبلغ هر دریچه لوستر',halogen:'مبلغ هر هالوژن',linear:'مبلغ هر متر لاین نوری'};
+function blankPrices(){return {meter:0,cooler:0,chand:0,halogen:0,linear:0};}
 function pricesOf(p){const r=blankPrices();if(p&&p.prices)Object.keys(r).forEach(k=>r[k]=+p.prices[k]||0);return r;}
-function entryAmount(e,pr){return (+e.pages||0)*(+pr.page||0)+IKEYS.reduce((a,k)=>a+(+e[k]||0)*(+pr[k]||0),0);}
+function entryAmount(e,pr){return mOf(e)*(+pr.meter||0)+IKEYS.reduce((a,k)=>a+(+e[k]||0)*(+pr[k]||0),0);}
 
 function todayJalali(){
   try{
@@ -270,7 +270,7 @@ function todayJalali(){
 }
 function blankEntry(){return {id:uid(),date:'',pages:0,cooler:0,chand:0,halogen:0,linear:0,desc:''};}
 function seed(){
-  return {projects:[{id:'p_zarabi',name:'ضرابی',prices:{page:660000,cooler:100000,chand:100000,halogen:0,linear:0},entries:[
+  return {projects:[{id:'p_zarabi',name:'ضرابی',prices:{meter:220000,cooler:100000,chand:100000,halogen:0,linear:0},entries:[
     {id:uid(),date:'۱۴۰۵/۰۵/۰۳',pages:61,cooler:0,chand:0,halogen:0,linear:0,desc:''},
     {id:uid(),date:'۱۴۰۵/۰۵/۱۷',pages:10,cooler:5,chand:0,halogen:0,linear:0,desc:''},
     {id:uid(),date:'۱۴۰۵/۰۶/۰۳',pages:67,cooler:4,chand:1,halogen:0,linear:0,desc:''},
@@ -291,6 +291,9 @@ function migrate(s){
       p.payments.forEach(r=>s.receipts.push({id:r.id||uid(),source:p.name,date:r.date,amount:r.amount,desc:r.desc||''}));
     }
     delete p.payments;
+    // v12 stored knauf price per page -> convert to per meter
+    if(p.prices&&+p.prices.page>0&&!(+p.prices.meter>0))p.prices.meter=Math.round(+p.prices.page/3);
+    if(p.prices)delete p.prices.page;
     if(!p.prices||typeof p.prices!=='object')p.prices=blankPrices();
     PKEYS.forEach(k=>{p.prices[k]=+p.prices[k]||0;});
     // rates era -> per-entry agreed amounts -> infer unit prices
@@ -305,11 +308,11 @@ function migrate(s){
     // agreed-amount era (amount / aPages / aCooler...) -> infer project unit prices once
     const hasPrice=Object.values(p.prices).some(v=>v>0);
     if(!hasPrice){
-      const guess={page:[],cooler:[],chand:[],halogen:[],linear:[]};
+      const guess={meter:[],cooler:[],chand:[],halogen:[],linear:[]};
       p.entries.forEach(e=>{
         if(+e.pages>0){
-          if(+e.aPages>0)guess.page.push(Math.round(+e.aPages/+e.pages));
-          else if(+e.amount>0&&!(+e.cooler||+e.chand||+e.halogen||+e.linear))guess.page.push(Math.round(+e.amount/+e.pages));
+          if(+e.aPages>0)guess.meter.push(Math.round(+e.aPages/(+e.pages*3)));
+          else if(+e.amount>0&&!(+e.cooler||+e.chand||+e.halogen||+e.linear))guess.meter.push(Math.round(+e.amount/(+e.pages*3)));
         }
         IKEYS.forEach(k=>{
           const ak='a'+k[0].toUpperCase()+k.slice(1);
@@ -317,11 +320,11 @@ function migrate(s){
         });
       });
       const med=a=>a.length?a.sort((x,y)=>x-y)[Math.floor(a.length/2)]:0;
-      p.prices.page=med(guess.page);
+      p.prices.meter=med(guess.meter);
       IKEYS.forEach(k=>p.prices[k]=med(guess[k]));
       // zarabi fallback (known old rates)
       if(p.id==='p_zarabi'){
-        if(!p.prices.page)p.prices.page=660000;
+        if(!p.prices.meter)p.prices.meter=220000;
         if(!p.prices.cooler)p.prices.cooler=100000;
         if(!p.prices.chand)p.prices.chand=100000;
       }
@@ -343,7 +346,7 @@ let editCtx=null;
 function save(){localStorage.setItem(LS,JSON.stringify(S));}
 function receivedTotal(){return (S.receipts||[]).reduce((a,r)=>a+(+r.amount||0),0);}
 function entryComplete(e,pr){
-  if((+e.pages||0)>0&&!(+pr.page>0))return false;
+  if((+e.pages||0)>0&&!(+pr.meter>0))return false;
   return IKEYS.every(k=>!(+e[k]>0)||(+pr[k]>0));
 }
 function totals(p){
@@ -361,7 +364,7 @@ function totals(p){
 function amtD(t){return t.ok?faN(t.amt):'نامعلوم';}
 function priceLine(p){
   const pr=pricesOf(p);
-  const parts=[`صفحه ${+pr.page?faN(pr.page):'نامعلوم'}`];
+  const parts=[`متر ${+pr.meter?faN(pr.meter):'نامعلوم'}`];
   IKEYS.forEach(k=>parts.push(`${ITEMS[k].t} ${+pr[k]?faN(pr[k]):'نامعلوم'}`));
   return parts.join(' • ');
 }
@@ -492,7 +495,7 @@ function renderDetail(){
       <div class="proj-name">💰 قیمت‌های این پروژه</div>
       <div style="font-size:12px;color:var(--text2);margin-top:6px">یه بار قیمت بده — خودکار روی همه ثبت‌های همین پروژه اعمال میشه.</div>
       <div class="grid2">
-        <div><label class="lbl">مبلغ هر صفحه</label><input class="inp" id="pr-page" type="number" min="0" value="${pr.page||''}"></div>
+        <div><label class="lbl">مبلغ هر متر کناف</label><input class="inp" id="pr-meter" type="number" min="0" value="${pr.meter||''}"></div>
         <div><label class="lbl">مبلغ هر دریچه کولر</label><input class="inp" id="pr-cooler" type="number" min="0" value="${pr.cooler||''}"></div>
       </div>
       <div class="grid2">
