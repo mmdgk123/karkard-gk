@@ -102,7 +102,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v18</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v19</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
 </div>
 
 <!-- ─── Tab 1: new project + backup ─── -->
@@ -292,6 +292,9 @@ const num=v=>{const s=String(v??'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'
 const mOf=e=>(+e.pages||0)*3;
 const ITEMS={cooler:{t:'❄️ کولر',u:'عدد'},chand:{t:'💡 لوستر',u:'عدد'},halogen:{t:'🔆 هالوژن',u:'عدد'},linear:{t:'➖ لاین',u:'متر'}};
 const IKEYS=Object.keys(ITEMS);
+const INAME={cooler:'دریچه کولر',chand:'دریچه لوستر',halogen:'هالوژن',linear:'لاین نوری'};
+const IUNIT={cooler:'عدد',chand:'عدد',halogen:'عدد',linear:'متر'};
+function prettyItem(k,n){return faN(n)+' '+IUNIT[k]+' '+INAME[k];}
 const PKEYS=['meter','cooler','chand','halogen','linear'];
 const PLBL={meter:'مبلغ هر متر کناف',cooler:'مبلغ هر دریچه کولر',chand:'مبلغ هر دریچه لوستر',halogen:'مبلغ هر هالوژن',linear:'مبلغ هر متر لاین نوری'};
 function blankPrices(){return {meter:0,cooler:0,chand:0,halogen:0,linear:0};}
@@ -409,7 +412,7 @@ function priceLine(p){
 function itemStr(e){
   const parts=[];
   if(+e.pages>0)parts.push(faN(e.pages)+' صفحه ('+faN(mOf(e))+' متر)');
-  IKEYS.forEach(k=>{if(+e[k])parts.push(ITEMS[k].t+faN(e[k]));});
+  IKEYS.forEach(k=>{if(+e[k])parts.push(prettyItem(k,+e[k]));});
   return parts.join(' • ');
 }
 
@@ -590,7 +593,7 @@ function buildSheetItems(){
   let e=null;
   if(editCtx)e=p.entries.find(x=>x.id===editCtx.eid);
   box.innerHTML=IKEYS.map(k=>
-    `<div><label class="lbl">${ITEMS[k].t} (${ITEMS[k].u})</label><input class="inp" id="si-${k}" type="text" inputmode="numeric" autocomplete="off" min="0" value="${e&&+e[k]?e[k]:''}"></div>`
+    `<div><label class="lbl">${INAME[k]} (${IUNIT[k]})</label><input class="inp" id="si-${k}" type="text" inputmode="numeric" autocomplete="off" min="0" value="${e&&+e[k]?e[k]:''}"></div>`
   ).join('');
 }
 function openSheet(mode,pid,eid){
@@ -677,9 +680,9 @@ function renderInvoice(){
     cols.forEach(k=>cells+=`<td>${+e[k]?faN(e[k]):'—'}</td>`);
     return `<tr>${cells}${showM?`<td>${entryComplete(e,pr)?faN(entryAmount(e,pr)):'نامعلوم'}</td>`:''}</tr>`;}).join('');
   let head=`<tr><th>#</th><th>تاریخ</th><th>صفحه</th><th>متر</th>`;
-  cols.forEach(k=>head+=`<th>${ITEMS[k].t}</th>`);
+  cols.forEach(k=>head+=`<th>${INAME[k]}</th>`);
   head+=`${showM?'<th>مبلغ</th>':''}</tr>`;
-  const isum=cols.map(k=>`${ITEMS[k].t} ${faN(t.it[k])}`).join(' • ');
+  const isum=cols.map(k=>prettyItem(k,t.it[k])).join(' • ');
   const qsum=[t.pages>0?`${faN(t.pages)} صفحه • ${faN(t.m)} متر`:null,isum||null].filter(Boolean).join(' • ');
   box.innerHTML=`<table class="inv-table">${head}${rows}</table>
   <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع: ${qsum||'—'}</div>${showM?`<div class="v">${amtD(t)} تومان</div>`:''}</div>`;
@@ -731,10 +734,10 @@ function doPrint(){
     cols.forEach(k=>cells+=`<td>${+e[k]||'—'}</td>`);
     return `<tr>${cells}${showM?`<td>${entryComplete(e,pr)?entryAmount(e,pr).toLocaleString('en-US'):'نامعلوم'}</td>`:''}</tr>`;}).join('');
   let head=`<tr><th>ردیف</th><th>تاریخ</th><th>شرح</th><th>صفحه</th><th>متراژ</th>`;
-  cols.forEach(k=>head+=`<th>${ITEMS[k].t} (${ITEMS[k].u})</th>`);
+  cols.forEach(k=>head+=`<th>${INAME[k]} (${IUNIT[k]})</th>`);
   head+=`${showM?'<th>مبلغ (تومان)</th>':''}</tr>`;
   const pq=t.pages>0?`${t.pages} صفحه • ${t.m} متر`:null;
-  const iq=cols.map(k=>t.it[k]>0?t.it[k]+' '+ITEMS[k].t:null).filter(Boolean).join(' • ');
+  const iq=cols.map(k=>t.it[k]>0?prettyItem(k,t.it[k]):null).filter(Boolean).join(' • ');
   const tq=[pq,iq||null].filter(Boolean).join(' • ');
   document.getElementById('printArea').innerHTML=`
     <h1>صورت کار پروژه ${p.name}</h1>

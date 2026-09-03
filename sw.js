@@ -1,5 +1,5 @@
 // Force-fresh SW: network-first for everything
-const CACHE = 'karkard-v18';
+const CACHE = 'karkard-v19';
 
 self.addEventListener('install', e => { self.skipWaiting(); });
 self.addEventListener('activate', e => {
