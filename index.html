@@ -100,7 +100,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v10</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v11</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
 </div>
 
 <!-- ─── Tab 1: new project + backup ─── -->
@@ -193,8 +193,8 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 <section id="pg-recv" class="page">
   <div class="card">
     <div class="proj-name" id="r-title">💵 ثبت دریافتی</div>
-    <label class="lbl">پروژه</label>
-    <select class="inp" id="r-proj" onchange="renderRecv()"></select>
+    <label class="lbl">از کی گرفتی؟ (شرکت / اسم پیمانکار)</label>
+    <input class="inp" id="r-source">
     <div class="grid2">
       <div><label class="lbl">تاریخ</label><input class="inp" id="r-date"></div>
       <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="r-amount" type="number"></div>
@@ -207,7 +207,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
     </div>
   </div>
   <div class="card">
-    <div class="proj-name">📊 وضعیت این پروژه</div>
+    <div class="proj-name">📊 جمع دریافتی‌ها</div>
     <div id="rSum"></div>
   </div>
   <div class="card">
@@ -277,15 +277,20 @@ function seed(){
     {id:uid(),date:'۱۴۰۵/۰۶/۰۷',pages:20,cooler:0,chand:0,halogen:0,linear:0,desc:'کناف'},
     {id:uid(),date:'۱۴۰۵/۰۶/۱۰',pages:0,cooler:0,chand:7,halogen:0,linear:0,desc:'دریچه لوستر'},
     {id:uid(),date:'۱۴۰۵/۰۶/۱۲',pages:1,cooler:0,chand:0,halogen:0,linear:0,desc:''}
-  ],payments:[]}]};
+  ]}],receipts:[]};
 }
 function seedWages(){return [{id:uid(),name:'سجاد',date:'۱۴۰۵/۰۶/۰۸',amount:18600000,desc:'تسویه تا ۸ شهریور'}];}
 /* migrate old shapes -> project prices (automatic on all entries) */
 function migrate(s){
   if(!s||!Array.isArray(s.projects))return null;
   if(!Array.isArray(s.wages))s.wages=seedWages();
+  if(!Array.isArray(s.receipts))s.receipts=[];
+  // old shape: payments lived inside each project -> move to global receipts
   s.projects.forEach(p=>{
-    if(!Array.isArray(p.payments))p.payments=[];
+    if(Array.isArray(p.payments)&&p.payments.length){
+      p.payments.forEach(r=>s.receipts.push({id:r.id||uid(),source:p.name,date:r.date,amount:r.amount,desc:r.desc||''}));
+    }
+    delete p.payments;
     if(!p.prices||typeof p.prices!=='object')p.prices=blankPrices();
     PKEYS.forEach(k=>{p.prices[k]=+p.prices[k]||0;});
     // rates era -> per-entry agreed amounts -> infer unit prices
@@ -336,7 +341,7 @@ let S=load();
 let curPid=null;
 let editCtx=null;
 function save(){localStorage.setItem(LS,JSON.stringify(S));}
-function received(p){return (p.payments||[]).reduce((a,r)=>a+(+r.amount||0),0);}
+function receivedTotal(){return (S.receipts||[]).reduce((a,r)=>a+(+r.amount||0),0);}
 function totals(p){
   const pr=pricesOf(p);
   let pages=0,amt=0;const it={cooler:0,chand:0,halogen:0,linear:0};
@@ -346,8 +351,7 @@ function totals(p){
     amt+=(Object.values(pr).some(v=>v>0)?entryAmount(e,pr):(+e.amount||0));
     IKEYS.forEach(k=>it[k]+=+(e[k]||0));
   });
-  const recv=received(p);
-  return {pages,m:pages*3,it,amt,recv,rem:amt-recv};
+  return {pages,m:pages*3,it,amt};
 }
 function priceLine(p){
   const pr=pricesOf(p);
@@ -382,7 +386,7 @@ function toggleTheme(){var c=document.documentElement.getAttribute('data-theme')
 function addProject(){
   const name=document.getElementById('np-name').value.trim();
   if(!name){alert('اسم پروژه رو بنویس');return;}
-  const p={id:uid(),name,prices:blankPrices(),entries:[],payments:[]};
+  const p={id:uid(),name,prices:blankPrices(),entries:[]};
   S.projects.push(p);
   document.getElementById('np-name').value='';
   save();renderAll();openProject(p.id);
@@ -421,7 +425,7 @@ function restoreBackup(txt){
 function wipeAll(){
   if(!confirm('همه پروژه‌ها و ثبت‌ها پاک بشه؟'))return;
   if(!confirm('مطمئنی؟ بکاپ گرفتی؟'))return;
-  S={projects:[],wages:[]};curPid=null;save();renderAll();
+  S={projects:[],wages:[],receipts:[]};curPid=null;save();renderAll();
 }
 function checkUpdate(){
   if(!confirm('کش برنامه پاک و تازه‌سازی بشه؟ (داده‌هات پاک نمیشه)'))return;
@@ -442,8 +446,7 @@ function renderProjects(){
       <div class="proj-stats">
         <div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>
         <div class="stat"><div class="n">${faN(t.m)}</div><div class="t">متر</div></div>
-        <div class="stat"><div class="n">${faN(t.recv)}</div><div class="t">💵 دریافتی</div></div>
-        <div class="stat"><div class="n">${faN(t.rem)}</div><div class="t">مانده</div></div>
+        <div class="stat"><div class="n">${faN(t.amt)}</div><div class="t">💰 مبلغ کار</div></div>
       </div>
       <div style="font-size:11.5px;color:var(--text2);margin-top:8px">${faN(p.entries.length)} ثبت • بزن توش 👆</div>
     </div>`;
@@ -472,11 +475,10 @@ function renderDetail(){
       <div class="proj-stats">
         <div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>
         <div class="stat"><div class="n">${faN(t.m)}</div><div class="t">متر</div></div>
-        <div class="stat"><div class="n">${faN(t.recv)}</div><div class="t">💵 دریافتی</div></div>
-        <div class="stat"><div class="n">${faN(t.rem)}</div><div class="t">مانده</div></div>
+        <div class="stat"><div class="n">${faN(t.amt)}</div><div class="t">💰 مبلغ کار</div></div>
       </div>
       <div class="rowbtns">
-        <button class="btn btn-g" onclick="go('recv');document.getElementById('r-proj').value='${p.id}';renderRecv()">💵 دریافتی</button>
+        <button class="btn btn-g" onclick="go('recv')">💵 ثبت دریافتی</button>
         <button class="btn btn-g" style="color:var(--red)" onclick="delProject('${p.id}')">🗑️ حذف پروژه</button>
       </div>
     </div>
@@ -510,7 +512,7 @@ function savePrices(pid){
 }
 function delProject(pid){
   if(!confirm('پروژه و همه ثبت‌هاش پاک شه؟'))return;
-  S={projects:S.projects.filter(p=>p.id!==pid),wages:S.wages||[]};
+  S={projects:S.projects.filter(p=>p.id!==pid),wages:S.wages||[],receipts:S.receipts||[]};
   curPid=null;save();renderAll();backToList();
 }
 function delEntry(pid,eid){
@@ -589,14 +591,15 @@ function saveSheet(){
 function renderBills(){
   const sel=document.getElementById('i-proj');
   sel.innerHTML=S.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
-  let gT=0,gR=0;
-  const rows=S.projects.map(p=>{const t=totals(p);gT+=t.amt;gR+=t.recv;
-    return `<tr><td>${faD(p.name)}</td><td>${faN(t.amt)}</td><td>${faN(t.recv)}</td><td>${faN(t.rem)}</td></tr>`;}).join('');
+  let gT=0;
+  const rows=S.projects.map(p=>{const t=totals(p);gT+=t.amt;
+    return `<tr><td>${faD(p.name)}</td><td>${faN(t.pages)}</td><td>${faN(t.amt)}</td></tr>`;}).join('');
   const wt=wagesTotal();
+  const gR=receivedTotal();
   document.getElementById('allBox').innerHTML=S.projects.length?
-    `<table class="inv-table"><tr><th>پروژه</th><th>کار</th><th>دریافتی</th><th>مانده</th></tr>${rows}</table>
+    `<table class="inv-table"><tr><th>پروژه</th><th>صفحه</th><th>مبلغ کار</th></tr>${rows}</table>
      <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع کار</div><div class="v">${faN(gT)} تومان</div>
-     <div style="font-size:13px;color:var(--text2);margin-top:8px">دریافتی: ${faN(gR)} • حقوق: ${faN(wt)} • خالص نهایی: ${faN(gT-gR-wt)} تومان</div></div>`:'<div class="empty">پروژه‌ای نیست</div>';
+     <div style="font-size:13px;color:var(--text2);margin-top:8px">دریافتی: ${faN(gR)} • حقوق: ${faN(wt)} • مانده کلی: ${faN(gT-gR-wt)} تومان</div></div>`:'<div class="empty">پروژه‌ای نیست</div>';
   renderInvoice();
 }
 function invCols(p){
@@ -619,7 +622,7 @@ function renderInvoice(){
   head+=`${showM?'<th>مبلغ</th>':''}</tr>`;
   const isum=cols.map(k=>`${ITEMS[k].t} ${faN(t.it[k])}`).join(' • ');
   box.innerHTML=`<table class="inv-table">${head}${rows}</table>
-  <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع: ${faN(t.pages)} صفحه • ${faN(t.m)} متر${isum?' • '+isum:''}</div>${showM?`<div class="v">${faN(t.amt)} تومان</div><div style="font-size:13px;color:var(--text2);margin-top:6px">دریافتی: ${faN(t.recv)} • مانده: ${faN(t.rem)} تومان</div>`:''}</div>`;
+  <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع: ${faN(t.pages)} صفحه • ${faN(t.m)} متر${isum?' • '+isum:''}</div>${showM?`<div class="v">${faN(t.amt)} تومان</div>`:''}</div>`;
 }
 function doPrint(){
   const p=S.projects.find(x=>x.id===document.getElementById('i-proj').value)||S.projects[0];
@@ -639,7 +642,7 @@ function doPrint(){
     <h1>صورت کار پروژه ${p.name}</h1>
     <div class="sub">تاریخ تنظیم: ${todayJalali()} • گزارش مقادیر اجرا شده${showM?'':' (بدون مبالغ)'}</div>
     <table>${head}${rows}</table>
-    <div class="tot">جمع کل: ${t.pages} صفحه • ${t.m} متر${cols.map(k=>' • '+t.it[k]+' '+ITEMS[k].t).join('')}${showM?' • '+t.amt.toLocaleString('en-US')+' تومان • دریافتی '+t.recv.toLocaleString('en-US')+' • مانده '+t.rem.toLocaleString('en-US'):''}</div>
+    <div class="tot">جمع کل: ${t.pages} صفحه • ${t.m} متر${cols.map(k=>' • '+t.it[k]+' '+ITEMS[k].t).join('')}${showM?' • '+t.amt.toLocaleString('en-US')+' تومان':''}</div>
     <div class="note">این صورت مقادیر کار انجام‌شده است.</div>`;
   window.print();
 }
@@ -700,63 +703,56 @@ function delWage(id){
   S.wages=S.wages.filter(w=>w.id!==id);save();renderAll();
 }
 
-/* ─── tab5: received ─── */
+/* ─── tab5: received (global, from company / contractor) ─── */
 let recvEditId=null;
 function renderRecv(){
-  const sel=document.getElementById('r-proj');
-  sel.innerHTML=S.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
-  if(recvEditId){/* keep selection while editing */}
-  const p=S.projects.find(x=>x.id===sel.value)||S.projects[0];
-  if(sel.value!==(p&&p.id))sel.value=p?p.id:'';
   const box=document.getElementById('rList');
   const sum=document.getElementById('rSum');
-  if(!p){box.innerHTML='<div class="empty">پروژه‌ای نیست — اول از تب ➕ بساز</div>';sum.innerHTML='';return;}
+  if(!Array.isArray(S.receipts))S.receipts=[];
   if(!recvEditId){
     const di=document.getElementById('r-date');
     if(!di.value)di.value=todayJalali();
   }
-  const t=totals(p);
+  const gR=receivedTotal();
   sum.innerHTML=`<div class="proj-stats" style="margin-top:10px">
-    <div class="stat"><div class="n">${faN(t.amt)}</div><div class="t">جمع کار</div></div>
-    <div class="stat"><div class="n">${faN(t.recv)}</div><div class="t">💵 دریافتی</div></div>
-    <div class="stat"><div class="n">${faN(t.rem)}</div><div class="t">مانده</div></div></div>`;
-  const rows=[...(p.payments||[])].reverse().map(r=>
-    `<div class="ent"><div><div class="q">${faN(r.amount)} تومان${r.desc?' • '+faD(r.desc):''}</div><div class="d">${faD(r.date)}</div></div>
-    <div class="ops"><button class="op-edit" onclick="editRecv('${p.id}','${r.id}')">✏️</button><button class="op-del" onclick="delRecv('${p.id}','${r.id}')">🗑️</button></div></div>`).join('');
+    <div class="stat"><div class="n">${faN(gR)}</div><div class="t">💵 جمع دریافتی</div></div>
+    <div class="stat"><div class="n">${faN(S.receipts.length)}</div><div class="t">تعداد</div></div></div>`;
+  const rows=[...S.receipts].reverse().map(r=>
+    `<div class="ent"><div><div class="q">${faD(r.source||'—')} • ${faN(r.amount)} تومان${r.desc?' • '+faD(r.desc):''}</div><div class="d">${faD(r.date)}</div></div>
+    <div class="ops"><button class="op-edit" onclick="editRecv('${r.id}')">✏️</button><button class="op-del" onclick="delRecv('${r.id}')">🗑️</button></div></div>`).join('');
   box.innerHTML=rows||'<div class="empty">هنوز دریافتی ثبت نشده</div>';
 }
 function saveRecv(){
-  const p=S.projects.find(x=>x.id===document.getElementById('r-proj').value);
-  if(!p){alert('اول یه پروژه بساز');return;}
+  const source=document.getElementById('r-source').value.trim();
+  if(!source){alert('بنویس از کی گرفتی (شرکت / اسم پیمانکار)');return;}
   const amount=+document.getElementById('r-amount').value||0;
   if(!amount){alert('مبلغ رو وارد کن');return;}
-  const rec={date:document.getElementById('r-date').value.trim()||todayJalali(),amount,desc:document.getElementById('r-desc').value.trim()};
+  const rec={source,date:document.getElementById('r-date').value.trim()||todayJalali(),amount,desc:document.getElementById('r-desc').value.trim()};
+  if(!Array.isArray(S.receipts))S.receipts=[];
   if(recvEditId){
-    const r=p.payments.find(x=>x.id===recvEditId);
+    const r=S.receipts.find(x=>x.id===recvEditId);
     if(r)Object.assign(r,rec);
   }else{
-    rec.id=uid();p.payments.push(rec);
+    rec.id=uid();S.receipts.push(rec);
   }
-  cancelRecvEdit();save();renderAll();
-  document.getElementById('r-proj').value=p.id;renderRecv();
+  cancelRecvEdit();save();renderAll();renderRecv();
   alert('ثبت شد ✅');
 }
-function editRecv(pid,rid){
-  const p=S.projects.find(x=>x.id===pid);if(!p)return;
-  const r=p.payments.find(x=>x.id===rid);if(!r)return;
+function editRecv(rid){
+  const r=(S.receipts||[]).find(x=>x.id===rid);if(!r)return;
   recvEditId=rid;
-  document.getElementById('r-proj').value=pid;
+  document.getElementById('r-source').value=r.source||'';
   document.getElementById('r-date').value=r.date;
   document.getElementById('r-amount').value=r.amount;
   document.getElementById('r-desc').value=r.desc||'';
   document.getElementById('r-title').textContent='✏️ ویرایش دریافتی';
   document.getElementById('r-save').textContent='ذخیره ✅';
   document.getElementById('r-cancel').style.display='';
-  renderRecv();
   window.scrollTo(0,0);
 }
 function cancelRecvEdit(){
   recvEditId=null;
+  document.getElementById('r-source').value='';
   document.getElementById('r-date').value=todayJalali();
   document.getElementById('r-amount').value='';
   document.getElementById('r-desc').value='';
@@ -764,10 +760,9 @@ function cancelRecvEdit(){
   document.getElementById('r-save').textContent='ثبت ✅';
   document.getElementById('r-cancel').style.display='none';
 }
-function delRecv(pid,rid){
+function delRecv(rid){
   if(!confirm('این دریافتی پاک شه؟'))return;
-  const p=S.projects.find(x=>x.id===pid);if(!p)return;
-  p.payments=p.payments.filter(r=>r.id!==rid);save();renderAll();renderRecv();
+  S.receipts=(S.receipts||[]).filter(r=>r.id!==rid);save();renderAll();renderRecv();
 }
 
 /* ─── boot ─── */
