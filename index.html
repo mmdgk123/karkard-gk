@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="کارکرد">
+<meta name="theme-color" content="#07080d">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<title>کارکرد</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IRANSansX:wght@300;400;500;600;700;800;900;1000&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#07080d;--card:rgba(255,255,255,.04);--card2:rgba(255,255,255,.07);--border:rgba(255,255,255,.09);--text:#f0f2f8;--text2:#9aa0b4;--green:#2de0a5;--gold:#ffc857;--blue:#6c9bff;--red:#ff4d6d;--nav-bg:rgba(13,15,23,.94)}
+html{background:var(--bg)}
+body{font-family:'IRANSansX',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:120px;direction:rtl;-webkit-font-smoothing:antialiased}
+.page{display:none;padding:0 16px;animation:fadeUp .25s ease}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.header{padding:20px 16px 12px;position:sticky;top:0;z-index:20;background:linear-gradient(180deg,var(--bg) 72%,transparent)}
+.header h1{font-size:24px;font-weight:1000}
+.header h1 span{color:var(--gold)}
+.grand{margin-top:10px;padding:14px 16px;border-radius:18px;background:linear-gradient(135deg,rgba(255,200,87,.14),rgba(255,200,87,.04));border:1px solid rgba(255,200,87,.3);text-align:center}
+.grand .l{font-size:12px;color:var(--text2);font-weight:600}
+.grand .v{font-size:24px;font-weight:1000;color:var(--gold)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;margin-bottom:12px}
+.proj-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.proj-name{font-size:17px;font-weight:800}
+.proj-amt{font-size:15px;font-weight:800;color:var(--green)}
+.proj-stats{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.stat{flex:1;min-width:70px;background:var(--card2);border-radius:12px;padding:8px 6px;text-align:center}
+.stat .n{font-size:16px;font-weight:800}
+.stat .t{font-size:10.5px;color:var(--text2);margin-top:2px}
+.entries{margin-top:10px;border-top:1px dashed var(--border);padding-top:8px;display:none}
+.entries.open{display:block}
+.ent{display:flex;justify-content:space-between;align-items:center;padding:9px 4px;border-bottom:1px solid var(--border);font-size:13px}
+.ent:last-child{border-bottom:none}
+.ent .d{color:var(--text2);font-size:12px}
+.ent .q{font-weight:700}
+.ent .del{background:none;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:4px 8px}
+.rowbtns{display:flex;gap:8px;margin-top:10px}
+.btn{flex:1;border:none;border-radius:14px;padding:11px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
+.btn-p{background:linear-gradient(145deg,#ff5f7d,#d01845);color:#fff}
+.btn-g{background:var(--card2);color:var(--text);border:1px solid var(--border)}
+.btn-b{background:linear-gradient(145deg,#4d7dff,#2b4fc4);color:#fff}
+.btn:active{transform:scale(.97)}
+label.lbl{display:block;font-size:12.5px;color:var(--text2);font-weight:600;margin:12px 0 6px}
+.inp,select.inp{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:14px;color:var(--text);padding:12px 14px;font-family:inherit;font-size:15px;outline:none}
+.inp:focus{border-color:var(--gold)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.preview{margin-top:14px;padding:14px;border-radius:16px;background:rgba(45,224,165,.07);border:1px dashed rgba(45,224,165,.4);text-align:center;font-size:14px;font-weight:700;color:var(--green)}
+.inv-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
+.inv-table th{background:var(--card2);padding:9px 6px;font-weight:800}
+.inv-table td{padding:9px 6px;border-top:1px solid var(--border);text-align:center}
+.inv-total{margin-top:12px;padding:14px;border-radius:16px;background:linear-gradient(135deg,rgba(45,224,165,.14),rgba(45,224,165,.04));border:1px solid rgba(45,224,165,.35);text-align:center}
+.inv-total .v{font-size:22px;font-weight:1000;color:var(--green)}
+.toggle{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13.5px}
+.toggle input{width:20px;height:20px;accent-color:var(--gold)}
+.bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--nav-bg);backdrop-filter:blur(14px);border-top:1px solid var(--border);display:flex;padding:10px 8px calc(10px + env(safe-area-inset-bottom))}
+.navbtn{flex:1;background:none;border:none;color:var(--text2);font-family:inherit;font-size:12px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px;cursor:pointer;border-radius:12px}
+.navbtn .ic{font-size:22px}
+.navbtn.on{color:var(--gold)}
+.empty{text-align:center;color:var(--text2);padding:30px 10px;font-size:14px}
+.rate-edit{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border)}
+.rate-edit.open{display:block}
+#printArea{display:none}
+@media print{
+  body{background:#fff!important;padding:0!important}
+  body>*{display:none!important}
+  #printArea{display:block!important;color:#000;font-family:'IRANSansX',Tahoma,sans-serif;direction:rtl;padding:20px}
+  #printArea h1{text-align:center;font-size:22px;color:#1a2b5c;margin-bottom:4px}
+  #printArea .sub{text-align:center;font-size:12px;color:#555;margin-bottom:16px}
+  #printArea table{width:100%;border-collapse:collapse;font-size:12px}
+  #printArea th{background:#1a2b5c!important;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:8px}
+  #printArea td{border:1px solid #999;padding:8px;text-align:center}
+  #printArea .tot{margin-top:14px;background:#eef!important;border:2px solid #1a2b5c;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-radius:8px;padding:12px;text-align:center;font-weight:bold;font-size:15px}
+  #printArea .note{text-align:center;font-size:11px;color:#555;margin-top:10px}
+}
+@page{size:A4;margin:12mm}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>کارکرد <span>🏗️</span></h1>
+  <div class="grand"><div class="l">جمع طلب همه پروژه‌ها</div><div class="v" id="grandTotal">۰</div></div>
+</div>
+
+<!-- ─── Projects ─── -->
+<section id="pg-projects" class="page active">
+  <div id="projList"></div>
+  <div class="card">
+    <div class="proj-name" style="margin-bottom:4px">➕ پروژه جدید</div>
+    <label class="lbl">اسم پروژه</label>
+    <input class="inp" id="np-name" placeholder="مثلاً ضرابی">
+    <div class="grid2">
+      <div><label class="lbl">نرخ هر متر (تومان)</label><input class="inp" id="np-ratem" type="number" value="220000"></div>
+      <div><label class="lbl">نرخ دریچه کولر</label><input class="inp" id="np-ratec" type="number" value="100000"></div>
+    </div>
+    <label class="lbl">نرخ دریچه لوستر</label>
+    <input class="inp" id="np-ratech" type="number" value="100000">
+    <div style="height:12px"></div>
+    <button class="btn btn-p" onclick="addProject()">ساختن پروژه</button>
+  </div>
+</section>
+
+<!-- ─── Log work ─── -->
+<section id="pg-add" class="page">
+  <div class="card">
+    <div class="proj-name">📝 ثبت کار روزانه</div>
+    <label class="lbl">پروژه</label>
+    <select class="inp" id="f-proj"></select>
+    <div class="grid2">
+      <div><label class="lbl">تاریخ</label><input class="inp" id="f-date" placeholder="۱۴۰۵/۰۶/۱۲"></div>
+      <div><label class="lbl">تعداد صفحه</label><input class="inp" id="f-pages" type="number" min="0" value="1" oninput="updPrev()"></div>
+    </div>
+    <div class="grid2">
+      <div><label class="lbl">دریچه کولر</label><input class="inp" id="f-cooler" type="number" min="0" value="0"></div>
+      <div><label class="lbl">دریچه لوستر</label><input class="inp" id="f-chand" type="number" min="0" value="0"></div>
+    </div>
+    <label class="lbl">توضیح (اختیاری)</label>
+    <input class="inp" id="f-desc" placeholder="مثلاً سالن اصلی">
+    <div class="preview" id="f-prev"></div>
+    <div style="height:12px"></div>
+    <button class="btn btn-p" onclick="addEntry()">ثبت ✅</button>
+  </div>
+</section>
+
+<!-- ─── Invoice ─── -->
+<section id="pg-invoice" class="page">
+  <div class="card">
+    <div class="proj-name">🧾 فاکتور پروژه</div>
+    <label class="lbl">پروژه</label>
+    <select class="inp" id="i-proj" onchange="renderInvoice()"></select>
+    <label class="toggle"><input type="checkbox" id="i-money" checked onchange="renderInvoice()"> نمایش مبالغ توی فاکتور</label>
+    <div id="invBox"></div>
+    <div style="height:12px"></div>
+    <button class="btn btn-b" onclick="doPrint()">🖨️ چاپ / ذخیره PDF</button>
+  </div>
+</section>
+
+<nav class="bottomnav">
+  <button class="navbtn on" id="nb-projects" onclick="go('projects')"><span class="ic">🏠</span>پروژه‌ها</button>
+  <button class="navbtn" id="nb-add" onclick="go('add')"><span class="ic">➕</span>ثبت کار</button>
+  <button class="navbtn" id="nb-invoice" onclick="go('invoice')"><span class="ic">🧾</span>فاکتور</button>
+</nav>
+
+<div id="printArea"></div>
+
+<script>
+const LS='karkard_v1';
+const uid=()=>Date.now().toString(36)+Math.floor(Math.random()*999);
+const faN=n=>(+n||0).toLocaleString('fa-IR');
+const faD=s=>String(s??'').replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+const mOf=e=>(+e.pages||0)*3;
+const amtOf=(p,e)=>mOf(e)*p.rateM+(+e.cooler||0)*p.rateCooler+(+e.chand||0)*p.rateChand;
+
+function todayJalali(){
+  try{
+    const p=new Intl.DateTimeFormat('en-u-ca-persian',{year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+    const g=t=>(p.find(x=>x.type===t)||{}).value;
+    return g('year')+'/'+g('month')+'/'+g('day');
+  }catch(e){return '';}
+}
+function seed(){
+  return {projects:[{id:'p_zarabi',name:'ضرابی',rateM:220000,rateCooler:100000,rateChand:100000,entries:[
+    {id:uid(),date:'۱۴۰۵/۰۵/۰۳',pages:61,cooler:0,chand:0,desc:''},
+    {id:uid(),date:'۱۴۰۵/۰۵/۱۷',pages:10,cooler:5,chand:0,desc:''},
+    {id:uid(),date:'۱۴۰۵/۰۶/۰۳',pages:67,cooler:4,chand:1,desc:''},
+    {id:uid(),date:'۱۴۰۵/۰۶/۰۷',pages:20,cooler:0,chand:0,desc:'کناف'},
+    {id:uid(),date:'۱۴۰۵/۰۶/۱۲',pages:1,cooler:0,chand:0,desc:''}
+  ]}]};
+}
+function load(){try{const s=JSON.parse(localStorage.getItem(LS));if(s&&s.projects)return s;}catch(e){}return seed();}
+let S=load();
+function save(){localStorage.setItem(LS,JSON.stringify(S));}
+function totals(p){
+  let pages=0,cooler=0,chand=0,amt=0;
+  p.entries.forEach(e=>{pages+=+e.pages||0;cooler+=+e.cooler||0;chand+=+e.chand||0;amt+=amtOf(p,e);});
+  return {pages,m:pages*3,cooler,chand,amt};
+}
+function go(t){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById('pg-'+t).classList.add('active');
+  document.querySelectorAll('.navbtn').forEach(x=>x.classList.remove('on'));
+  document.getElementById('nb-'+t).classList.add('on');
+  if(t==='invoice')renderInvoice();
+  window.scrollTo(0,0);
+}
+function render(){
+  let grand=0;S.projects.forEach(p=>grand+=totals(p).amt);
+  document.getElementById('grandTotal').textContent=faN(grand)+' تومان';
+  const box=document.getElementById('projList');
+  if(!S.projects.length){box.innerHTML='<div class="empty">هنوز پروژه‌ای نداری — از پایین بساز 👇</div>';}
+  else box.innerHTML=S.projects.map(p=>{
+    const t=totals(p);
+    const ents=[...p.entries].reverse().map(e=>
+      `<div class="ent"><div><div class="q">${e.desc?faD(e.desc)+' • ':''}${faN(e.pages)} صفحه (${faN(mOf(e))} متر)${(+e.cooler||0)?' • ❄️'+faN(e.cooler):''}${(+e.chand||0)?' • 💡'+faN(e.chand):''}</div><div class="d">${faD(e.date)} • ${faN(amtOf(p,e))} تومان</div></div><button class="del" onclick="delEntry('${p.id}','${e.id}')">×</button></div>`
+    ).join('');
+    return `<div class="card">
+      <div class="proj-head" onclick="document.getElementById('ents-${p.id}').classList.toggle('open')">
+        <div class="proj-name">🏗️ ${faD(p.name)}</div><div class="proj-amt">${faN(t.amt)}</div>
+      </div>
+      <div class="proj-stats">
+        <div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>
+        <div class="stat"><div class="n">${faN(t.m)}</div><div class="t">متر</div></div>
+        <div class="stat"><div class="n">${faN(t.cooler)}</div><div class="t">❄️ کولر</div></div>
+        <div class="stat"><div class="n">${faN(t.chand)}</div><div class="t">💡 لوستر</div></div>
+      </div>
+      <div class="entries" id="ents-${p.id}">${ents||'<div class="empty">ثبتی نداره</div>'}</div>
+      <div class="rate-edit" id="re-${p.id}">
+        <div class="grid2">
+          <div><label class="lbl">نرخ متر</label><input class="inp" id="rm-${p.id}" type="number" value="${p.rateM}"></div>
+          <div><label class="lbl">نرخ کولر</label><input class="inp" id="rc-${p.id}" type="number" value="${p.rateCooler}"></div>
+        </div>
+        <label class="lbl">نرخ لوستر</label><input class="inp" id="rh-${p.id}" type="number" value="${p.rateChand}">
+        <div style="height:10px"></div>
+        <button class="btn btn-p" onclick="saveRates('${p.id}')">ذخیره نرخ‌ها</button>
+      </div>
+      <div class="rowbtns">
+        <button class="btn btn-g" onclick="document.getElementById('re-${p.id}').classList.toggle('open')">✏️ نرخ‌ها</button>
+        <button class="btn btn-g" onclick="go('invoice');document.getElementById('i-proj').value='${p.id}';renderInvoice()">🧾 فاکتور</button>
+        <button class="btn btn-g" style="color:var(--red)" onclick="delProject('${p.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+  const opts=S.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  document.getElementById('f-proj').innerHTML=opts;
+  document.getElementById('i-proj').innerHTML=opts;
+  updPrev();
+}
+function addProject(){
+  const name=document.getElementById('np-name').value.trim();
+  if(!name){alert('اسم پروژه رو بنویس');return;}
+  S.projects.push({id:uid(),name,rateM:+document.getElementById('np-ratem').value||0,rateCooler:+document.getElementById('np-ratec').value||0,rateChand:+document.getElementById('np-ratech').value||0,entries:[]});
+  document.getElementById('np-name').value='';
+  save();render();
+}
+function delProject(id){
+  if(!confirm('پروژه و همه ثبت‌هاش پاک شه؟'))return;
+  S={projects:S.projects.filter(p=>p.id!==id)};save();render();
+}
+function saveRates(id){
+  const p=S.projects.find(x=>x.id===id);if(!p)return;
+  p.rateM=+document.getElementById('rm-'+id).value||0;
+  p.rateCooler=+document.getElementById('rc-'+id).value||0;
+  p.rateChand=+document.getElementById('rh-'+id).value||0;
+  save();render();
+}
+function updPrev(){
+  const p=S.projects.find(x=>x.id===document.getElementById('f-proj').value);
+  const pg=+document.getElementById('f-pages').value||0;
+  document.getElementById('f-prev').textContent=p?('= '+faN(pg*3)+' متر'):'';
+}
+function addEntry(){
+  const pid=document.getElementById('f-proj').value;
+  const p=S.projects.find(x=>x.id===pid);
+  if(!p){alert('اول یه پروژه بساز');return;}
+  const pg=+document.getElementById('f-pages').value||0;
+  if(pg<=0&&!(+document.getElementById('f-cooler').value||0)&&!(+document.getElementById('f-chand').value||0)){alert('یه مقداری وارد کن');return;}
+  p.entries.push({id:uid(),date:document.getElementById('f-date').value.trim()||todayJalali(),pages:pg,cooler:+document.getElementById('f-cooler').value||0,chand:+document.getElementById('f-chand').value||0,desc:document.getElementById('f-desc').value.trim()});
+  document.getElementById('f-pages').value=1;document.getElementById('f-cooler').value=0;document.getElementById('f-chand').value=0;document.getElementById('f-desc').value='';
+  save();render();alert('ثبت شد ✅');
+}
+function delEntry(pid,eid){
+  if(!confirm('این ثبت پاک شه؟'))return;
+  const p=S.projects.find(x=>x.id===pid);if(!p)return;
+  p.entries=p.entries.filter(e=>e.id!==eid);save();render();renderInvoice();
+}
+function renderInvoice(){
+  const p=S.projects.find(x=>x.id===document.getElementById('i-proj').value)||S.projects[0];
+  const box=document.getElementById('invBox');
+  if(!p){box.innerHTML='<div class="empty">پروژه‌ای نیست</div>';return;}
+  const showM=document.getElementById('i-money').checked;
+  const t=totals(p);
+  let rows=p.entries.map((e,i)=>{
+    const cells=`<td>${faN(i+1)}</td><td>${faD(e.date)}</td><td>${faN(e.pages)}</td><td>${faN(mOf(e))}</td><td>${+e.cooler?faN(e.cooler):'—'}</td><td>${+e.chand?faN(e.chand):'—'}</td>`;
+    return `<tr>${cells}${showM?`<td>${faN(amtOf(p,e))}</td>`:''}</tr>`;
+  }).join('');
+  box.innerHTML=`<table class="inv-table"><tr><th>#</th><th>تاریخ</th><th>صفحه</th><th>متر</th><th>❄️</th><th>💡</th>${showM?'<th>مبلغ</th>':''}</tr>${rows}</table>
+  <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع: ${faN(t.pages)} صفحه • ${faN(t.m)} متر • ❄️${faN(t.cooler)} • 💡${faN(t.chand)}</div>${showM?`<div class="v">${faN(t.amt)} تومان</div>`:''}</div>`;
+}
+function doPrint(){
+  const p=S.projects.find(x=>x.id===document.getElementById('i-proj').value)||S.projects[0];
+  if(!p)return;
+  const showM=document.getElementById('i-money').checked;
+  const t=totals(p);
+  const rows=p.entries.map((e,i)=>`<tr><td>${i+1}</td><td>${e.date}</td><td>${e.desc||''}</td><td>${e.pages}</td><td>${mOf(e)}</td><td>${+e.cooler||'—'}</td><td>${+e.chand||'—'}</td>${showM?`<td>${amtOf(p,e).toLocaleString('en-US')}</td>`:''}</tr>`).join('');
+  document.getElementById('printArea').innerHTML=`
+    <h1>صورت کار پروژه ${p.name}</h1>
+    <div class="sub">تاریخ تنظیم: ${todayJalali()} • گزارش مقادیر اجرا شده${showM?'':' (بدون مبالغ)'}</div>
+    <table><tr><th>ردیف</th><th>تاریخ</th><th>شرح</th><th>صفحه</th><th>متراژ</th><th>دریچه کولر</th><th>دریچه لوستر</th>${showM?'<th>مبلغ (تومان)</th>':''}</tr>${rows}</table>
+    <div class="tot">جمع کل: ${t.pages} صفحه • ${t.m} متر • ${t.cooler} دریچه کولر • ${t.chand} دریچه لوستر${showM?' • '+t.amt.toLocaleString('en-US')+' تومان':''}</div>
+    <div class="note">این صورت صرفاً مقادیر کار انجام‌شده است${showM?'':''}.</div>`;
+  window.print();
+}
+document.getElementById('f-date').value=todayJalali();
+render();
+</script>
+</body>
+</html>
