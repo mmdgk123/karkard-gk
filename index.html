@@ -100,7 +100,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v11</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v12</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
 </div>
 
 <!-- ─── Tab 1: new project + backup ─── -->
@@ -342,23 +342,28 @@ let curPid=null;
 let editCtx=null;
 function save(){localStorage.setItem(LS,JSON.stringify(S));}
 function receivedTotal(){return (S.receipts||[]).reduce((a,r)=>a+(+r.amount||0),0);}
+function entryComplete(e,pr){
+  if((+e.pages||0)>0&&!(+pr.page>0))return false;
+  return IKEYS.every(k=>!(+e[k]>0)||(+pr[k]>0));
+}
 function totals(p){
   const pr=pricesOf(p);
-  let pages=0,amt=0;const it={cooler:0,chand:0,halogen:0,linear:0};
+  let pages=0,amt=0,ok=true;const it={cooler:0,chand:0,halogen:0,linear:0};
   p.entries.forEach(e=>{
     pages+=+e.pages||0;
     // old backup without prices: fallback to stored amount
     amt+=(Object.values(pr).some(v=>v>0)?entryAmount(e,pr):(+e.amount||0));
+    if(!entryComplete(e,pr))ok=false;
     IKEYS.forEach(k=>it[k]+=+(e[k]||0));
   });
-  return {pages,m:pages*3,it,amt};
+  return {pages,m:pages*3,it,amt,ok};
 }
+function amtD(t){return t.ok?faN(t.amt):'نامعلوم';}
 function priceLine(p){
   const pr=pricesOf(p);
-  const parts=[];
-  if(+pr.page)parts.push('صفحه '+faN(pr.page));
-  IKEYS.forEach(k=>{if(+pr[k])parts.push(ITEMS[k].t+' '+faN(pr[k]));});
-  return parts.length?parts.join(' • '):'قیمت ثبت نشده — پایین وارد کن 👇';
+  const parts=[`صفحه ${+pr.page?faN(pr.page):'نامعلوم'}`];
+  IKEYS.forEach(k=>parts.push(`${ITEMS[k].t} ${+pr[k]?faN(pr[k]):'نامعلوم'}`));
+  return parts.join(' • ');
 }
 function itemStr(e){
   const parts=[];
@@ -442,11 +447,11 @@ function renderProjects(){
   box.innerHTML=S.projects.map(p=>{
     const t=totals(p);
     return `<div class="card proj-card" onclick="openProject('${p.id}')">
-      <div class="proj-head"><div class="proj-name">🏗️ ${faD(p.name)}</div><div class="proj-amt">${faN(t.amt)}</div></div>
+      <div class="proj-head"><div class="proj-name">🏗️ ${faD(p.name)}</div><div class="proj-amt">${amtD(t)}</div></div>
       <div class="proj-stats">
         <div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>
         <div class="stat"><div class="n">${faN(t.m)}</div><div class="t">متر</div></div>
-        <div class="stat"><div class="n">${faN(t.amt)}</div><div class="t">💰 مبلغ کار</div></div>
+        <div class="stat"><div class="n">${amtD(t)}</div><div class="t">💰 مبلغ کار</div></div>
       </div>
       <div style="font-size:11.5px;color:var(--text2);margin-top:8px">${faN(p.entries.length)} ثبت • بزن توش 👆</div>
     </div>`;
@@ -466,16 +471,17 @@ function renderDetail(){
   const ents=[...p.entries].reverse().map(e=>{
     const is=itemStr(e);
     const ea=entryAmount(e,pr);
-    return `<div class="ent"><div><div class="q">${e.desc?faD(e.desc)+' • ':''}${faN(e.pages)} صفحه (${faN(mOf(e))} متر)${is?' • '+is:''}</div><div class="d">${faD(e.date)}${ea?' • '+faN(ea)+' تومان':''}</div></div>
+    const ec=entryComplete(e,pr);
+    return `<div class="ent"><div><div class="q">${e.desc?faD(e.desc)+' • ':''}${faN(e.pages)} صفحه (${faN(mOf(e))} متر)${is?' • '+is:''}</div><div class="d">${faD(e.date)} • ${ec?faN(ea)+' تومان':'نامعلوم'}</div></div>
     <div class="ops"><button class="op-edit" onclick="openSheet('edit','${p.id}','${e.id}')">✏️</button><button class="op-del" onclick="delEntry('${p.id}','${e.id}')">🗑️</button></div></div>`;
   }).join('');
   box.innerHTML=`<div class="card">
-      <div class="proj-head"><div class="proj-name">🏗️ ${faD(p.name)}</div><div class="proj-amt">${faN(t.amt)} تومان</div></div>
+      <div class="proj-head"><div class="proj-name">🏗️ ${faD(p.name)}</div><div class="proj-amt">${amtD(t)} تومان</div></div>
       <div style="font-size:12px;color:var(--text2);margin-top:6px">💰 ${priceLine(p)}</div>
       <div class="proj-stats">
         <div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>
         <div class="stat"><div class="n">${faN(t.m)}</div><div class="t">متر</div></div>
-        <div class="stat"><div class="n">${faN(t.amt)}</div><div class="t">💰 مبلغ کار</div></div>
+        <div class="stat"><div class="n">${amtD(t)}</div><div class="t">💰 مبلغ کار</div></div>
       </div>
       <div class="rowbtns">
         <button class="btn btn-g" onclick="go('recv')">💵 ثبت دریافتی</button>
@@ -591,15 +597,15 @@ function saveSheet(){
 function renderBills(){
   const sel=document.getElementById('i-proj');
   sel.innerHTML=S.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
-  let gT=0;
-  const rows=S.projects.map(p=>{const t=totals(p);gT+=t.amt;
-    return `<tr><td>${faD(p.name)}</td><td>${faN(t.pages)}</td><td>${faN(t.amt)}</td></tr>`;}).join('');
+  let gT=0,gOk=true;
+  const rows=S.projects.map(p=>{const t=totals(p);gT+=t.amt;if(!t.ok)gOk=false;
+    return `<tr><td>${faD(p.name)}</td><td>${faN(t.pages)}</td><td>${amtD(t)}</td></tr>`;}).join('');
   const wt=wagesTotal();
   const gR=receivedTotal();
   document.getElementById('allBox').innerHTML=S.projects.length?
     `<table class="inv-table"><tr><th>پروژه</th><th>صفحه</th><th>مبلغ کار</th></tr>${rows}</table>
-     <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع کار</div><div class="v">${faN(gT)} تومان</div>
-     <div style="font-size:13px;color:var(--text2);margin-top:8px">دریافتی: ${faN(gR)} • حقوق: ${faN(wt)} • مانده کلی: ${faN(gT-gR-wt)} تومان</div></div>`:'<div class="empty">پروژه‌ای نیست</div>';
+     <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع کار</div><div class="v">${gOk?faN(gT)+' تومان':'نامعلوم'}</div>
+     <div style="font-size:13px;color:var(--text2);margin-top:8px">دریافتی: ${faN(gR)} • حقوق: ${faN(wt)} • مانده کلی: ${gOk?faN(gT-gR-wt)+' تومان':'نامعلوم'}</div></div>`:'<div class="empty">پروژه‌ای نیست</div>';
   renderInvoice();
 }
 function invCols(p){
@@ -616,13 +622,13 @@ function renderInvoice(){
   const rows=p.entries.map((e,i)=>{
     let cells=`<td>${faN(i+1)}</td><td>${faD(e.date)}</td><td>${faN(e.pages)}</td><td>${faN(mOf(e))}</td>`;
     cols.forEach(k=>cells+=`<td>${+e[k]?faN(e[k]):'—'}</td>`);
-    return `<tr>${cells}${showM?`<td>${faN(entryAmount(e,pr))}</td>`:''}</tr>`;}).join('');
+    return `<tr>${cells}${showM?`<td>${entryComplete(e,pr)?faN(entryAmount(e,pr)):'نامعلوم'}</td>`:''}</tr>`;}).join('');
   let head=`<tr><th>#</th><th>تاریخ</th><th>صفحه</th><th>متر</th>`;
   cols.forEach(k=>head+=`<th>${ITEMS[k].t}</th>`);
   head+=`${showM?'<th>مبلغ</th>':''}</tr>`;
   const isum=cols.map(k=>`${ITEMS[k].t} ${faN(t.it[k])}`).join(' • ');
   box.innerHTML=`<table class="inv-table">${head}${rows}</table>
-  <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع: ${faN(t.pages)} صفحه • ${faN(t.m)} متر${isum?' • '+isum:''}</div>${showM?`<div class="v">${faN(t.amt)} تومان</div>`:''}</div>`;
+  <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع: ${faN(t.pages)} صفحه • ${faN(t.m)} متر${isum?' • '+isum:''}</div>${showM?`<div class="v">${amtD(t)} تومان</div>`:''}</div>`;
 }
 function doPrint(){
   const p=S.projects.find(x=>x.id===document.getElementById('i-proj').value)||S.projects[0];
@@ -634,7 +640,7 @@ function doPrint(){
   const rows=p.entries.map((e,i)=>{
     let cells=`<td>${i+1}</td><td>${e.date}</td><td>${e.desc||''}</td><td>${e.pages}</td><td>${mOf(e)}</td>`;
     cols.forEach(k=>cells+=`<td>${+e[k]||'—'}</td>`);
-    return `<tr>${cells}${showM?`<td>${entryAmount(e,pr).toLocaleString('en-US')}</td>`:''}</tr>`;}).join('');
+    return `<tr>${cells}${showM?`<td>${entryComplete(e,pr)?entryAmount(e,pr).toLocaleString('en-US'):'نامعلوم'}</td>`:''}</tr>`;}).join('');
   let head=`<tr><th>ردیف</th><th>تاریخ</th><th>شرح</th><th>صفحه</th><th>متراژ</th>`;
   cols.forEach(k=>head+=`<th>${ITEMS[k].t} (${ITEMS[k].u})</th>`);
   head+=`${showM?'<th>مبلغ (تومان)</th>':''}</tr>`;
@@ -642,7 +648,7 @@ function doPrint(){
     <h1>صورت کار پروژه ${p.name}</h1>
     <div class="sub">تاریخ تنظیم: ${todayJalali()} • گزارش مقادیر اجرا شده${showM?'':' (بدون مبالغ)'}</div>
     <table>${head}${rows}</table>
-    <div class="tot">جمع کل: ${t.pages} صفحه • ${t.m} متر${cols.map(k=>' • '+t.it[k]+' '+ITEMS[k].t).join('')}${showM?' • '+t.amt.toLocaleString('en-US')+' تومان':''}</div>
+    <div class="tot">جمع کل: ${t.pages} صفحه • ${t.m} متر${cols.map(k=>' • '+t.it[k]+' '+ITEMS[k].t).join('')}${showM?' • '+(t.ok?t.amt.toLocaleString('en-US')+' تومان':'نامعلوم'):''}</div>
     <div class="note">این صورت مقادیر کار انجام‌شده است.</div>`;
   window.print();
 }
