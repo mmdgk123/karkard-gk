@@ -133,6 +133,9 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
       <button class="btn btn-p" onclick="backupImportText()">بازیابی ⬆️</button>
       <button class="btn btn-g" style="color:var(--red)" onclick="wipeAll()">🗑️ پاک کردن همه</button>
     </div>
+    <div class="rowbtns">
+      <button class="btn btn-g" onclick="checkUpdate()">🔄 بررسی آپدیت برنامه</button>
+    </div>
   </div>
 </section>
 
@@ -219,7 +222,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 </section>
 
 <button class="fab hide" id="fab" onclick="openSheet('add')">+</button>
-<div class="vermark">v5</div>
+<div class="vermark">v6</div>
 
 <nav class="bottomnav">
   <button class="navbtn on" id="nb-new" onclick="go('new')"><span class="ic">➕</span>جدید</button>
@@ -380,6 +383,13 @@ function wipeAll(){
   if(!confirm('همه پروژه‌ها و ثبت‌ها پاک بشه؟'))return;
   if(!confirm('مطمئنی؟ بکاپ گرفتی؟'))return;
   S={projects:[],wages:[]};curPid=null;save();renderAll();
+}
+function checkUpdate(){
+  if(!confirm('کش برنامه پاک و تازه‌سازی بشه؟ (داده‌هات پاک نمیشه)'))return;
+  const done=()=>{try{location.reload(true);}catch(e){location.reload();}};
+  if('serviceWorker' in navigator){
+    Promise.all([caches.keys().then(ks=>Promise.all(ks.map(k=>caches.delete(k)))),navigator.serviceWorker.getRegistrations().then(rs=>Promise.all(rs.map(r=>r.unregister())))]).then(done).catch(done);
+  }else done();
 }
 
 /* ─── tab2: list ─── */
