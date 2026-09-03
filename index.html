@@ -102,7 +102,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v19</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v20</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
 </div>
 
 <!-- ─── Tab 1: new project + backup ─── -->
@@ -402,7 +402,10 @@ function totals(p){
   });
   return {pages,m:pages*3,it,amt,ok};
 }
-function amtD(t){return t.ok?faN(t.amt):'نامعلوم';}
+function hasWork(t){return t.pages>0||IKEYS.some(k=>t.it[k]>0);}
+function amtD(t){if(t.amt>0)return faN(t.amt);return hasWork(t)?'نامعلوم':faN(0);}
+function entryHasQty(e){return (+e.pages||0)>0||IKEYS.some(k=>(+e[k]||0)>0);}
+function entryAmtD(e,pr){const a=entryAmount(e,pr);if(a>0)return faN(a)+' تومان';return entryHasQty(e)?'نامعلوم':'—';}
 function priceLine(p){
   const pr=pricesOf(p);
   const parts=[`متر ${+pr.meter?faN(pr.meter):'نامعلوم'}`];
@@ -515,12 +518,11 @@ function renderDetail(){
   const t=totals(p);
   const pr=pricesOf(p);
   const pc=costsOf(p.id);
-  const profit=t.ok?faN(t.amt-pc)+' تومان':'نامعلوم';
+  const profit=t.amt>0?faN(t.amt-pc)+' تومان':'نامعلوم';
   const ents=[...p.entries].reverse().map(e=>{
     const is=itemStr(e);
     const ea=entryAmount(e,pr);
-    const ec=entryComplete(e,pr);
-    return `<div class="ent"><div><div class="q">${e.desc?faD(e.desc)+' • ':''}${is}</div><div class="d">${faD(e.date)} • ${ec?faN(ea)+' تومان':'نامعلوم'}</div></div>
+    return `<div class="ent"><div><div class="q">${e.desc?faD(e.desc)+' • ':''}${is}</div><div class="d">${faD(e.date)} • ${entryAmtD(e,pr)}</div></div>
     <div class="ops"><button class="op-edit" onclick="openSheet('edit','${p.id}','${e.id}')">✏️</button><button class="op-del" onclick="delEntry('${p.id}','${e.id}')">🗑️</button></div></div>`;
   }).join('');
   box.innerHTML=`<div class="card">
@@ -651,17 +653,17 @@ function saveSheet(){
 function renderBills(){
   const sel=document.getElementById('i-proj');
   sel.innerHTML=S.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
-  let gT=0,gOk=true;
-  const rows=S.projects.map(p=>{const t=totals(p);gT+=t.amt;if(!t.ok)gOk=false;
+  let gT=0,gHas=false;
+  const rows=S.projects.map(p=>{const t=totals(p);gT+=t.amt;if(hasWork(t))gHas=true;
     return `<tr><td>${faD(p.name)}</td><td>${faN(t.pages)}</td><td>${amtD(t)}</td></tr>`;}).join('');
   const wt=wagesTotal();
   const gR=receivedTotal();
   const gC=costsTotal();
   document.getElementById('allBox').innerHTML=S.projects.length?
     `<table class="inv-table"><tr><th>پروژه</th><th>صفحه</th><th>مبلغ کار</th></tr>${rows}</table>
-     <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع کار</div><div class="v">${gOk?faN(gT)+' تومان':'نامعلوم'}</div>
+     <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع کار</div><div class="v">${gT>0?faN(gT)+' تومان':(gHas?'نامعلوم':faN(0)+' تومان')}</div>
      <div style="font-size:13px;color:var(--text2);margin-top:8px">دریافتی: ${faN(gR)} • حقوق: ${faN(wt)} • هزینه‌ها: ${faN(gC)}</div>
-     <div style="font-size:13px;color:var(--text2);margin-top:4px">مانده کلی: ${gOk?faN(gT-gR-wt-gC)+' تومان':'نامعلوم'}</div></div>`:'<div class="empty">پروژه‌ای نیست</div>';
+     <div style="font-size:13px;color:var(--text2);margin-top:4px">مانده کلی: ${gT>0?faN(gT-gR-wt-gC)+' تومان':(gHas?'نامعلوم':'—')}</div></div>`:'<div class="empty">پروژه‌ای نیست</div>';
   renderInvoice();
 }
 function invCols(p){
@@ -678,7 +680,7 @@ function renderInvoice(){
   const rows=p.entries.map((e,i)=>{
     let cells=`<td>${faN(i+1)}</td><td>${faD(e.date)}</td><td>${+e.pages?faN(e.pages):'—'}</td><td>${+e.pages?faN(mOf(e)):'—'}</td>`;
     cols.forEach(k=>cells+=`<td>${+e[k]?faN(e[k]):'—'}</td>`);
-    return `<tr>${cells}${showM?`<td>${entryComplete(e,pr)?faN(entryAmount(e,pr)):'نامعلوم'}</td>`:''}</tr>`;}).join('');
+    return `<tr>${cells}${showM?`<td>${entryAmtD(e,pr)}</td>`:''}</tr>`;}).join('');
   let head=`<tr><th>#</th><th>تاریخ</th><th>صفحه</th><th>متر</th>`;
   cols.forEach(k=>head+=`<th>${INAME[k]}</th>`);
   head+=`${showM?'<th>مبلغ</th>':''}</tr>`;
@@ -696,14 +698,14 @@ function buildInvText(p){
   L.push('——————————');
   p.entries.forEach((e,i)=>{
     const w=itemStr(e)||'—';
-    const m=entryComplete(e,pr)?faN(entryAmount(e,pr))+' تومان':'نامعلوم';
+    const m=entryAmtD(e,pr);
     L.push((i+1)+'٫ '+faD(e.date)+' — '+w+' — '+m+(e.desc?' ('+e.desc+')':''));
   });
   L.push('——————————');
   const pc=costsOf(p.id);
-  L.push('جمع کار: '+(t.ok?faN(t.amt)+' تومان':'نامعلوم'));
+  L.push('جمع کار: '+(t.amt>0?faN(t.amt)+' تومان':'نامعلوم'));
   if(pc>0)L.push('هزینه‌ها: '+faN(pc)+' تومان');
-  if(t.ok&&pc>0)L.push('سود پروژه: '+faN(t.amt-pc)+' تومان');
+  if(t.amt>0&&pc>0)L.push('سود پروژه: '+faN(t.amt-pc)+' تومان');
   return L.join('\n');
 }
 function shareInvoice(){
@@ -732,7 +734,7 @@ function doPrint(){
   const rows=p.entries.map((e,i)=>{
     let cells=`<td>${i+1}</td><td>${e.date}</td><td>${e.desc||''}</td><td>${+e.pages||'—'}</td><td>${+e.pages?mOf(e):'—'}</td>`;
     cols.forEach(k=>cells+=`<td>${+e[k]||'—'}</td>`);
-    return `<tr>${cells}${showM?`<td>${entryComplete(e,pr)?entryAmount(e,pr).toLocaleString('en-US'):'نامعلوم'}</td>`:''}</tr>`;}).join('');
+    return `<tr>${cells}${showM?`<td>${entryAmount(e,pr)>0?entryAmount(e,pr).toLocaleString('en-US'):'نامعلوم'}</td>`:''}</tr>`;}).join('');
   let head=`<tr><th>ردیف</th><th>تاریخ</th><th>شرح</th><th>صفحه</th><th>متراژ</th>`;
   cols.forEach(k=>head+=`<th>${INAME[k]} (${IUNIT[k]})</th>`);
   head+=`${showM?'<th>مبلغ (تومان)</th>':''}</tr>`;
@@ -743,7 +745,7 @@ function doPrint(){
     <h1>صورت کار پروژه ${p.name}</h1>
     <div class="sub">تاریخ تنظیم: ${todayJalali()} • گزارش مقادیر اجرا شده${showM?'':' (بدون مبالغ)'}</div>
     <table>${head}${rows}</table>
-    <div class="tot">جمع کل: ${tq||'—'}${showM?' • '+(t.ok?t.amt.toLocaleString('en-US')+' تومان':'نامعلوم'):''}</div>
+    <div class="tot">جمع کل: ${tq||'—'}${showM?' • '+(t.amt>0?t.amt.toLocaleString('en-US')+' تومان':'نامعلوم'):''}</div>
     <div class="note">این صورت مقادیر کار انجام‌شده است.</div>`;
   window.print();
 }
