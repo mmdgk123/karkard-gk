@@ -100,7 +100,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v15</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v16</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
 </div>
 
 <!-- ─── Tab 1: new project + backup ─── -->
@@ -158,7 +158,10 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
     <label class="toggle"><input type="checkbox" id="i-money" checked onchange="renderInvoice()"> نمایش مبالغ توی فاکتور</label>
     <div id="invBox"></div>
     <div style="height:12px"></div>
-    <button class="btn btn-b" onclick="doPrint()">🖨️ چاپ / ذخیره PDF</button>
+    <div class="rowbtns">
+      <button class="btn btn-b" onclick="doPrint()">🖨️ چاپ / ذخیره PDF</button>
+      <button class="btn btn-p" onclick="shareInvoice()">📤 ارسال فاکتور</button>
+    </div>
   </div>
 </section>
 
@@ -216,6 +219,35 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
   </div>
 </section>
 
+<!-- ─── Tab 6: costs ─── -->
+<section id="pg-costs" class="page">
+  <div class="card">
+    <div class="proj-name" id="c-title">🧰 ثبت هزینه</div>
+    <div class="grid2">
+      <div><label class="lbl">دسته</label><select class="inp" id="c-cat"><option>مصالح</option><option>کرایه حمل</option><option>ابزار</option><option>متفرقه</option></select></div>
+      <div><label class="lbl">پروژه (اختیاری)</label><select class="inp" id="c-proj"></select></div>
+    </div>
+    <div class="grid2">
+      <div><label class="lbl">تاریخ</label><input class="inp" id="c-date"></div>
+      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="c-amount" type="text" inputmode="numeric" autocomplete="off"></div>
+    </div>
+    <label class="lbl">توضیح (اختیاری)</label>
+    <input class="inp" id="c-desc" autocomplete="off">
+    <div class="rowbtns" style="margin-top:14px">
+      <button class="btn btn-p" id="c-save" onclick="saveCost()">ثبت ✅</button>
+      <button class="btn btn-g" id="c-cancel" style="display:none" onclick="cancelCostEdit()">انصراف</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="proj-name">📊 جمع هزینه‌ها</div>
+    <div id="cSum"></div>
+  </div>
+  <div class="card">
+    <div class="proj-name">📝 سوابق هزینه</div>
+    <div id="cList" style="margin-top:6px"></div>
+  </div>
+</section>
+
 <button class="fab hide" id="fab" onclick="openSheet('add')">+</button>
 
 <nav class="bottomnav">
@@ -224,6 +256,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
   <button class="navbtn" id="nb-bills" onclick="go('bills')"><span class="ic">🧾</span>حساب‌ها</button>
   <button class="navbtn" id="nb-wages" onclick="go('wages')"><span class="ic">💰</span>حقوق</button>
   <button class="navbtn" id="nb-recv" onclick="go('recv')"><span class="ic">💵</span>دریافتی</button>
+  <button class="navbtn" id="nb-costs" onclick="go('costs')"><span class="ic">🧰</span>هزینه‌ها</button>
 </nav>
 
 <!-- quick add / edit sheet -->
@@ -278,7 +311,7 @@ function seed(){
     {id:uid(),date:'۱۴۰۵/۰۶/۰۷',pages:20,cooler:0,chand:0,halogen:0,linear:0,desc:'کناف'},
     {id:uid(),date:'۱۴۰۵/۰۶/۱۰',pages:0,cooler:0,chand:7,halogen:0,linear:0,desc:'دریچه لوستر'},
     {id:uid(),date:'۱۴۰۵/۰۶/۱۲',pages:1,cooler:0,chand:0,halogen:0,linear:0,desc:''}
-  ]}],receipts:[]};
+  ]}],receipts:[],costs:[]};
 }
 function seedWages(){return [{id:uid(),name:'سجاد',date:'۱۴۰۵/۰۶/۰۸',amount:18600000,desc:'تسویه تا ۸ شهریور'}];}
 /* migrate old shapes -> project prices (automatic on all entries) */
@@ -286,6 +319,7 @@ function migrate(s){
   if(!s||!Array.isArray(s.projects))return null;
   if(!Array.isArray(s.wages))s.wages=seedWages();
   if(!Array.isArray(s.receipts))s.receipts=[];
+  if(!Array.isArray(s.costs))s.costs=[];
   // old shape: payments lived inside each project -> move to global receipts
   s.projects.forEach(p=>{
     if(Array.isArray(p.payments)&&p.payments.length){
@@ -378,15 +412,16 @@ function itemStr(e){
 
 /* ─── nav ─── */
 function go(t){
-  ['new','projects','bills','wages','recv','detail'].forEach(x=>document.getElementById('pg-'+x).classList.remove('active'));
+  ['new','projects','bills','wages','recv','costs','detail'].forEach(x=>document.getElementById('pg-'+x).classList.remove('active'));
   document.getElementById('pg-'+t).classList.add('active');
-  ['new','projects','bills','wages','recv'].forEach(x=>document.getElementById('nb-'+x).classList.remove('on'));
+  ['new','projects','bills','wages','recv','costs'].forEach(x=>document.getElementById('nb-'+x).classList.remove('on'));
   if(t!=='detail')document.getElementById('nb-'+t).classList.add('on');
   else document.getElementById('nb-projects').classList.add('on');
   document.getElementById('fab').classList.toggle('hide',!(t==='projects'||t==='detail'));
   if(t==='bills')renderBills();
   if(t==='wages')renderWages();
   if(t==='recv')renderRecv();
+  if(t==='costs')renderCosts();
   window.scrollTo(0,0);
 }
 function backToList(){curPid=null;go('projects');}
@@ -435,7 +470,7 @@ function restoreBackup(txt){
 function wipeAll(){
   if(!confirm('همه پروژه‌ها و ثبت‌ها پاک بشه؟'))return;
   if(!confirm('مطمئنی؟ بکاپ گرفتی؟'))return;
-  S={projects:[],wages:[],receipts:[]};curPid=null;save();renderAll();
+  S={projects:[],wages:[],receipts:[],costs:[]};curPid=null;save();renderAll();
 }
 function checkUpdate(){
   if(!confirm('کش برنامه پاک و تازه‌سازی بشه؟ (داده‌هات پاک نمیشه)'))return;
@@ -473,6 +508,8 @@ function renderDetail(){
   if(!p){box.innerHTML='<div class="empty">پروژه پیدا نشد</div>';return;}
   const t=totals(p);
   const pr=pricesOf(p);
+  const pc=costsOf(p.id);
+  const profit=t.ok?faN(t.amt-pc)+' تومان':'نامعلوم';
   const ents=[...p.entries].reverse().map(e=>{
     const is=itemStr(e);
     const ea=entryAmount(e,pr);
@@ -487,6 +524,8 @@ function renderDetail(){
         <div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>
         <div class="stat"><div class="n">${faN(t.m)}</div><div class="t">متر</div></div>
         <div class="stat"><div class="n">${amtD(t)}</div><div class="t">💰 مبلغ کار</div></div>
+        <div class="stat"><div class="n">${faN(pc)}</div><div class="t">🧰 هزینه</div></div>
+        <div class="stat"><div class="n">${profit}</div><div class="t">سود پروژه</div></div>
       </div>
       <div class="rowbtns">
         <button class="btn btn-g" onclick="go('recv')">💵 ثبت دریافتی</button>
@@ -523,7 +562,7 @@ function savePrices(pid){
 }
 function delProject(pid){
   if(!confirm('پروژه و همه ثبت‌هاش پاک شه؟'))return;
-  S={projects:S.projects.filter(p=>p.id!==pid),wages:S.wages||[],receipts:S.receipts||[]};
+  S={projects:S.projects.filter(p=>p.id!==pid),wages:S.wages||[],receipts:S.receipts||[],costs:(S.costs||[]).map(c=>c.pid===pid?Object.assign({},c,{pid:''}):c)};
   curPid=null;save();renderAll();backToList();
 }
 function delEntry(pid,eid){
@@ -611,10 +650,12 @@ function renderBills(){
     return `<tr><td>${faD(p.name)}</td><td>${faN(t.pages)}</td><td>${amtD(t)}</td></tr>`;}).join('');
   const wt=wagesTotal();
   const gR=receivedTotal();
+  const gC=costsTotal();
   document.getElementById('allBox').innerHTML=S.projects.length?
     `<table class="inv-table"><tr><th>پروژه</th><th>صفحه</th><th>مبلغ کار</th></tr>${rows}</table>
      <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع کار</div><div class="v">${gOk?faN(gT)+' تومان':'نامعلوم'}</div>
-     <div style="font-size:13px;color:var(--text2);margin-top:8px">دریافتی: ${faN(gR)} • حقوق: ${faN(wt)} • مانده کلی: ${gOk?faN(gT-gR-wt)+' تومان':'نامعلوم'}</div></div>`:'<div class="empty">پروژه‌ای نیست</div>';
+     <div style="font-size:13px;color:var(--text2);margin-top:8px">دریافتی: ${faN(gR)} • حقوق: ${faN(wt)} • هزینه‌ها: ${faN(gC)}</div>
+     <div style="font-size:13px;color:var(--text2);margin-top:4px">مانده کلی: ${gOk?faN(gT-gR-wt-gC)+' تومان':'نامعلوم'}</div></div>`:'<div class="empty">پروژه‌ای نیست</div>';
   renderInvoice();
 }
 function invCols(p){
@@ -639,6 +680,41 @@ function renderInvoice(){
   const qsum=[t.pages>0?`${faN(t.pages)} صفحه • ${faN(t.m)} متر`:null,isum||null].filter(Boolean).join(' • ');
   box.innerHTML=`<table class="inv-table">${head}${rows}</table>
   <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع: ${qsum||'—'}</div>${showM?`<div class="v">${amtD(t)} تومان</div>`:''}</div>`;
+}
+function buildInvText(p){
+  const t=totals(p);
+  const pr=pricesOf(p);
+  const L=[];
+  L.push('🧾 صورت کار پروژه '+p.name);
+  L.push('تاریخ تنظیم: '+todayJalali());
+  L.push('——————————');
+  p.entries.forEach((e,i)=>{
+    const w=itemStr(e)||'—';
+    const m=entryComplete(e,pr)?faN(entryAmount(e,pr))+' تومان':'نامعلوم';
+    L.push((i+1)+'٫ '+faD(e.date)+' — '+w+' — '+m+(e.desc?' ('+e.desc+')':''));
+  });
+  L.push('——————————');
+  const pc=costsOf(p.id);
+  L.push('جمع کار: '+(t.ok?faN(t.amt)+' تومان':'نامعلوم'));
+  if(pc>0)L.push('هزینه‌ها: '+faN(pc)+' تومان');
+  if(t.ok&&pc>0)L.push('سود پروژه: '+faN(t.amt-pc)+' تومان');
+  return L.join('\n');
+}
+function shareInvoice(){
+  const p=S.projects.find(x=>x.id===document.getElementById('i-proj').value)||S.projects[0];
+  if(!p){alert('پروژه‌ای نیست');return;}
+  const txt=buildInvText(p);
+  if(navigator.share){
+    navigator.share({title:'صورت کار '+p.name,text:txt}).catch(()=>{});
+  }else if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(()=>alert('کپی شد ✅ بفرست برای کارفرما')).catch(()=>fallbackCopy(txt));
+  }else fallbackCopy(txt);
+}
+function fallbackCopy(t){
+  const ta=document.createElement('textarea');
+  ta.value=t;document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');alert('کپی شد ✅ بفرست برای کارفرما');}catch(e){alert('کپی نشد ❌');}
+  ta.remove();
 }
 function doPrint(){
   const p=S.projects.find(x=>x.id===document.getElementById('i-proj').value)||S.projects[0];
@@ -784,6 +860,73 @@ function delRecv(rid){
   S.receipts=(S.receipts||[]).filter(r=>r.id!==rid);save();renderAll();renderRecv();
 }
 
+/* ─── tab6: costs (مصالح / کرایه / ابزار) ─── */
+let costEditId=null;
+function projName(pid){const p=S.projects.find(x=>x.id===pid);return p?p.name:'';}
+function costsOf(pid){return (S.costs||[]).filter(c=>!pid||c.pid===pid).reduce((a,c)=>a+(+c.amount||0),0);}
+function costsTotal(){return (S.costs||[]).reduce((a,c)=>a+(+c.amount||0),0);}
+function renderCosts(){
+  const sel=document.getElementById('c-proj');
+  sel.innerHTML='<option value="">عمومی (بدون پروژه)</option>'+S.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  if(!costEditId){
+    const di=document.getElementById('c-date');
+    if(!di.value)di.value=todayJalali();
+  }
+  if(!Array.isArray(S.costs))S.costs=[];
+  const by={};
+  S.costs.forEach(c=>{const k=c.cat||'متفرقه';by[k]=by[k]||{total:0,n:0};by[k].total+=+c.amount||0;by[k].n++;});
+  const cats=Object.keys(by);
+  document.getElementById('cSum').innerHTML=(cats.length?('<div class="proj-stats" style="margin-top:10px">'+cats.map(k=>
+    `<div class="stat"><div class="n">${faN(by[k].total)}</div><div class="t">${faD(k)} • ${faN(by[k].n)}</div></div>`).join('')+'</div>'):'<div class="empty">هنوز هزینه‌ای ثبت نشده</div>')
+    +`<div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع کل هزینه‌ها</div><div class="v">${faN(costsTotal())} تومان</div></div>`;
+  const rows=[...S.costs].reverse().map(c=>{
+    const pn=c.pid?projName(c.pid):'';
+    return `<div class="ent"><div><div class="q">${faD(c.cat||'متفرقه')}${pn?' • '+faD(pn):''} • ${faN(c.amount)} تومان${c.desc?' • '+faD(c.desc):''}</div><div class="d">${faD(c.date)}</div></div>
+    <div class="ops"><button class="op-edit" onclick="editCost('${c.id}')">✏️</button><button class="op-del" onclick="delCost('${c.id}')">🗑️</button></div></div>`;}).join('');
+  document.getElementById('cList').innerHTML=rows||'<div class="empty">سوابقی نیست</div>';
+}
+function saveCost(){
+  const amount=num(document.getElementById('c-amount').value);
+  if(!amount){alert('مبلغ رو وارد کن');return;}
+  const rec={cat:document.getElementById('c-cat').value,pid:document.getElementById('c-proj').value||'',date:document.getElementById('c-date').value.trim()||todayJalali(),amount,desc:document.getElementById('c-desc').value.trim()};
+  if(!Array.isArray(S.costs))S.costs=[];
+  if(costEditId){
+    const c=S.costs.find(x=>x.id===costEditId);
+    if(c)Object.assign(c,rec);
+  }else{
+    rec.id=uid();S.costs.push(rec);
+  }
+  cancelCostEdit();save();renderAll();renderCosts();
+  alert('ثبت شد ✅');
+}
+function editCost(id){
+  const c=(S.costs||[]).find(x=>x.id===id);if(!c)return;
+  costEditId=id;
+  document.getElementById('c-cat').value=c.cat||'متفرقه';
+  renderCosts();
+  document.getElementById('c-proj').value=c.pid||'';
+  document.getElementById('c-date').value=c.date;
+  document.getElementById('c-amount').value=c.amount;
+  document.getElementById('c-desc').value=c.desc||'';
+  document.getElementById('c-title').textContent='✏️ ویرایش هزینه';
+  document.getElementById('c-save').textContent='ذخیره ✅';
+  document.getElementById('c-cancel').style.display='';
+  window.scrollTo(0,0);
+}
+function cancelCostEdit(){
+  costEditId=null;
+  document.getElementById('c-date').value=todayJalali();
+  document.getElementById('c-amount').value='';
+  document.getElementById('c-desc').value='';
+  document.getElementById('c-title').textContent='🧰 ثبت هزینه';
+  document.getElementById('c-save').textContent='ثبت ✅';
+  document.getElementById('c-cancel').style.display='none';
+}
+function delCost(id){
+  if(!confirm('این هزینه پاک شه؟'))return;
+  S.costs=(S.costs||[]).filter(c=>c.id!==id);save();renderAll();renderCosts();
+}
+
 /* ─── boot ─── */
 function renderAll(){
   renderProjects();
@@ -791,6 +934,7 @@ function renderAll(){
   if(document.getElementById('pg-bills').classList.contains('active'))renderBills();
   if(document.getElementById('pg-wages').classList.contains('active'))renderWages();
   if(document.getElementById('pg-recv').classList.contains('active'))renderRecv();
+  if(document.getElementById('pg-costs').classList.contains('active'))renderCosts();
 }
 try{document.getElementById('themeBtn').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'🌙':'☀️';}catch(e){}
 renderAll();
