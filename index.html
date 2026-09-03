@@ -1,27 +1,32 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="کارکرد">
-<meta name="theme-color" content="#07080d">
+<meta name="theme-color" content="#07080d"><script>try{var _t=localStorage.getItem("karkard_theme");if(_t)document.documentElement.setAttribute("data-theme",_t);}catch(e){}</script>
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
 <title>کارکرد</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IRANSansX:wght@300;400;500;600;700;800;900;1000&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#07080d;--card:rgba(255,255,255,.04);--card2:rgba(255,255,255,.07);--border:rgba(255,255,255,.09);--text:#f0f2f8;--text2:#9aa0b4;--green:#2de0a5;--gold:#ffc857;--blue:#6c9bff;--red:#ff4d6d;--nav-bg:rgba(13,15,23,.94);--fab-grad:linear-gradient(145deg,#ff5f7d,#d01845)}
+:root{--bg:#07080d;--bg2:#14161f;--card:rgba(255,255,255,.04);--card2:rgba(255,255,255,.07);--border:rgba(255,255,255,.09);--text:#f0f2f8;--text2:#9aa0b4;--green:#2de0a5;--gold:#ffc857;--blue:#6c9bff;--red:#ff4d6d;--nav-bg:rgba(13,15,23,.94);--fab-grad:linear-gradient(145deg,#ff5f7d,#d01845)}
+[data-theme="light"]{--bg:#f2f3f7;--bg2:#ffffff;--card:rgba(0,0,0,.03);--card2:rgba(0,0,0,.05);--border:rgba(0,0,0,.08);--text:#1a1d2e;--text2:#6b7085;--green:#0da672;--gold:#c9940a;--blue:#3d63d8;--red:#d6335a;--nav-bg:rgba(242,243,247,.94);--fab-grad:linear-gradient(145deg,#ff5f7d,#d01845)}
 html{background:var(--bg)}
-body{font-family:'IRANSansX',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:120px;direction:rtl;-webkit-font-smoothing:antialiased}
+body{font-family:'IRANSansX',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:120px;direction:rtl;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
 .page{display:none;padding:0 16px;animation:fadeUp .25s ease}
 .page.active{display:block}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .header{padding:20px 16px 12px;position:sticky;top:0;z-index:20;background:linear-gradient(180deg,var(--bg) 72%,transparent)}
+.header-row{display:flex;justify-content:space-between;align-items:center}
 .header h1{font-size:24px;font-weight:1000}
 .header h1 span{color:var(--gold)}
+.theme-toggle{width:40px;height:40px;border-radius:14px;border:1.5px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px}
+.theme-toggle:active{transform:scale(.9)}
+.vermark{position:fixed;left:50%;transform:translateX(-50%);bottom:88px;font-size:9px;font-weight:600;opacity:.3;color:var(--text);z-index:29;pointer-events:none}
 .grand{margin-top:10px;padding:14px 16px;border-radius:18px;background:linear-gradient(135deg,rgba(255,200,87,.14),rgba(255,200,87,.04));border:1px solid rgba(255,200,87,.3);text-align:center}
 .grand .l{font-size:12px;color:var(--text2);font-weight:600}
 .grand .v{font-size:24px;font-weight:1000;color:var(--gold)}
@@ -74,7 +79,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 /* sheet modal */
 .overlay{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center}
 .overlay.open{display:flex}
-.sheet{width:100%;max-width:520px;background:#14161f;border:1px solid var(--border);border-bottom:none;border-radius:24px 24px 0 0;padding:18px 18px calc(20px + env(safe-area-inset-bottom));animation:slideUp .25s ease;max-height:88vh;overflow-y:auto}
+.sheet{width:100%;max-width:520px;background:var(--bg2);border:1px solid var(--border);border-bottom:none;border-radius:24px 24px 0 0;padding:18px 18px calc(20px + env(safe-area-inset-bottom));animation:slideUp .25s ease;max-height:88vh;overflow-y:auto}
 @keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:none;opacity:1}}
 .sheet h3{font-size:17px;font-weight:800;margin-bottom:4px}
 #printArea{display:none}
@@ -96,7 +101,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 <body>
 
 <div class="header">
-  <h1>کارکرد <span>🏗️</span></h1>
+  <div class="header-row"><h1>کارکرد <span>🏗️</span></h1><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
   <div class="grand"><div class="l">جمع طلب همه پروژه‌ها</div><div class="v" id="grandTotal">۰</div></div>
 </div>
 
@@ -189,6 +194,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 </section>
 
 <button class="fab hide" id="fab" onclick="openSheet('add')">+</button>
+<div class="vermark">v2</div>
 
 <nav class="bottomnav">
   <button class="navbtn on" id="nb-new" onclick="go('new')"><span class="ic">➕</span>پروژه جدید</button>
@@ -536,6 +542,7 @@ function delWage(id){
 }
 
 /* ─── boot ─── */
+function toggleTheme(){var c=document.documentElement.getAttribute('data-theme');var n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);try{localStorage.setItem('karkard_theme',n);}catch(e){}document.getElementById('themeBtn').textContent=n==='dark'?'🌙':'☀️';}
 function renderAll(){
   let grand=0;S.projects.forEach(p=>grand+=totals(p).amt);
   document.getElementById('grandTotal').textContent=faN(grand)+' تومان';
@@ -544,6 +551,7 @@ function renderAll(){
   if(document.getElementById('pg-wages').classList.contains('active'))renderWages();
   if(document.getElementById('pg-bills').classList.contains('active'))renderBills();
 }
+try{document.getElementById('themeBtn').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'🌙':'☀️';}catch(e){}
 renderAll();
 </script>
 </body>
