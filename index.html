@@ -27,6 +27,8 @@ body{font-family:'IRANSansX',system-ui,sans-serif;background:var(--bg);color:var
 .theme-toggle{width:40px;height:40px;border-radius:14px;border:1.5px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px}
 .theme-toggle:active{transform:scale(.9)}
 .ver{font-size:10px;font-weight:700;color:var(--gold);border:1px solid var(--gold);border-radius:99px;padding:2px 9px;opacity:.9;white-space:nowrap}
+.creator{position:fixed;bottom:calc(82px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);z-index:29;font-size:10px;font-weight:600;color:var(--text2);opacity:.65;text-decoration:none;background:var(--card);border:1px solid var(--border);border-radius:99px;padding:3px 12px;white-space:nowrap;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.creator b{color:var(--gold);font-weight:800}
 .card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;margin-bottom:12px}
 .proj-card{cursor:pointer}
 .proj-card:active{transform:scale(.98)}
@@ -100,7 +102,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v16</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v17</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
 </div>
 
 <!-- ─── Tab 1: new project + backup ─── -->
@@ -249,6 +251,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 </section>
 
 <button class="fab hide" id="fab" onclick="openSheet('add')">+</button>
+<a class="creator" href="https://t.me/mmdGK" target="_blank" rel="noopener">👨‍💻 سازنده: <b>@mmdGK</b></a>
 
 <nav class="bottomnav">
   <button class="navbtn on" id="nb-new" onclick="go('new')"><span class="ic">➕</span>جدید</button>
