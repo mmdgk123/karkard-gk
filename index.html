@@ -100,7 +100,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v9</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v10</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
 </div>
 
 <!-- ─── Tab 1: new project + backup ─── -->
@@ -109,7 +109,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
     <div class="proj-name">➕ پروژه جدید</div>
     <label class="lbl">اسم پروژه</label>
     <input class="inp" id="np-name">
-    <div style="font-size:12px;color:var(--text2);margin-top:10px">موقع ثبت کار، هر آیتمی که داشتی (صفحه، دریچه، هالوژن، لاین) با تعداد و مبلغش وارد کن. هر صفحه = ۳ متر.</div>
+    <div style="font-size:12px;color:var(--text2);margin-top:10px">قیمت‌ها رو داخل خود پروژه ثبت می‌کنی — موقع ثبت کار فقط تعداد می‌زنی و مبلغ خودش حساب میشه. هر صفحه = ۳ متر.</div>
     <div style="height:12px"></div>
     <button class="btn btn-p" onclick="addProject()">ساختن پروژه</button>
   </div>
@@ -235,8 +235,6 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
       <div><label class="lbl">تاریخ</label><input class="inp" id="s-date"></div>
       <div><label class="lbl">تعداد صفحه</label><input class="inp" id="s-pages" type="number" min="0"></div>
     </div>
-    <label class="lbl">مبلغ صفحه‌ها (تومان)</label>
-    <input class="inp" id="sa-pages" type="number" min="0">
     <div id="s-items"></div>
     <label class="lbl">توضیح (اختیاری)</label>
     <input class="inp" id="s-desc">
@@ -257,7 +255,11 @@ const faD=s=>String(s??'').replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
 const mOf=e=>(+e.pages||0)*3;
 const ITEMS={cooler:{t:'❄️ کولر',u:'عدد'},chand:{t:'💡 لوستر',u:'عدد'},halogen:{t:'🔆 هالوژن',u:'عدد'},linear:{t:'➖ لاین',u:'متر'}};
 const IKEYS=Object.keys(ITEMS);
-const akey=k=>'a'+k[0].toUpperCase()+k.slice(1);
+const PKEYS=['page','cooler','chand','halogen','linear'];
+const PLBL={page:'مبلغ هر صفحه',cooler:'مبلغ هر دریچه کولر',chand:'مبلغ هر دریچه لوستر',halogen:'مبلغ هر هالوژن',linear:'مبلغ هر متر لاین نوری'};
+function blankPrices(){return {page:0,cooler:0,chand:0,halogen:0,linear:0};}
+function pricesOf(p){const r=blankPrices();if(p&&p.prices)Object.keys(r).forEach(k=>r[k]=+p.prices[k]||0);return r;}
+function entryAmount(e,pr){return (+e.pages||0)*(+pr.page||0)+IKEYS.reduce((a,k)=>a+(+e[k]||0)*(+pr[k]||0),0);}
 
 function todayJalali(){
   try{
@@ -266,25 +268,27 @@ function todayJalali(){
     return g('year')+'/'+g('month')+'/'+g('day');
   }catch(e){return '';}
 }
-function blankEntry(){return {id:uid(),date:'',pages:0,cooler:0,chand:0,halogen:0,linear:0,amount:0,desc:''};}
+function blankEntry(){return {id:uid(),date:'',pages:0,cooler:0,chand:0,halogen:0,linear:0,desc:''};}
 function seed(){
-  return {projects:[{id:'p_zarabi',name:'ضرابی',items:{cooler:true,chand:true,halogen:false,linear:false},entries:[
-    {id:uid(),date:'۱۴۰۵/۰۵/۰۳',pages:61,cooler:0,chand:0,halogen:0,linear:0,amount:40260000,aPages:40260000,aCooler:0,aChand:0,aHalogen:0,aLinear:0,desc:''},
-    {id:uid(),date:'۱۴۰۵/۰۵/۱۷',pages:10,cooler:5,chand:0,halogen:0,linear:0,amount:7100000,aPages:6600000,aCooler:500000,aChand:0,aHalogen:0,aLinear:0,desc:''},
-    {id:uid(),date:'۱۴۰۵/۰۶/۰۳',pages:67,cooler:4,chand:1,halogen:0,linear:0,amount:44720000,aPages:44220000,aCooler:400000,aChand:100000,aHalogen:0,aLinear:0,desc:''},
-    {id:uid(),date:'۱۴۰۵/۰۶/۰۷',pages:20,cooler:0,chand:0,halogen:0,linear:0,amount:13200000,aPages:13200000,aCooler:0,aChand:0,aHalogen:0,aLinear:0,desc:'کناف'},
-    {id:uid(),date:'۱۴۰۵/۰۶/۱۰',pages:0,cooler:0,chand:7,halogen:0,linear:0,amount:700000,aPages:0,aCooler:0,aChand:700000,aHalogen:0,aLinear:0,desc:'دریچه لوستر'},
-    {id:uid(),date:'۱۴۰۵/۰۶/۱۲',pages:1,cooler:0,chand:0,halogen:0,linear:0,amount:660000,aPages:660000,aCooler:0,aChand:0,aHalogen:0,aLinear:0,desc:''}
+  return {projects:[{id:'p_zarabi',name:'ضرابی',prices:{page:660000,cooler:100000,chand:100000,halogen:0,linear:0},entries:[
+    {id:uid(),date:'۱۴۰۵/۰۵/۰۳',pages:61,cooler:0,chand:0,halogen:0,linear:0,desc:''},
+    {id:uid(),date:'۱۴۰۵/۰۵/۱۷',pages:10,cooler:5,chand:0,halogen:0,linear:0,desc:''},
+    {id:uid(),date:'۱۴۰۵/۰۶/۰۳',pages:67,cooler:4,chand:1,halogen:0,linear:0,desc:''},
+    {id:uid(),date:'۱۴۰۵/۰۶/۰۷',pages:20,cooler:0,chand:0,halogen:0,linear:0,desc:'کناف'},
+    {id:uid(),date:'۱۴۰۵/۰۶/۱۰',pages:0,cooler:0,chand:7,halogen:0,linear:0,desc:'دریچه لوستر'},
+    {id:uid(),date:'۱۴۰۵/۰۶/۱۲',pages:1,cooler:0,chand:0,halogen:0,linear:0,desc:''}
   ],payments:[]}]};
 }
 function seedWages(){return [{id:uid(),name:'سجاد',date:'۱۴۰۵/۰۶/۰۸',amount:18600000,desc:'تسویه تا ۸ شهریور'}];}
-/* migrate old shapes (with rates) -> new shape (agreed amount per entry) */
+/* migrate old shapes -> project prices (automatic on all entries) */
 function migrate(s){
   if(!s||!Array.isArray(s.projects))return null;
   if(!Array.isArray(s.wages))s.wages=seedWages();
   s.projects.forEach(p=>{
     if(!Array.isArray(p.payments))p.payments=[];
-    if(!p.items)p.items={cooler:true,chand:true,halogen:false,linear:false};
+    if(!p.prices||typeof p.prices!=='object')p.prices=blankPrices();
+    PKEYS.forEach(k=>{p.prices[k]=+p.prices[k]||0;});
+    // rates era -> per-entry agreed amounts -> infer unit prices
     if(p.rateM!=null){
       p.entries.forEach(e=>{
         if(e.amount==null)e.amount=(+e.pages||0)*3*p.rateM+(+e.cooler||0)*(p.rateCooler||0)+(+e.chand||0)*(p.rateChand||0);
@@ -292,21 +296,38 @@ function migrate(s){
         if(e.linear==null)e.linear=0;
       });
       delete p.rateM;delete p.rateCooler;delete p.rateChand;
+    }
+    // agreed-amount era (amount / aPages / aCooler...) -> infer project unit prices once
+    const hasPrice=Object.values(p.prices).some(v=>v>0);
+    if(!hasPrice){
+      const guess={page:[],cooler:[],chand:[],halogen:[],linear:[]};
+      p.entries.forEach(e=>{
+        if(+e.pages>0){
+          if(+e.aPages>0)guess.page.push(Math.round(+e.aPages/+e.pages));
+          else if(+e.amount>0&&!(+e.cooler||+e.chand||+e.halogen||+e.linear))guess.page.push(Math.round(+e.amount/+e.pages));
+        }
+        IKEYS.forEach(k=>{
+          const ak='a'+k[0].toUpperCase()+k.slice(1);
+          if(+e[k]>0&&+e[ak]>0)guess[k].push(Math.round(+e[ak]/+e[k]));
+        });
+      });
+      const med=a=>a.length?a.sort((x,y)=>x-y)[Math.floor(a.length/2)]:0;
+      p.prices.page=med(guess.page);
+      IKEYS.forEach(k=>p.prices[k]=med(guess[k]));
+      // zarabi fallback (known old rates)
       if(p.id==='p_zarabi'){
-        const ch=p.entries.reduce((a,e)=>a+(+e.chand||0),0);
-        if(ch<8)p.entries.push({id:uid(),date:'۱۴۰۵/۰۶/۱۰',pages:0,cooler:0,chand:8-ch,halogen:0,linear:0,amount:(8-ch)*100000,desc:'دریچه لوستر'});
+        if(!p.prices.page)p.prices.page=660000;
+        if(!p.prices.cooler)p.prices.cooler=100000;
+        if(!p.prices.chand)p.prices.chand=100000;
       }
     }
+    // drop per-entry amounts: totals are now computed from project prices
     p.entries.forEach(e=>{
-      if(e.aPages==null){
-        const m=(+e.pages||0)*3*220000,c=(+e.cooler||0)*100000,h=(+e.chand||0)*100000;
-        if(m+c+h===(+e.amount||0)){e.aPages=m;e.aCooler=c;e.aChand=h;}
-        else e.aPages=+e.amount||0;
-        if(e.aCooler==null)e.aCooler=0;
-        if(e.aChand==null)e.aChand=0;
-        e.aHalogen=+e.aHalogen||0;e.aLinear=+e.aLinear||0;
-      }
+      delete e.amount;delete e.aPages;delete e.aCooler;delete e.aChand;delete e.aHalogen;delete e.aLinear;
+      if(e.halogen==null)e.halogen=0;
+      if(e.linear==null)e.linear=0;
     });
+    delete p.items;delete p.rateM;delete p.rateCooler;delete p.rateChand;
   });
   return s;
 }
@@ -317,21 +338,28 @@ let editCtx=null;
 function save(){localStorage.setItem(LS,JSON.stringify(S));}
 function received(p){return (p.payments||[]).reduce((a,r)=>a+(+r.amount||0),0);}
 function totals(p){
+  const pr=pricesOf(p);
   let pages=0,amt=0;const it={cooler:0,chand:0,halogen:0,linear:0};
-  p.entries.forEach(e=>{pages+=+e.pages||0;amt+=+e.amount||0;IKEYS.forEach(k=>it[k]+=+(e[k]||0));});
+  p.entries.forEach(e=>{
+    pages+=+e.pages||0;
+    // old backup without prices: fallback to stored amount
+    amt+=(Object.values(pr).some(v=>v>0)?entryAmount(e,pr):(+e.amount||0));
+    IKEYS.forEach(k=>it[k]+=+(e[k]||0));
+  });
   const recv=received(p);
   return {pages,m:pages*3,it,amt,recv,rem:amt-recv};
+}
+function priceLine(p){
+  const pr=pricesOf(p);
+  const parts=[];
+  if(+pr.page)parts.push('صفحه '+faN(pr.page));
+  IKEYS.forEach(k=>{if(+pr[k])parts.push(ITEMS[k].t+' '+faN(pr[k]));});
+  return parts.length?parts.join(' • '):'قیمت ثبت نشده — پایین وارد کن 👇';
 }
 function itemStr(e){
   const parts=[];
   IKEYS.forEach(k=>{if(+e[k])parts.push(ITEMS[k].t+faN(e[k]));});
   return parts.join(' • ');
-}
-function amtStr(e){
-  const parts=[];
-  if(+e.aPages)parts.push('صفحه '+faN(e.aPages));
-  IKEYS.forEach(k=>{const v=+e[akey(k)];if(v)parts.push(ITEMS[k].t+' '+faN(v));});
-  return parts.length>1?parts.join(' • '):'';
 }
 
 /* ─── nav ─── */
@@ -354,7 +382,7 @@ function toggleTheme(){var c=document.documentElement.getAttribute('data-theme')
 function addProject(){
   const name=document.getElementById('np-name').value.trim();
   if(!name){alert('اسم پروژه رو بنویس');return;}
-  const p={id:uid(),name,entries:[],payments:[]};
+  const p={id:uid(),name,prices:blankPrices(),entries:[],payments:[]};
   S.projects.push(p);
   document.getElementById('np-name').value='';
   save();renderAll();openProject(p.id);
@@ -431,14 +459,16 @@ function renderDetail(){
   const box=document.getElementById('detailBox');
   if(!p){box.innerHTML='<div class="empty">پروژه پیدا نشد</div>';return;}
   const t=totals(p);
+  const pr=pricesOf(p);
   const ents=[...p.entries].reverse().map(e=>{
     const is=itemStr(e);
-    const as=amtStr(e);
-    return `<div class="ent"><div><div class="q">${e.desc?faD(e.desc)+' • ':''}${faN(e.pages)} صفحه (${faN(mOf(e))} متر)${is?' • '+is:''}</div><div class="d">${faD(e.date)} • ${faN(e.amount)} تومان</div>${as?`<div class="d">💰 ${as}</div>`:''}</div>
+    const ea=entryAmount(e,pr);
+    return `<div class="ent"><div><div class="q">${e.desc?faD(e.desc)+' • ':''}${faN(e.pages)} صفحه (${faN(mOf(e))} متر)${is?' • '+is:''}</div><div class="d">${faD(e.date)}${ea?' • '+faN(ea)+' تومان':''}</div></div>
     <div class="ops"><button class="op-edit" onclick="openSheet('edit','${p.id}','${e.id}')">✏️</button><button class="op-del" onclick="delEntry('${p.id}','${e.id}')">🗑️</button></div></div>`;
   }).join('');
   box.innerHTML=`<div class="card">
       <div class="proj-head"><div class="proj-name">🏗️ ${faD(p.name)}</div><div class="proj-amt">${faN(t.amt)} تومان</div></div>
+      <div style="font-size:12px;color:var(--text2);margin-top:6px">💰 ${priceLine(p)}</div>
       <div class="proj-stats">
         <div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>
         <div class="stat"><div class="n">${faN(t.m)}</div><div class="t">متر</div></div>
@@ -451,9 +481,32 @@ function renderDetail(){
       </div>
     </div>
     <div class="card">
+      <div class="proj-name">💰 قیمت‌های این پروژه</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:6px">یه بار قیمت بده — خودکار روی همه ثبت‌های همین پروژه اعمال میشه.</div>
+      <div class="grid2">
+        <div><label class="lbl">مبلغ هر صفحه</label><input class="inp" id="pr-page" type="number" min="0" value="${pr.page||''}"></div>
+        <div><label class="lbl">مبلغ هر دریچه کولر</label><input class="inp" id="pr-cooler" type="number" min="0" value="${pr.cooler||''}"></div>
+      </div>
+      <div class="grid2">
+        <div><label class="lbl">مبلغ هر دریچه لوستر</label><input class="inp" id="pr-chand" type="number" min="0" value="${pr.chand||''}"></div>
+        <div><label class="lbl">مبلغ هر هالوژن</label><input class="inp" id="pr-halogen" type="number" min="0" value="${pr.halogen||''}"></div>
+      </div>
+      <label class="lbl">مبلغ هر متر لاین نوری</label>
+      <input class="inp" id="pr-linear" type="number" min="0" value="${pr.linear||''}">
+      <div class="rowbtns" style="margin-top:14px">
+        <button class="btn btn-p" onclick="savePrices('${p.id}')">ثبت قیمت ✅</button>
+      </div>
+    </div>
+    <div class="card">
       <div class="proj-name">📝 ثبت‌ها (${faN(p.entries.length)})</div>
       <div style="margin-top:6px">${ents||'<div class="empty">هنوز ثبتی نداره — با + ثبت کن 👇</div>'}</div>
     </div>`;
+}
+function savePrices(pid){
+  const p=S.projects.find(x=>x.id===pid);if(!p)return;
+  if(!p.prices)p.prices=blankPrices();
+  PKEYS.forEach(k=>{const el=document.getElementById('pr-'+k);p.prices[k]=el?+el.value||0:0;});
+  save();renderAll();alert('قیمت ثبت شد ✅ روی همه ثبت‌های این پروژه اعمال شد');
 }
 function delProject(pid){
   if(!confirm('پروژه و همه ثبت‌هاش پاک شه؟'))return;
@@ -478,7 +531,7 @@ function buildSheetItems(){
   let e=null;
   if(editCtx)e=p.entries.find(x=>x.id===editCtx.eid);
   box.innerHTML=IKEYS.map(k=>
-    `<div class="grid2"><div><label class="lbl">${ITEMS[k].t} (${ITEMS[k].u})</label><input class="inp" id="si-${k}" type="number" min="0" value="${e?+e[k]||0:''}"></div><div><label class="lbl">مبلغ ${ITEMS[k].t}</label><input class="inp" id="sa-${k}" type="number" min="0" value="${e?+(e[akey(k)]||0)||'':''}"></div></div>`
+    `<div><label class="lbl">${ITEMS[k].t} (${ITEMS[k].u})</label><input class="inp" id="si-${k}" type="number" min="0" value="${e?+e[k]||0:''}"></div>`
   ).join('');
 }
 function openSheet(mode,pid,eid){
@@ -494,7 +547,6 @@ function openSheet(mode,pid,eid){
     document.getElementById('s-proj-wrap').style.display='none';
     document.getElementById('s-date').value=e.date;
     document.getElementById('s-pages').value=e.pages;
-    document.getElementById('sa-pages').value=+e.aPages||'';
     document.getElementById('s-desc').value=e.desc||'';
     document.getElementById('s-save').textContent='ذخیره ✅';
     buildSheetItems();
@@ -504,7 +556,6 @@ function openSheet(mode,pid,eid){
     sel.value=(pid&&S.projects.some(p=>p.id===pid))?pid:(curPid||(S.projects[0]&&S.projects[0].id)||'');
     document.getElementById('s-date').value=todayJalali();
     document.getElementById('s-pages').value='';
-    document.getElementById('sa-pages').value='';
     document.getElementById('s-desc').value='';
     document.getElementById('s-save').textContent='ثبت ✅';
     buildSheetItems();
@@ -521,18 +572,14 @@ function saveSheet(){
   IKEYS.forEach(k=>{if(vals[k]==null)vals[k]=0;});
   const dt=document.getElementById('s-date').value.trim()||todayJalali();
   const ds=document.getElementById('s-desc').value.trim();
-  const avals={aPages:+document.getElementById('sa-pages').value||0};
-  IKEYS.forEach(k=>{const el=document.getElementById('sa-'+k);avals[akey(k)]=el?+el.value||0:0;});
-  const am=avals.aPages+IKEYS.reduce((a,k)=>a+avals[akey(k)],0);
   if(editCtx){
     const e=p.entries.find(x=>x.id===editCtx.eid);
     if(!e){closeSheet();return;}
-    e.date=dt;e.pages=pg;e.amount=am;e.desc=ds;
+    e.date=dt;e.pages=pg;e.desc=ds;
     IKEYS.forEach(k=>e[k]=vals[k]);
-    Object.assign(e,avals);
   }else{
-    if(pg<=0&&am<=0&&!IKEYS.some(k=>vals[k]>0)){alert('یه مقداری وارد کن');return;}
-    p.entries.push(Object.assign({id:uid(),date:dt,pages:pg,amount:am,desc:ds},vals,avals));
+    if(pg<=0&&!IKEYS.some(k=>vals[k]>0)){alert('یه مقداری وارد کن');return;}
+    p.entries.push(Object.assign({id:uid(),date:dt,pages:pg,desc:ds},vals));
   }
   const wasEdit=!!editCtx;
   save();closeSheet();renderAll();alert(wasEdit?'ذخیره شد ✅':'ثبت شد ✅');
@@ -561,11 +608,12 @@ function renderInvoice(){
   if(!p){box.innerHTML='<div class="empty">پروژه‌ای نیست</div>';return;}
   const showM=document.getElementById('i-money').checked;
   const t=totals(p);
+  const pr=pricesOf(p);
   const cols=invCols(p);
   const rows=p.entries.map((e,i)=>{
     let cells=`<td>${faN(i+1)}</td><td>${faD(e.date)}</td><td>${faN(e.pages)}</td><td>${faN(mOf(e))}</td>`;
     cols.forEach(k=>cells+=`<td>${+e[k]?faN(e[k]):'—'}</td>`);
-    return `<tr>${cells}${showM?`<td>${faN(e.amount)}</td>`:''}</tr>`;}).join('');
+    return `<tr>${cells}${showM?`<td>${faN(entryAmount(e,pr))}</td>`:''}</tr>`;}).join('');
   let head=`<tr><th>#</th><th>تاریخ</th><th>صفحه</th><th>متر</th>`;
   cols.forEach(k=>head+=`<th>${ITEMS[k].t}</th>`);
   head+=`${showM?'<th>مبلغ</th>':''}</tr>`;
@@ -578,11 +626,12 @@ function doPrint(){
   if(!p)return;
   const showM=document.getElementById('i-money').checked;
   const t=totals(p);
+  const pr=pricesOf(p);
   const cols=invCols(p);
   const rows=p.entries.map((e,i)=>{
     let cells=`<td>${i+1}</td><td>${e.date}</td><td>${e.desc||''}</td><td>${e.pages}</td><td>${mOf(e)}</td>`;
     cols.forEach(k=>cells+=`<td>${+e[k]||'—'}</td>`);
-    return `<tr>${cells}${showM?`<td>${(+e.amount||0).toLocaleString('en-US')}</td>`:''}</tr>`;}).join('');
+    return `<tr>${cells}${showM?`<td>${entryAmount(e,pr).toLocaleString('en-US')}</td>`:''}</tr>`;}).join('');
   let head=`<tr><th>ردیف</th><th>تاریخ</th><th>شرح</th><th>صفحه</th><th>متراژ</th>`;
   cols.forEach(k=>head+=`<th>${ITEMS[k].t} (${ITEMS[k].u})</th>`);
   head+=`${showM?'<th>مبلغ (تومان)</th>':''}</tr>`;
