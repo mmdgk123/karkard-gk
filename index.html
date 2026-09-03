@@ -100,7 +100,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v8</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v9</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
 </div>
 
 <!-- ─── Tab 1: new project + backup ─── -->
@@ -109,12 +109,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
     <div class="proj-name">➕ پروژه جدید</div>
     <label class="lbl">اسم پروژه</label>
     <input class="inp" id="np-name">
-    <label class="lbl">این پروژه چی داره؟ (تیک بزن)</label>
-    <label class="chk"><input type="checkbox" id="ni-cooler"> ❄️ دریچه کولر <small>— تعداد</small></label>
-    <label class="chk"><input type="checkbox" id="ni-chand"> 💡 دریچه لوستر <small>— تعداد</small></label>
-    <label class="chk"><input type="checkbox" id="ni-halogen"> 🔆 هالوژن <small>— تعداد</small></label>
-    <label class="chk"><input type="checkbox" id="ni-linear"> ➖ لاین نوری <small>— متر</small></label>
-    <div style="font-size:12px;color:var(--text2);margin-top:10px">صفحه کناف همیشه هست (هر صفحه = ۳ متر). مبلغ موقع ثبت، توافقی وارد میشه.</div>
+    <div style="font-size:12px;color:var(--text2);margin-top:10px">موقع ثبت کار، هر آیتمی که داشتی (صفحه، دریچه، هالوژن، لاین) با تعداد و مبلغش وارد کن. هر صفحه = ۳ متر.</div>
     <div style="height:12px"></div>
     <button class="btn btn-p" onclick="addProject()">ساختن پروژه</button>
   </div>
@@ -359,7 +354,7 @@ function toggleTheme(){var c=document.documentElement.getAttribute('data-theme')
 function addProject(){
   const name=document.getElementById('np-name').value.trim();
   if(!name){alert('اسم پروژه رو بنویس');return;}
-  const p={id:uid(),name,items:{cooler:document.getElementById('ni-cooler').checked,chand:document.getElementById('ni-chand').checked,halogen:document.getElementById('ni-halogen').checked,linear:document.getElementById('ni-linear').checked},entries:[],payments:[]};
+  const p={id:uid(),name,entries:[],payments:[]};
   S.projects.push(p);
   document.getElementById('np-name').value='';
   save();renderAll();openProject(p.id);
@@ -431,13 +426,6 @@ function renderProjects(){
 function openProject(pid){
   curPid=pid;renderDetail();go('detail');
 }
-function itemToggles(p){
-  return IKEYS.map(k=>`<label class="chk" style="font-size:12.5px;padding:9px 12px"><input type="checkbox" ${p.items[k]?'checked':''} onchange="toggleItem('${p.id}','${k}',this.checked)"> ${ITEMS[k].t} <small>— ${ITEMS[k].u}</small></label>`).join('');
-}
-function toggleItem(pid,k,v){
-  const p=S.projects.find(x=>x.id===pid);if(!p)return;
-  p.items[k]=v;save();renderAll();
-}
 function renderDetail(){
   const p=S.projects.find(x=>x.id===curPid);
   const box=document.getElementById('detailBox');
@@ -457,8 +445,6 @@ function renderDetail(){
         <div class="stat"><div class="n">${faN(t.recv)}</div><div class="t">💵 دریافتی</div></div>
         <div class="stat"><div class="n">${faN(t.rem)}</div><div class="t">مانده</div></div>
       </div>
-      <label class="lbl">آیتم‌های این پروژه</label>
-      ${itemToggles(p)}
       <div class="rowbtns">
         <button class="btn btn-g" onclick="go('recv');document.getElementById('r-proj').value='${p.id}';renderRecv()">💵 دریافتی</button>
         <button class="btn btn-g" style="color:var(--red)" onclick="delProject('${p.id}')">🗑️ حذف پروژه</button>
@@ -491,7 +477,7 @@ function buildSheetItems(){
   if(!p){box.innerHTML='';return;}
   let e=null;
   if(editCtx)e=p.entries.find(x=>x.id===editCtx.eid);
-  box.innerHTML=IKEYS.filter(k=>p.items[k]).map(k=>
+  box.innerHTML=IKEYS.map(k=>
     `<div class="grid2"><div><label class="lbl">${ITEMS[k].t} (${ITEMS[k].u})</label><input class="inp" id="si-${k}" type="number" min="0" value="${e?+e[k]||0:''}"></div><div><label class="lbl">مبلغ ${ITEMS[k].t}</label><input class="inp" id="sa-${k}" type="number" min="0" value="${e?+(e[akey(k)]||0)||'':''}"></div></div>`
   ).join('');
 }
@@ -531,7 +517,7 @@ function saveSheet(){
   if(!p){alert('اول یه پروژه بساز');closeSheet();return;}
   const pg=+document.getElementById('s-pages').value||0;
   const vals={};
-  IKEYS.filter(k=>p.items[k]).forEach(k=>{const el=document.getElementById('si-'+k);vals[k]=el?+el.value||0:0;});
+  IKEYS.forEach(k=>{const el=document.getElementById('si-'+k);vals[k]=el?+el.value||0:0;});
   IKEYS.forEach(k=>{if(vals[k]==null)vals[k]=0;});
   const dt=document.getElementById('s-date').value.trim()||todayJalali();
   const ds=document.getElementById('s-desc').value.trim();
@@ -567,7 +553,7 @@ function renderBills(){
   renderInvoice();
 }
 function invCols(p){
-  return IKEYS.filter(k=>p.items[k]||p.entries.some(e=>+e[k]));
+  return IKEYS.filter(k=>p.entries.some(e=>+e[k]));
 }
 function renderInvoice(){
   const p=S.projects.find(x=>x.id===document.getElementById('i-proj').value)||S.projects[0];
