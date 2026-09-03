@@ -111,7 +111,7 @@ body.kb .bottomnav,body.kb .fab,body.kb .creator{opacity:0!important;visibility:
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v23</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v24</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
 </div>
 
 <!-- ─── Tab 1: new project + backup ─── -->
@@ -182,8 +182,8 @@ body.kb .bottomnav,body.kb .fab,body.kb .creator{opacity:0!important;visibility:
     <label class="lbl">اسم</label>
     <input class="inp" id="w-name" placeholder="اسم شاگرد">
     <div class="grid2">
-      <div><label class="lbl">تاریخ</label><input class="inp" id="w-date"></div>
-      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="w-amount" type="text" inputmode="numeric"></div>
+      <div><label class="lbl">تاریخ</label><div style="display:flex;gap:6px"><input class="inp" id="w-date" inputmode="numeric" oninput="fmtDate(this)" style="flex:1;min-width:0"><button class="btn btn-g" style="padding:10px 12px;font-size:12px;white-space:nowrap" onclick="setToday('w-date')">امروز</button></div></div>
+      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="w-amount" type="text" inputmode="numeric" oninput="fmtAmount(this)"></div>
     </div>
     <label class="lbl">توضیح (اختیاری)</label>
     <input class="inp" id="w-desc">
@@ -209,8 +209,8 @@ body.kb .bottomnav,body.kb .fab,body.kb .creator{opacity:0!important;visibility:
     <label class="lbl">از کی گرفتی؟ (شرکت / اسم پیمانکار)</label>
     <input class="inp" id="r-source">
     <div class="grid2">
-      <div><label class="lbl">تاریخ</label><input class="inp" id="r-date"></div>
-      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="r-amount" type="text" inputmode="numeric"></div>
+      <div><label class="lbl">تاریخ</label><div style="display:flex;gap:6px"><input class="inp" id="r-date" inputmode="numeric" oninput="fmtDate(this)" style="flex:1;min-width:0"><button class="btn btn-g" style="padding:10px 12px;font-size:12px;white-space:nowrap" onclick="setToday('r-date')">امروز</button></div></div>
+      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="r-amount" type="text" inputmode="numeric" oninput="fmtAmount(this)"></div>
     </div>
     <label class="lbl">توضیح (اختیاری)</label>
     <input class="inp" id="r-desc">
@@ -238,8 +238,8 @@ body.kb .bottomnav,body.kb .fab,body.kb .creator{opacity:0!important;visibility:
       <div><label class="lbl">پروژه (اختیاری)</label><select class="inp" id="c-proj"></select></div>
     </div>
     <div class="grid2">
-      <div><label class="lbl">تاریخ</label><input class="inp" id="c-date"></div>
-      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="c-amount" type="text" inputmode="numeric" autocomplete="off"></div>
+      <div><label class="lbl">تاریخ</label><div style="display:flex;gap:6px"><input class="inp" id="c-date" inputmode="numeric" oninput="fmtDate(this)" style="flex:1;min-width:0"><button class="btn btn-g" style="padding:10px 12px;font-size:12px;white-space:nowrap" onclick="setToday('c-date')">امروز</button></div></div>
+      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="c-amount" type="text" inputmode="numeric" autocomplete="off" oninput="fmtAmount(this)"></div>
     </div>
     <label class="lbl">توضیح (اختیاری)</label>
     <input class="inp" id="c-desc" autocomplete="off">
@@ -276,7 +276,7 @@ body.kb .bottomnav,body.kb .fab,body.kb .creator{opacity:0!important;visibility:
     <h3 id="s-title">📝 ثبت کار</h3>
     <div id="s-proj-wrap"><label class="lbl">پروژه</label><select class="inp" id="s-proj" onchange="buildSheetItems()"></select></div>
     <div class="grid2">
-      <div><label class="lbl">تاریخ</label><input class="inp" id="s-date"></div>
+      <div><label class="lbl">تاریخ</label><div style="display:flex;gap:6px"><input class="inp" id="s-date" inputmode="numeric" oninput="fmtDate(this)" style="flex:1;min-width:0"><button class="btn btn-g" style="padding:10px 12px;font-size:12px;white-space:nowrap" onclick="setToday('s-date')">امروز</button></div></div>
       <div><label class="lbl">تعداد صفحه</label><input class="inp" id="s-pages" type="text" inputmode="numeric" autocomplete="off" min="0"></div>
     </div>
     <div id="s-items"></div>
@@ -295,15 +295,15 @@ body.kb .bottomnav,body.kb .fab,body.kb .creator{opacity:0!important;visibility:
     <h3>💰 قیمت‌های پروژه</h3>
     <div style="font-size:12px;color:var(--text2);margin-bottom:10px">یه بار قیمت بده — خودکار روی همه ثبت‌های همین پروژه اعمال میشه.</div>
     <div class="grid2">
-      <div><label class="lbl">مبلغ هر متر کناف</label><input class="inp" id="pp-meter" type="text" inputmode="numeric" autocomplete="off"></div>
-      <div><label class="lbl">مبلغ هر دریچه کولر</label><input class="inp" id="pp-cooler" type="text" inputmode="numeric" autocomplete="off"></div>
+      <div><label class="lbl">مبلغ هر متر کناف</label><input class="inp" id="pp-meter" type="text" inputmode="numeric" autocomplete="off" oninput="fmtAmount(this)"></div>
+      <div><label class="lbl">مبلغ هر دریچه کولر</label><input class="inp" id="pp-cooler" type="text" inputmode="numeric" autocomplete="off" oninput="fmtAmount(this)"></div>
     </div>
     <div class="grid2">
-      <div><label class="lbl">مبلغ هر دریچه لوستر</label><input class="inp" id="pp-chand" type="text" inputmode="numeric" autocomplete="off"></div>
-      <div><label class="lbl">مبلغ هر هالوژن</label><input class="inp" id="pp-halogen" type="text" inputmode="numeric" autocomplete="off"></div>
+      <div><label class="lbl">مبلغ هر دریچه لوستر</label><input class="inp" id="pp-chand" type="text" inputmode="numeric" autocomplete="off" oninput="fmtAmount(this)"></div>
+      <div><label class="lbl">مبلغ هر هالوژن</label><input class="inp" id="pp-halogen" type="text" inputmode="numeric" autocomplete="off" oninput="fmtAmount(this)"></div>
     </div>
     <label class="lbl">مبلغ هر متر لاین نوری</label>
-    <input class="inp" id="pp-linear" type="text" inputmode="numeric" autocomplete="off">
+    <input class="inp" id="pp-linear" type="text" inputmode="numeric" autocomplete="off" oninput="fmtAmount(this)">
     <div class="rowbtns" style="margin-top:16px">
       <button class="btn btn-p" onclick="savePriceModal()">ثبت قیمت ✅</button>
       <button class="btn btn-g" onclick="closePrice()">بستن</button>
@@ -332,6 +332,9 @@ const uid=()=>Date.now().toString(36)+Math.floor(Math.random()*999);
 const faN=n=>(+n||0).toLocaleString('fa-IR');
 const faD=s=>String(s??'').replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
 const num=v=>{const s=String(v??'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^0-9]/g,'');return +s||0;};
+function fmtAmount(el){const n=num(el.value);el.value=n>0?n.toLocaleString('fa-IR'):'';}
+function fmtDate(el){let d=String(el.value??'').replace(/[۰-۹]/g,x=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(x)).replace(/[٠-٩]/g,x=>'٠١٢٣٤٥٦٧٨٩'.indexOf(x)).replace(/\D/g,'').slice(0,8);let out=d;if(d.length>4)out=d.slice(0,4)+'/'+d.slice(4);if(d.length>6)out=d.slice(0,4)+'/'+d.slice(4,6)+'/'+d.slice(6);el.value=out;}
+function setToday(id){document.getElementById(id).value=todayJalali();}
 const mOf=e=>(+e.pages||0)*3;
 const ITEMS={cooler:{t:'❄️ کولر',u:'عدد'},chand:{t:'💡 لوستر',u:'عدد'},halogen:{t:'🔆 هالوژن',u:'عدد'},linear:{t:'➖ لاین',u:'متر'}};
 const IKEYS=Object.keys(ITEMS);
@@ -593,7 +596,7 @@ function renderDetail(){
     </div>`;
 }
 let curPricePid=null;
-function openPrice(pid){const p=S.projects.find(x=>x.id===pid);if(!p)return;curPricePid=pid;const pr=pricesOf(p);PKEYS.forEach(k=>{const el=document.getElementById('pp-'+k);if(el)el.value=pr[k]||'';});document.getElementById('priceOverlay').classList.add('open');}
+function openPrice(pid){const p=S.projects.find(x=>x.id===pid);if(!p)return;curPricePid=pid;const pr=pricesOf(p);PKEYS.forEach(k=>{const el=document.getElementById('pp-'+k);if(el)el.value=+pr[k]>0?(+pr[k]).toLocaleString('fa-IR'):'';});document.getElementById('priceOverlay').classList.add('open');}
 function closePrice(){document.getElementById('priceOverlay').classList.remove('open');curPricePid=null;}
 function savePriceModal(){if(!curPricePid)return;savePrices(curPricePid,true);closePrice();}
 function savePrices(pid,silent){
@@ -796,7 +799,7 @@ function editWage(id){
   wageEditId=id;
   document.getElementById('w-name').value=w.name;
   document.getElementById('w-date').value=w.date;
-  document.getElementById('w-amount').value=w.amount;
+  document.getElementById('w-amount').value=+w.amount>0?(+w.amount).toLocaleString('fa-IR'):'';
   document.getElementById('w-desc').value=w.desc||'';
   document.getElementById('w-title').textContent='✏️ ویرایش پرداختی';
   document.getElementById('w-save').textContent='ذخیره ✅';
@@ -858,7 +861,7 @@ function editRecv(rid){
   recvEditId=rid;
   document.getElementById('r-source').value=r.source||'';
   document.getElementById('r-date').value=r.date;
-  document.getElementById('r-amount').value=r.amount;
+  document.getElementById('r-amount').value=+r.amount>0?(+r.amount).toLocaleString('fa-IR'):'';
   document.getElementById('r-desc').value=r.desc||'';
   document.getElementById('r-title').textContent='✏️ ویرایش دریافتی';
   document.getElementById('r-save').textContent='ذخیره ✅';
@@ -926,7 +929,7 @@ function editCost(id){
   renderCosts();
   document.getElementById('c-proj').value=c.pid||'';
   document.getElementById('c-date').value=c.date;
-  document.getElementById('c-amount').value=c.amount;
+  document.getElementById('c-amount').value=+c.amount>0?(+c.amount).toLocaleString('fa-IR'):'';
   document.getElementById('c-desc').value=c.desc||'';
   document.getElementById('c-title').textContent='✏️ ویرایش هزینه';
   document.getElementById('c-save').textContent='ذخیره ✅';
