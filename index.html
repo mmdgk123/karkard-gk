@@ -161,12 +161,40 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
   </div>
 </section>
 
+<!-- ─── Tab 4: wages ─── -->
+<section id="pg-wages" class="page">
+  <div class="card">
+    <div class="proj-name" id="w-title">💰 ثبت پرداختی</div>
+    <label class="lbl">اسم</label>
+    <input class="inp" id="w-name" value="سجاد" placeholder="اسم شاگرد">
+    <div class="grid2">
+      <div><label class="lbl">تاریخ</label><input class="inp" id="w-date"></div>
+      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="w-amount" type="number" placeholder="مثلاً 800000"></div>
+    </div>
+    <label class="lbl">توضیح (اختیاری)</label>
+    <input class="inp" id="w-desc" placeholder="مثلاً دستمزد روزانه / تسویه">
+    <div class="rowbtns" style="margin-top:14px">
+      <button class="btn btn-p" id="w-save" onclick="saveWage()">ثبت ✅</button>
+      <button class="btn btn-g" id="w-cancel" style="display:none" onclick="cancelWageEdit()">انصراف</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="proj-name">📊 جمع پرداختی‌ها</div>
+    <div id="wSum"></div>
+  </div>
+  <div class="card">
+    <div class="proj-name">📝 سوابق پرداخت</div>
+    <div id="wList" style="margin-top:6px"></div>
+  </div>
+</section>
+
 <button class="fab hide" id="fab" onclick="openSheet('add')">+</button>
 
 <nav class="bottomnav">
   <button class="navbtn on" id="nb-new" onclick="go('new')"><span class="ic">➕</span>پروژه جدید</button>
   <button class="navbtn" id="nb-projects" onclick="go('projects')"><span class="ic">📋</span>پروژه‌ها</button>
   <button class="navbtn" id="nb-bills" onclick="go('bills')"><span class="ic">🧾</span>حساب‌ها</button>
+  <button class="navbtn" id="nb-wages" onclick="go('wages')"><span class="ic">💰</span>حقوق</button>
 </nav>
 
 <!-- quick add / edit sheet -->
@@ -217,7 +245,8 @@ function seed(){
     {id:uid(),date:'۱۴۰۵/۰۶/۱۲',pages:1,cooler:0,chand:0,desc:''}
   ]}]};
 }
-function load(){try{const s=JSON.parse(localStorage.getItem(LS));if(s&&Array.isArray(s.projects))return s;}catch(e){}return seed();}
+function seedWages(){return [{id:uid(),name:'سجاد',date:'۱۴۰۵/۰۶/۰۸',amount:18600000,desc:'تسویه تا ۸ شهریور'}];}
+function load(){try{const s=JSON.parse(localStorage.getItem(LS));if(s&&Array.isArray(s.projects)){if(!Array.isArray(s.wages))s.wages=seedWages();return s;}}catch(e){}const f=seed();f.wages=seedWages();return f;}
 let S=load();
 let curPid=null;
 let editCtx=null;
@@ -230,13 +259,14 @@ function totals(p){
 
 /* ─── nav ─── */
 function go(t){
-  ['new','projects','bills','detail'].forEach(x=>document.getElementById('pg-'+x).classList.remove('active'));
+  ['new','projects','bills','wages','detail'].forEach(x=>document.getElementById('pg-'+x).classList.remove('active'));
   document.getElementById('pg-'+t).classList.add('active');
-  ['new','projects','bills'].forEach(x=>document.getElementById('nb-'+x).classList.remove('on'));
+  ['new','projects','bills','wages'].forEach(x=>document.getElementById('nb-'+x).classList.remove('on'));
   if(t!=='detail')document.getElementById('nb-'+t).classList.add('on');
   else document.getElementById('nb-projects').classList.add('on');
   document.getElementById('fab').classList.toggle('hide',!(t==='projects'||t==='detail'));
   if(t==='bills')renderBills();
+  if(t==='wages')renderWages();
   window.scrollTo(0,0);
 }
 function backToList(){curPid=null;go('projects');}
@@ -278,6 +308,7 @@ function restoreBackup(txt){
   try{
     const o=JSON.parse(txt);
     if(!o||!Array.isArray(o.projects))throw 0;
+    if(!Array.isArray(o.wages))o.wages=[];
     S=o;save();renderAll();alert('برگردونده شد ✅');
   }catch(e){alert('متن بکاپ معتبر نیست ❌');}
 }
@@ -418,7 +449,8 @@ function renderBills(){
     return `<tr><td>${faD(p.name)}</td><td>${faN(t.pages)}</td><td>${faN(t.m)}</td><td>${faN(t.cooler+t.chand)}</td><td>${faN(t.amt)}</td></tr>`;}).join('');
   document.getElementById('allBox').innerHTML=S.projects.length?
     `<table class="inv-table"><tr><th>پروژه</th><th>صفحه</th><th>متر</th><th>دریچه</th><th>مبلغ</th></tr>${rows}</table>
-     <div class="inv-total"><div class="v">${faN(grand)} تومان</div></div>`:'<div class="empty">پروژه‌ای نیست</div>';
+     <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع طلب</div><div class="v">${faN(grand)} تومان</div>
+     <div style="font-size:13px;color:var(--text2);margin-top:8px">حقوق پرداختی: ${faN(wagesTotal())} • خالص: ${faN(grand-wagesTotal())} تومان</div></div>`:'<div class="empty">پروژه‌ای نیست</div>';
   renderInvoice();
 }
 function renderInvoice(){
@@ -447,12 +479,69 @@ function doPrint(){
   window.print();
 }
 
+/* ─── tab4: wages ─── */
+let wageEditId=null;
+function wagesTotal(){return (S.wages||[]).reduce((a,w)=>a+(+w.amount||0),0);}
+function renderWages(){
+  const di=document.getElementById('w-date');
+  if(!di.value&&!wageEditId)di.value=todayJalali();
+  const by={};
+  (S.wages||[]).forEach(w=>{const k=w.name||'شاگرد';by[k]=by[k]||{total:0,n:0};by[k].total+=+w.amount||0;by[k].n++;});
+  const names=Object.keys(by);
+  document.getElementById('wSum').innerHTML=names.length?('<div class="proj-stats" style="margin-top:10px">'+names.map(k=>
+    `<div class="stat"><div class="n">${faN(by[k].total)}</div><div class="t">${faD(k)} • ${faN(by[k].n)} پرداخت</div></div>`).join('')+'</div>'):'<div class="empty">هنوز پرداختی ثبت نشده</div>';
+  const rows=[...(S.wages||[])].reverse().map(w=>
+    `<div class="ent"><div><div class="q">${faD(w.name||'شاگرد')} • ${faN(w.amount)} تومان${w.desc?' • '+faD(w.desc):''}</div><div class="d">${faD(w.date)}</div></div>
+    <div class="ops"><button class="op-edit" onclick="editWage('${w.id}')">✏️</button><button class="op-del" onclick="delWage('${w.id}')">🗑️</button></div></div>`).join('');
+  document.getElementById('wList').innerHTML=rows||'<div class="empty">سوابقی نیست</div>';
+}
+function saveWage(){
+  const name=document.getElementById('w-name').value.trim()||'شاگرد';
+  const amount=+document.getElementById('w-amount').value||0;
+  if(!amount){alert('مبلغ رو وارد کن');return;}
+  const rec={name,date:document.getElementById('w-date').value.trim()||todayJalali(),amount,desc:document.getElementById('w-desc').value.trim()};
+  if(wageEditId){
+    const w=S.wages.find(x=>x.id===wageEditId);
+    if(w)Object.assign(w,rec);
+  }else{
+    rec.id=uid();S.wages.push(rec);
+  }
+  cancelWageEdit();save();renderAll();alert('ثبت شد ✅');
+}
+function editWage(id){
+  const w=S.wages.find(x=>x.id===id);if(!w)return;
+  wageEditId=id;
+  document.getElementById('w-name').value=w.name;
+  document.getElementById('w-date').value=w.date;
+  document.getElementById('w-amount').value=w.amount;
+  document.getElementById('w-desc').value=w.desc||'';
+  document.getElementById('w-title').textContent='✏️ ویرایش پرداختی';
+  document.getElementById('w-save').textContent='ذخیره ✅';
+  document.getElementById('w-cancel').style.display='';
+  window.scrollTo(0,0);
+}
+function cancelWageEdit(){
+  wageEditId=null;
+  document.getElementById('w-name').value='سجاد';
+  document.getElementById('w-date').value=todayJalali();
+  document.getElementById('w-amount').value='';
+  document.getElementById('w-desc').value='';
+  document.getElementById('w-title').textContent='💰 ثبت پرداختی';
+  document.getElementById('w-save').textContent='ثبت ✅';
+  document.getElementById('w-cancel').style.display='none';
+}
+function delWage(id){
+  if(!confirm('این پرداخت پاک شه؟'))return;
+  S.wages=S.wages.filter(w=>w.id!==id);save();renderAll();
+}
+
 /* ─── boot ─── */
 function renderAll(){
   let grand=0;S.projects.forEach(p=>grand+=totals(p).amt);
   document.getElementById('grandTotal').textContent=faN(grand)+' تومان';
   renderProjects();
   if(curPid)renderDetail();
+  if(document.getElementById('pg-wages').classList.contains('active'))renderWages();
   if(document.getElementById('pg-bills').classList.contains('active'))renderBills();
 }
 renderAll();
