@@ -110,8 +110,8 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
     <label class="lbl">اسم پروژه</label>
     <input class="inp" id="np-name" placeholder="مثلاً ضرابی">
     <label class="lbl">این پروژه چی داره؟ (تیک بزن)</label>
-    <label class="chk"><input type="checkbox" id="ni-cooler" checked> ❄️ دریچه کولر <small>— تعداد</small></label>
-    <label class="chk"><input type="checkbox" id="ni-chand" checked> 💡 دریچه لوستر <small>— تعداد</small></label>
+    <label class="chk"><input type="checkbox" id="ni-cooler"> ❄️ دریچه کولر <small>— تعداد</small></label>
+    <label class="chk"><input type="checkbox" id="ni-chand"> 💡 دریچه لوستر <small>— تعداد</small></label>
     <label class="chk"><input type="checkbox" id="ni-halogen"> 🔆 هالوژن <small>— تعداد</small></label>
     <label class="chk"><input type="checkbox" id="ni-linear"> ➖ لاین نوری <small>— متر</small></label>
     <div style="font-size:12px;color:var(--text2);margin-top:10px">صفحه کناف همیشه هست (هر صفحه = ۳ متر). مبلغ موقع ثبت، توافقی وارد میشه.</div>
@@ -169,7 +169,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
   <div class="card">
     <div class="proj-name" id="w-title">💰 ثبت پرداختی</div>
     <label class="lbl">اسم</label>
-    <input class="inp" id="w-name" value="سجاد" placeholder="اسم شاگرد">
+    <input class="inp" id="w-name" placeholder="اسم شاگرد">
     <div class="grid2">
       <div><label class="lbl">تاریخ</label><input class="inp" id="w-date"></div>
       <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="w-amount" type="number" placeholder="مثلاً 800000"></div>
@@ -219,7 +219,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 </section>
 
 <button class="fab hide" id="fab" onclick="openSheet('add')">+</button>
-<div class="vermark">v3</div>
+<div class="vermark">v4</div>
 
 <nav class="bottomnav">
   <button class="navbtn on" id="nb-new" onclick="go('new')"><span class="ic">➕</span>جدید</button>
@@ -236,7 +236,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
     <div id="s-proj-wrap"><label class="lbl">پروژه</label><select class="inp" id="s-proj" onchange="buildSheetItems()"></select></div>
     <div class="grid2">
       <div><label class="lbl">تاریخ</label><input class="inp" id="s-date"></div>
-      <div><label class="lbl">تعداد صفحه</label><input class="inp" id="s-pages" type="number" min="0" value="1"></div>
+      <div><label class="lbl">تعداد صفحه</label><input class="inp" id="s-pages" type="number" min="0" placeholder="مثلاً ۱۰"></div>
     </div>
     <div id="s-items"></div>
     <label class="lbl">مبلغ توافقی این ثبت (تومان)</label>
@@ -465,7 +465,7 @@ function buildSheetItems(){
   let e=null;
   if(editCtx)e=p.entries.find(x=>x.id===editCtx.eid);
   box.innerHTML=IKEYS.filter(k=>p.items[k]).map(k=>
-    `<div><label class="lbl">${ITEMS[k].t} (${ITEMS[k].u})</label><input class="inp" id="si-${k}" type="number" min="0" value="${e?+e[k]||0:0}"></div>`
+    `<div><label class="lbl">${ITEMS[k].t} (${ITEMS[k].u})</label><input class="inp" id="si-${k}" type="number" min="0" placeholder="۰" value="${e?+e[k]||0:''}"></div>`
   ).join('');
 }
 function openSheet(mode,pid,eid){
@@ -490,7 +490,7 @@ function openSheet(mode,pid,eid){
     document.getElementById('s-proj-wrap').style.display='';
     sel.value=(pid&&S.projects.some(p=>p.id===pid))?pid:(curPid||(S.projects[0]&&S.projects[0].id)||'');
     document.getElementById('s-date').value=todayJalali();
-    document.getElementById('s-pages').value=1;
+    document.getElementById('s-pages').value='';
     document.getElementById('s-amount').value='';
     document.getElementById('s-desc').value='';
     document.getElementById('s-save').textContent='ثبت ✅';
@@ -622,7 +622,7 @@ function editWage(id){
 }
 function cancelWageEdit(){
   wageEditId=null;
-  document.getElementById('w-name').value='سجاد';
+  document.getElementById('w-name').value='';
   document.getElementById('w-date').value=todayJalali();
   document.getElementById('w-amount').value='';
   document.getElementById('w-desc').value='';
