@@ -84,6 +84,14 @@ body.kb .bottomnav,body.kb .fab,body.kb .creator{opacity:0!important;visibility:
 .sheet{width:100%;max-width:520px;background:var(--bg2);border:1px solid var(--border);border-bottom:none;border-radius:24px 24px 0 0;padding:18px 18px calc(20px + env(safe-area-inset-bottom));animation:slideUp .25s ease;max-height:88vh;overflow-y:auto}
 @keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:none;opacity:1}}
 .sheet h3{font-size:17px;font-weight:800;margin-bottom:4px}
+.inv-paper{background:#fff;color:#1a1d2e;border-radius:14px;padding:18px 14px}
+.inv-paper h1{text-align:center;font-size:18px;color:#1a2b5c;margin-bottom:4px}
+.inv-paper .sub{text-align:center;font-size:11px;color:#555;margin-bottom:12px}
+.inv-paper table{width:100%;border-collapse:collapse;font-size:11px}
+.inv-paper th{background:#1a2b5c;color:#fff;padding:7px 4px}
+.inv-paper td{border:1px solid #bbb;padding:7px 4px;text-align:center;color:#1a1d2e}
+.inv-paper .tot{margin-top:12px;background:#eef;border:2px solid #1a2b5c;border-radius:8px;padding:10px;text-align:center;font-weight:800;font-size:13px;color:#1a1d2e}
+.inv-paper .note{text-align:center;font-size:10px;color:#777;margin-top:8px}
 #printArea{display:none}
 @media print{
   body{background:#fff!important;padding:0!important}
@@ -103,7 +111,7 @@ body.kb .bottomnav,body.kb .fab,body.kb .creator{opacity:0!important;visibility:
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v22</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v23</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
 </div>
 
 <!-- ─── Tab 1: new project + backup ─── -->
@@ -162,8 +170,7 @@ body.kb .bottomnav,body.kb .fab,body.kb .creator{opacity:0!important;visibility:
     <div id="invBox"></div>
     <div style="height:12px"></div>
     <div class="rowbtns">
-      <button class="btn btn-b" onclick="doPrint()">🖨️ چاپ / ذخیره PDF</button>
-      <button class="btn btn-p" onclick="shareInvoice()">📤 ارسال فاکتور</button>
+      <button class="btn btn-b" onclick="viewInvoice()">👁️ مشاهده فاکتور</button>
     </div>
   </div>
 </section>
@@ -300,6 +307,19 @@ body.kb .bottomnav,body.kb .fab,body.kb .creator{opacity:0!important;visibility:
     <div class="rowbtns" style="margin-top:16px">
       <button class="btn btn-p" onclick="savePriceModal()">ثبت قیمت ✅</button>
       <button class="btn btn-g" onclick="closePrice()">بستن</button>
+    </div>
+  </div>
+</div>
+
+<!-- invoice preview -->
+<div class="overlay" id="invOverlay" onclick="if(event.target===this)closeInv()">
+  <div class="sheet">
+    <h3>🧾 فاکتور پروژه</h3>
+    <div style="height:10px"></div>
+    <div class="inv-paper" id="invPreview"></div>
+    <div class="rowbtns" style="margin-top:14px">
+      <button class="btn btn-b" onclick="saveInvPDF()">📥 ذخیره PDF / چاپ</button>
+      <button class="btn btn-g" onclick="closeInv()">بستن</button>
     </div>
   </div>
 </div>
@@ -703,64 +723,42 @@ function renderInvoice(){
   box.innerHTML=`<table class="inv-table">${head}${rows}</table>
   <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع: ${qsum||'—'}</div>${showM?`<div class="v">${amtD(t)} تومان</div>`:''}</div>`;
 }
-function buildInvText(p){
-  const t=totals(p);
-  const pr=pricesOf(p);
-  const L=[];
-  L.push('🧾 صورت کار پروژه '+p.name);
-  L.push('تاریخ تنظیم: '+todayJalali());
-  L.push('——————————');
-  p.entries.forEach((e,i)=>{
-    const w=itemStr(e)||'—';
-    const m=entryAmtD(e,pr);
-    L.push((i+1)+'٫ '+faD(e.date)+' — '+w+' — '+m+(e.desc?' ('+e.desc+')':''));
-  });
-  L.push('——————————');
-  const pc=costsOf(p.id);
-  L.push('جمع کار: '+(t.amt>0?faN(t.amt)+' تومان':'نامعلوم'));
-  if(pc>0)L.push('هزینه‌ها: '+faN(pc)+' تومان');
-  if(t.amt>0&&pc>0)L.push('سود پروژه: '+faN(t.amt-pc)+' تومان');
-  return L.join('\n');
-}
-function shareInvoice(){
+function buildInvHTML(forPrint){
   const p=S.projects.find(x=>x.id===document.getElementById('i-proj').value)||S.projects[0];
-  if(!p){alert('پروژه‌ای نیست');return;}
-  const txt=buildInvText(p);
-  if(navigator.share){
-    navigator.share({title:'صورت کار '+p.name,text:txt}).catch(()=>{});
-  }else if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(txt).then(()=>alert('کپی شد ✅ بفرست برای کارفرما')).catch(()=>fallbackCopy(txt));
-  }else fallbackCopy(txt);
-}
-function fallbackCopy(t){
-  const ta=document.createElement('textarea');
-  ta.value=t;document.body.appendChild(ta);ta.select();
-  try{document.execCommand('copy');alert('کپی شد ✅ بفرست برای کارفرما');}catch(e){alert('کپی نشد ❌');}
-  ta.remove();
-}
-function doPrint(){
-  const p=S.projects.find(x=>x.id===document.getElementById('i-proj').value)||S.projects[0];
-  if(!p)return;
+  if(!p)return null;
   const showM=document.getElementById('i-money').checked;
   const t=totals(p);
   const pr=pricesOf(p);
   const cols=invCols(p);
+  const F=forPrint?(n=>n.toLocaleString('en-US')):faN;
   const rows=p.entries.map((e,i)=>{
-    let cells=`<td>${i+1}</td><td>${e.date}</td><td>${e.desc||''}</td><td>${+e.pages||'—'}</td><td>${+e.pages?mOf(e):'—'}</td>`;
-    cols.forEach(k=>cells+=`<td>${+e[k]||'—'}</td>`);
-    return `<tr>${cells}${showM?`<td>${entryAmount(e,pr)>0?entryAmount(e,pr).toLocaleString('en-US'):'نامعلوم'}</td>`:''}</tr>`;}).join('');
+    let cells=`<td>${forPrint?(i+1):faN(i+1)}</td><td>${forPrint?e.date:faD(e.date)}</td><td>${forPrint?(e.desc||''):faD(e.desc||'')}</td><td>${+e.pages?(forPrint?e.pages:faN(e.pages)):'—'}</td><td>${+e.pages?(forPrint?mOf(e):faN(mOf(e))):'—'}</td>`;
+    cols.forEach(k=>cells+=`<td>${+e[k]?(forPrint?e[k]:faN(e[k])):'—'}</td>`);
+    return `<tr>${cells}${showM?`<td>${entryAmount(e,pr)>0?F(entryAmount(e,pr)):'نامعلوم'}</td>`:''}</tr>`;}).join('');
   let head=`<tr><th>ردیف</th><th>تاریخ</th><th>شرح</th><th>صفحه</th><th>متراژ</th>`;
   cols.forEach(k=>head+=`<th>${INAME[k]} (${IUNIT[k]})</th>`);
   head+=`${showM?'<th>مبلغ (تومان)</th>':''}</tr>`;
-  const pq=t.pages>0?`${t.pages} صفحه • ${t.m} متر`:null;
-  const iq=cols.map(k=>t.it[k]>0?prettyItem(k,t.it[k]):null).filter(Boolean).join(' • ');
+  const pq=t.pages>0?(forPrint?`${t.pages} صفحه • ${t.m} متر`:`${faN(t.pages)} صفحه • ${faN(t.m)} متر`):null;
+  const iq=cols.map(k=>t.it[k]>0?(forPrint?`${t.it[k]} ${INAME[k]}`:prettyItem(k,t.it[k])):null).filter(Boolean).join(' • ');
   const tq=[pq,iq||null].filter(Boolean).join(' • ');
-  document.getElementById('printArea').innerHTML=`
-    <h1>صورت کار پروژه ${p.name}</h1>
+  return `
+    <h1>صورت کار پروژه ${forPrint?p.name:faD(p.name)}</h1>
     <div class="sub">تاریخ تنظیم: ${todayJalali()} • گزارش مقادیر اجرا شده${showM?'':' (بدون مبالغ)'}</div>
     <table>${head}${rows}</table>
-    <div class="tot">جمع کل: ${tq||'—'}${showM?' • '+(t.amt>0?t.amt.toLocaleString('en-US')+' تومان':'نامعلوم'):''}</div>
+    <div class="tot">جمع کل: ${tq||'—'}${showM?' • '+(t.amt>0?F(t.amt)+' تومان':'نامعلوم'):''}</div>
     <div class="note">این صورت مقادیر کار انجام‌شده است.</div>`;
+}
+function viewInvoice(){
+  const h=buildInvHTML(false);
+  if(!h){alert('پروژه‌ای نیست');return;}
+  document.getElementById('invPreview').innerHTML=h;
+  document.getElementById('invOverlay').classList.add('open');
+}
+function closeInv(){document.getElementById('invOverlay').classList.remove('open');}
+function saveInvPDF(){
+  const h=buildInvHTML(true);
+  if(!h)return;
+  document.getElementById('printArea').innerHTML=h;
   window.print();
 }
 
