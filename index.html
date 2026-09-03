@@ -102,7 +102,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v20</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v21</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
 </div>
 
 <!-- ─── Tab 1: new project + backup ─── -->
@@ -277,6 +277,28 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
     <div class="rowbtns" style="margin-top:16px">
       <button class="btn btn-p" id="s-save" onclick="saveSheet()">ثبت ✅</button>
       <button class="btn btn-g" onclick="closeSheet()">بستن</button>
+    </div>
+  </div>
+</div>
+
+<!-- price modal -->
+<div class="overlay" id="priceOverlay" onclick="if(event.target===this)closePrice()">
+  <div class="sheet">
+    <h3>💰 قیمت‌های پروژه</h3>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:10px">یه بار قیمت بده — خودکار روی همه ثبت‌های همین پروژه اعمال میشه.</div>
+    <div class="grid2">
+      <div><label class="lbl">مبلغ هر متر کناف</label><input class="inp" id="pp-meter" type="text" inputmode="numeric" autocomplete="off"></div>
+      <div><label class="lbl">مبلغ هر دریچه کولر</label><input class="inp" id="pp-cooler" type="text" inputmode="numeric" autocomplete="off"></div>
+    </div>
+    <div class="grid2">
+      <div><label class="lbl">مبلغ هر دریچه لوستر</label><input class="inp" id="pp-chand" type="text" inputmode="numeric" autocomplete="off"></div>
+      <div><label class="lbl">مبلغ هر هالوژن</label><input class="inp" id="pp-halogen" type="text" inputmode="numeric" autocomplete="off"></div>
+    </div>
+    <label class="lbl">مبلغ هر متر لاین نوری</label>
+    <input class="inp" id="pp-linear" type="text" inputmode="numeric" autocomplete="off">
+    <div class="rowbtns" style="margin-top:16px">
+      <button class="btn btn-p" onclick="savePriceModal()">ثبت قیمت ✅</button>
+      <button class="btn btn-g" onclick="closePrice()">بستن</button>
     </div>
   </div>
 </div>
@@ -540,32 +562,23 @@ function renderDetail(){
         <button class="btn btn-g" style="color:var(--red)" onclick="delProject('${p.id}')">🗑️ حذف پروژه</button>
       </div>
     </div>
-    <div class="card">
-      <div class="proj-name">💰 قیمت‌های این پروژه</div>
-      <div style="font-size:12px;color:var(--text2);margin-top:6px">یه بار قیمت بده — خودکار روی همه ثبت‌های همین پروژه اعمال میشه.</div>
-      <div class="grid2">
-        <div><label class="lbl">مبلغ هر متر کناف</label><input class="inp" id="pr-meter" type="text" inputmode="numeric" min="0" value="${pr.meter||''}"></div>
-        <div><label class="lbl">مبلغ هر دریچه کولر</label><input class="inp" id="pr-cooler" type="text" inputmode="numeric" min="0" value="${pr.cooler||''}"></div>
-      </div>
-      <div class="grid2">
-        <div><label class="lbl">مبلغ هر دریچه لوستر</label><input class="inp" id="pr-chand" type="text" inputmode="numeric" min="0" value="${pr.chand||''}"></div>
-        <div><label class="lbl">مبلغ هر هالوژن</label><input class="inp" id="pr-halogen" type="text" inputmode="numeric" min="0" value="${pr.halogen||''}"></div>
-      </div>
-      <label class="lbl">مبلغ هر متر لاین نوری</label>
-      <input class="inp" id="pr-linear" type="text" inputmode="numeric" min="0" value="${pr.linear||''}">
-      <div class="rowbtns" style="margin-top:14px">
-        <button class="btn btn-p" onclick="savePrices('${p.id}')">ثبت قیمت ✅</button>
-      </div>
+    <div class="card" style="padding:12px 14px">
+      <div class="proj-head"><div class="proj-name" style="font-size:14px">💰 قیمت‌ها</div><button class="btn btn-p" style="padding:8px 14px;font-size:12px" onclick="openPrice('${p.id}')">ثبت / ویرایش ✏️</button></div>
+      <div style="font-size:12px;color:var(--text2);margin-top:8px">💰 ${priceLine(p)}</div>
     </div>
     <div class="card">
       <div class="proj-name">📝 ثبت‌ها (${faN(p.entries.length)})</div>
       <div style="margin-top:6px">${ents||'<div class="empty">هنوز ثبتی نداره — با + ثبت کن 👇</div>'}</div>
     </div>`;
 }
-function savePrices(pid){
+let curPricePid=null;
+function openPrice(pid){const p=S.projects.find(x=>x.id===pid);if(!p)return;curPricePid=pid;const pr=pricesOf(p);PKEYS.forEach(k=>{const el=document.getElementById('pp-'+k);if(el)el.value=pr[k]||'';});document.getElementById('priceOverlay').classList.add('open');}
+function closePrice(){document.getElementById('priceOverlay').classList.remove('open');curPricePid=null;}
+function savePriceModal(){if(!curPricePid)return;savePrices(curPricePid,true);closePrice();}
+function savePrices(pid,silent){
   const p=S.projects.find(x=>x.id===pid);if(!p)return;
   if(!p.prices)p.prices=blankPrices();
-  PKEYS.forEach(k=>{const el=document.getElementById('pr-'+k);p.prices[k]=el?num(el.value):0;});
+  PKEYS.forEach(k=>{const el=document.getElementById('pp-'+k)||document.getElementById('pr-'+k);p.prices[k]=el?num(el.value):0;});
   save();renderAll();alert('قیمت ثبت شد ✅ روی همه ثبت‌های این پروژه اعمال شد');
 }
 function delProject(pid){
