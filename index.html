@@ -100,7 +100,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v13</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v14</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
 </div>
 
 <!-- ─── Tab 1: new project + backup ─── -->
@@ -170,7 +170,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
     <input class="inp" id="w-name" placeholder="اسم شاگرد">
     <div class="grid2">
       <div><label class="lbl">تاریخ</label><input class="inp" id="w-date"></div>
-      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="w-amount" type="number"></div>
+      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="w-amount" type="text" inputmode="numeric"></div>
     </div>
     <label class="lbl">توضیح (اختیاری)</label>
     <input class="inp" id="w-desc">
@@ -197,7 +197,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
     <input class="inp" id="r-source">
     <div class="grid2">
       <div><label class="lbl">تاریخ</label><input class="inp" id="r-date"></div>
-      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="r-amount" type="number"></div>
+      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="r-amount" type="text" inputmode="numeric"></div>
     </div>
     <label class="lbl">توضیح (اختیاری)</label>
     <input class="inp" id="r-desc">
@@ -233,7 +233,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
     <div id="s-proj-wrap"><label class="lbl">پروژه</label><select class="inp" id="s-proj" onchange="buildSheetItems()"></select></div>
     <div class="grid2">
       <div><label class="lbl">تاریخ</label><input class="inp" id="s-date"></div>
-      <div><label class="lbl">تعداد صفحه</label><input class="inp" id="s-pages" type="number" min="0"></div>
+      <div><label class="lbl">تعداد صفحه</label><input class="inp" id="s-pages" type="text" inputmode="numeric" min="0"></div>
     </div>
     <div id="s-items"></div>
     <label class="lbl">توضیح (اختیاری)</label>
@@ -252,6 +252,7 @@ const LS='karkard_v1';
 const uid=()=>Date.now().toString(36)+Math.floor(Math.random()*999);
 const faN=n=>(+n||0).toLocaleString('fa-IR');
 const faD=s=>String(s??'').replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+const num=v=>{const s=String(v??'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^0-9]/g,'');return +s||0;};
 const mOf=e=>(+e.pages||0)*3;
 const ITEMS={cooler:{t:'❄️ کولر',u:'عدد'},chand:{t:'💡 لوستر',u:'عدد'},halogen:{t:'🔆 هالوژن',u:'عدد'},linear:{t:'➖ لاین',u:'متر'}};
 const IKEYS=Object.keys(ITEMS);
@@ -370,6 +371,7 @@ function priceLine(p){
 }
 function itemStr(e){
   const parts=[];
+  if(+e.pages>0)parts.push(faN(e.pages)+' صفحه ('+faN(mOf(e))+' متر)');
   IKEYS.forEach(k=>{if(+e[k])parts.push(ITEMS[k].t+faN(e[k]));});
   return parts.join(' • ');
 }
@@ -475,7 +477,7 @@ function renderDetail(){
     const is=itemStr(e);
     const ea=entryAmount(e,pr);
     const ec=entryComplete(e,pr);
-    return `<div class="ent"><div><div class="q">${e.desc?faD(e.desc)+' • ':''}${faN(e.pages)} صفحه (${faN(mOf(e))} متر)${is?' • '+is:''}</div><div class="d">${faD(e.date)} • ${ec?faN(ea)+' تومان':'نامعلوم'}</div></div>
+    return `<div class="ent"><div><div class="q">${e.desc?faD(e.desc)+' • ':''}${is}</div><div class="d">${faD(e.date)} • ${ec?faN(ea)+' تومان':'نامعلوم'}</div></div>
     <div class="ops"><button class="op-edit" onclick="openSheet('edit','${p.id}','${e.id}')">✏️</button><button class="op-del" onclick="delEntry('${p.id}','${e.id}')">🗑️</button></div></div>`;
   }).join('');
   box.innerHTML=`<div class="card">
@@ -495,15 +497,15 @@ function renderDetail(){
       <div class="proj-name">💰 قیمت‌های این پروژه</div>
       <div style="font-size:12px;color:var(--text2);margin-top:6px">یه بار قیمت بده — خودکار روی همه ثبت‌های همین پروژه اعمال میشه.</div>
       <div class="grid2">
-        <div><label class="lbl">مبلغ هر متر کناف</label><input class="inp" id="pr-meter" type="number" min="0" value="${pr.meter||''}"></div>
-        <div><label class="lbl">مبلغ هر دریچه کولر</label><input class="inp" id="pr-cooler" type="number" min="0" value="${pr.cooler||''}"></div>
+        <div><label class="lbl">مبلغ هر متر کناف</label><input class="inp" id="pr-meter" type="text" inputmode="numeric" min="0" value="${pr.meter||''}"></div>
+        <div><label class="lbl">مبلغ هر دریچه کولر</label><input class="inp" id="pr-cooler" type="text" inputmode="numeric" min="0" value="${pr.cooler||''}"></div>
       </div>
       <div class="grid2">
-        <div><label class="lbl">مبلغ هر دریچه لوستر</label><input class="inp" id="pr-chand" type="number" min="0" value="${pr.chand||''}"></div>
-        <div><label class="lbl">مبلغ هر هالوژن</label><input class="inp" id="pr-halogen" type="number" min="0" value="${pr.halogen||''}"></div>
+        <div><label class="lbl">مبلغ هر دریچه لوستر</label><input class="inp" id="pr-chand" type="text" inputmode="numeric" min="0" value="${pr.chand||''}"></div>
+        <div><label class="lbl">مبلغ هر هالوژن</label><input class="inp" id="pr-halogen" type="text" inputmode="numeric" min="0" value="${pr.halogen||''}"></div>
       </div>
       <label class="lbl">مبلغ هر متر لاین نوری</label>
-      <input class="inp" id="pr-linear" type="number" min="0" value="${pr.linear||''}">
+      <input class="inp" id="pr-linear" type="text" inputmode="numeric" min="0" value="${pr.linear||''}">
       <div class="rowbtns" style="margin-top:14px">
         <button class="btn btn-p" onclick="savePrices('${p.id}')">ثبت قیمت ✅</button>
       </div>
@@ -516,7 +518,7 @@ function renderDetail(){
 function savePrices(pid){
   const p=S.projects.find(x=>x.id===pid);if(!p)return;
   if(!p.prices)p.prices=blankPrices();
-  PKEYS.forEach(k=>{const el=document.getElementById('pr-'+k);p.prices[k]=el?+el.value||0:0;});
+  PKEYS.forEach(k=>{const el=document.getElementById('pr-'+k);p.prices[k]=el?num(el.value):0;});
   save();renderAll();alert('قیمت ثبت شد ✅ روی همه ثبت‌های این پروژه اعمال شد');
 }
 function delProject(pid){
@@ -542,7 +544,7 @@ function buildSheetItems(){
   let e=null;
   if(editCtx)e=p.entries.find(x=>x.id===editCtx.eid);
   box.innerHTML=IKEYS.map(k=>
-    `<div><label class="lbl">${ITEMS[k].t} (${ITEMS[k].u})</label><input class="inp" id="si-${k}" type="number" min="0" value="${e?+e[k]||0:''}"></div>`
+    `<div><label class="lbl">${ITEMS[k].t} (${ITEMS[k].u})</label><input class="inp" id="si-${k}" type="text" inputmode="numeric" min="0" value="${e?+e[k]||0:''}"></div>`
   ).join('');
 }
 function openSheet(mode,pid,eid){
@@ -577,9 +579,9 @@ function closeSheet(){document.getElementById('overlay').classList.remove('open'
 function saveSheet(){
   const p=sheetProject();
   if(!p){alert('اول یه پروژه بساز');closeSheet();return;}
-  const pg=+document.getElementById('s-pages').value||0;
+  const pg=num(document.getElementById('s-pages').value);
   const vals={};
-  IKEYS.forEach(k=>{const el=document.getElementById('si-'+k);vals[k]=el?+el.value||0:0;});
+  IKEYS.forEach(k=>{const el=document.getElementById('si-'+k);vals[k]=el?num(el.value):0;});
   IKEYS.forEach(k=>{if(vals[k]==null)vals[k]=0;});
   const dt=document.getElementById('s-date').value.trim()||todayJalali();
   const ds=document.getElementById('s-desc').value.trim();
@@ -623,15 +625,16 @@ function renderInvoice(){
   const pr=pricesOf(p);
   const cols=invCols(p);
   const rows=p.entries.map((e,i)=>{
-    let cells=`<td>${faN(i+1)}</td><td>${faD(e.date)}</td><td>${faN(e.pages)}</td><td>${faN(mOf(e))}</td>`;
+    let cells=`<td>${faN(i+1)}</td><td>${faD(e.date)}</td><td>${+e.pages?faN(e.pages):'—'}</td><td>${+e.pages?faN(mOf(e)):'—'}</td>`;
     cols.forEach(k=>cells+=`<td>${+e[k]?faN(e[k]):'—'}</td>`);
     return `<tr>${cells}${showM?`<td>${entryComplete(e,pr)?faN(entryAmount(e,pr)):'نامعلوم'}</td>`:''}</tr>`;}).join('');
   let head=`<tr><th>#</th><th>تاریخ</th><th>صفحه</th><th>متر</th>`;
   cols.forEach(k=>head+=`<th>${ITEMS[k].t}</th>`);
   head+=`${showM?'<th>مبلغ</th>':''}</tr>`;
   const isum=cols.map(k=>`${ITEMS[k].t} ${faN(t.it[k])}`).join(' • ');
+  const qsum=[t.pages>0?`${faN(t.pages)} صفحه • ${faN(t.m)} متر`:null,isum||null].filter(Boolean).join(' • ');
   box.innerHTML=`<table class="inv-table">${head}${rows}</table>
-  <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع: ${faN(t.pages)} صفحه • ${faN(t.m)} متر${isum?' • '+isum:''}</div>${showM?`<div class="v">${amtD(t)} تومان</div>`:''}</div>`;
+  <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع: ${qsum||'—'}</div>${showM?`<div class="v">${amtD(t)} تومان</div>`:''}</div>`;
 }
 function doPrint(){
   const p=S.projects.find(x=>x.id===document.getElementById('i-proj').value)||S.projects[0];
@@ -641,17 +644,20 @@ function doPrint(){
   const pr=pricesOf(p);
   const cols=invCols(p);
   const rows=p.entries.map((e,i)=>{
-    let cells=`<td>${i+1}</td><td>${e.date}</td><td>${e.desc||''}</td><td>${e.pages}</td><td>${mOf(e)}</td>`;
+    let cells=`<td>${i+1}</td><td>${e.date}</td><td>${e.desc||''}</td><td>${+e.pages||'—'}</td><td>${+e.pages?mOf(e):'—'}</td>`;
     cols.forEach(k=>cells+=`<td>${+e[k]||'—'}</td>`);
     return `<tr>${cells}${showM?`<td>${entryComplete(e,pr)?entryAmount(e,pr).toLocaleString('en-US'):'نامعلوم'}</td>`:''}</tr>`;}).join('');
   let head=`<tr><th>ردیف</th><th>تاریخ</th><th>شرح</th><th>صفحه</th><th>متراژ</th>`;
   cols.forEach(k=>head+=`<th>${ITEMS[k].t} (${ITEMS[k].u})</th>`);
   head+=`${showM?'<th>مبلغ (تومان)</th>':''}</tr>`;
+  const pq=t.pages>0?`${t.pages} صفحه • ${t.m} متر`:null;
+  const iq=cols.map(k=>t.it[k]>0?t.it[k]+' '+ITEMS[k].t:null).filter(Boolean).join(' • ');
+  const tq=[pq,iq||null].filter(Boolean).join(' • ');
   document.getElementById('printArea').innerHTML=`
     <h1>صورت کار پروژه ${p.name}</h1>
     <div class="sub">تاریخ تنظیم: ${todayJalali()} • گزارش مقادیر اجرا شده${showM?'':' (بدون مبالغ)'}</div>
     <table>${head}${rows}</table>
-    <div class="tot">جمع کل: ${t.pages} صفحه • ${t.m} متر${cols.map(k=>' • '+t.it[k]+' '+ITEMS[k].t).join('')}${showM?' • '+(t.ok?t.amt.toLocaleString('en-US')+' تومان':'نامعلوم'):''}</div>
+    <div class="tot">جمع کل: ${tq||'—'}${showM?' • '+(t.ok?t.amt.toLocaleString('en-US')+' تومان':'نامعلوم'):''}</div>
     <div class="note">این صورت مقادیر کار انجام‌شده است.</div>`;
   window.print();
 }
@@ -674,7 +680,7 @@ function renderWages(){
 }
 function saveWage(){
   const name=document.getElementById('w-name').value.trim()||'شاگرد';
-  const amount=+document.getElementById('w-amount').value||0;
+  const amount=num(document.getElementById('w-amount').value);
   if(!amount){alert('مبلغ رو وارد کن');return;}
   const rec={name,date:document.getElementById('w-date').value.trim()||todayJalali(),amount,desc:document.getElementById('w-desc').value.trim()};
   if(wageEditId){
@@ -734,7 +740,7 @@ function renderRecv(){
 function saveRecv(){
   const source=document.getElementById('r-source').value.trim();
   if(!source){alert('بنویس از کی گرفتی (شرکت / اسم پیمانکار)');return;}
-  const amount=+document.getElementById('r-amount').value||0;
+  const amount=num(document.getElementById('r-amount').value);
   if(!amount){alert('مبلغ رو وارد کن');return;}
   const rec={source,date:document.getElementById('r-date').value.trim()||todayJalali(),amount,desc:document.getElementById('r-desc').value.trim()};
   if(!Array.isArray(S.receipts))S.receipts=[];
