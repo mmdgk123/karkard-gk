@@ -111,7 +111,7 @@ body.kb .bottomnav,body.kb .fab,body.kb .creator{opacity:0!important;visibility:
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v24</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v25</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
 </div>
 
 <!-- ─── Tab 1: new project + backup ─── -->
@@ -333,7 +333,8 @@ const faN=n=>(+n||0).toLocaleString('fa-IR');
 const faD=s=>String(s??'').replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
 const num=v=>{const s=String(v??'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^0-9]/g,'');return +s||0;};
 function fmtAmount(el){const n=num(el.value);el.value=n>0?n.toLocaleString('fa-IR'):'';}
-function fmtDate(el){let d=String(el.value??'').replace(/[۰-۹]/g,x=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(x)).replace(/[٠-٩]/g,x=>'٠١٢٣٤٥٦٧٨٩'.indexOf(x)).replace(/\D/g,'').slice(0,8);let out=d;if(d.length>4)out=d.slice(0,4)+'/'+d.slice(4);if(d.length>6)out=d.slice(0,4)+'/'+d.slice(4,6)+'/'+d.slice(6);el.value=out;}
+function fmtDate(el){let d=String(el.value??'').replace(/[۰-۹]/g,x=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(x)).replace(/[٠-٩]/g,x=>'٠١٢٣٤٥٦٧٨٩'.indexOf(x)).replace(/\D/g,'');let out=d;if(d.length>=3&&d.length<=4){const dd=d.slice(0,2),mm=d.slice(2);if(d.length===4){const y=(todayJalali().split('/')[0]||'');out=y+'/'+mm+'/'+dd;}else out=dd+(mm?'/'+mm:'');}else if(d.length>4){d=d.slice(0,8);out=d.slice(0,4)+'/'+d.slice(4);if(d.length>6)out=d.slice(0,4)+'/'+d.slice(4,6)+'/'+d.slice(6);}el.value=out;}
+function normDate(v){v=String(v||'').trim();if(!v)return todayJalali();const ty=todayJalali().split('/');const pad=x=>String(x).padStart(2,'0');const dg=v.replace(/\D/g,'');const p=v.split('/').map(x=>x.trim()).filter(x=>x!=='');if(p.length===3)return v;if(p.length===2&&p[0]&&p[1])return ty[0]+'/'+pad(p[1])+'/'+pad(p[0]);if(dg.length===4)return ty[0]+'/'+dg.slice(2)+'/'+dg.slice(0,2);if(dg.length===3)return ty[0]+'/'+dg.slice(1)+'/'+pad(dg.slice(0,1));if(dg.length>=5){const d=dg.slice(0,8);return d.slice(0,4)+'/'+d.slice(4,6)+'/'+d.slice(6);}if(dg.length>0)return ty[0]+'/'+ty[1]+'/'+pad(dg);return v;}
 function setToday(id){document.getElementById(id).value=todayJalali();}
 const mOf=e=>(+e.pages||0)*3;
 const ITEMS={cooler:{t:'❄️ کولر',u:'عدد'},chand:{t:'💡 لوستر',u:'عدد'},halogen:{t:'🔆 هالوژن',u:'عدد'},linear:{t:'➖ لاین',u:'متر'}};
@@ -671,7 +672,7 @@ function saveSheet(){
   const vals={};
   IKEYS.forEach(k=>{const el=document.getElementById('si-'+k);vals[k]=el?num(el.value):0;});
   IKEYS.forEach(k=>{if(vals[k]==null)vals[k]=0;});
-  const dt=document.getElementById('s-date').value.trim()||todayJalali();
+  const dt=normDate(document.getElementById('s-date').value);
   const ds=document.getElementById('s-desc').value.trim();
   if(editCtx){
     const e=p.entries.find(x=>x.id===editCtx.eid);
@@ -785,7 +786,7 @@ function saveWage(){
   const name=document.getElementById('w-name').value.trim()||'شاگرد';
   const amount=num(document.getElementById('w-amount').value);
   if(!amount){alert('مبلغ رو وارد کن');return;}
-  const rec={name,date:document.getElementById('w-date').value.trim()||todayJalali(),amount,desc:document.getElementById('w-desc').value.trim()};
+  const rec={name,date:normDate(document.getElementById('w-date').value),amount,desc:document.getElementById('w-desc').value.trim()};
   if(wageEditId){
     const w=S.wages.find(x=>x.id===wageEditId);
     if(w)Object.assign(w,rec);
@@ -845,7 +846,7 @@ function saveRecv(){
   if(!source){alert('بنویس از کی گرفتی (شرکت / اسم پیمانکار)');return;}
   const amount=num(document.getElementById('r-amount').value);
   if(!amount){alert('مبلغ رو وارد کن');return;}
-  const rec={source,date:document.getElementById('r-date').value.trim()||todayJalali(),amount,desc:document.getElementById('r-desc').value.trim()};
+  const rec={source,date:normDate(document.getElementById('r-date').value),amount,desc:document.getElementById('r-desc').value.trim()};
   if(!Array.isArray(S.receipts))S.receipts=[];
   if(recvEditId){
     const r=S.receipts.find(x=>x.id===recvEditId);
@@ -911,7 +912,7 @@ function renderCosts(){
 function saveCost(){
   const amount=num(document.getElementById('c-amount').value);
   if(!amount){alert('مبلغ رو وارد کن');return;}
-  const rec={cat:document.getElementById('c-cat').value,pid:document.getElementById('c-proj').value||'',date:document.getElementById('c-date').value.trim()||todayJalali(),amount,desc:document.getElementById('c-desc').value.trim()};
+  const rec={cat:document.getElementById('c-cat').value,pid:document.getElementById('c-proj').value||'',date:normDate(document.getElementById('c-date').value),amount,desc:document.getElementById('c-desc').value.trim()};
   if(!Array.isArray(S.costs))S.costs=[];
   if(costEditId){
     const c=S.costs.find(x=>x.id===costEditId);
