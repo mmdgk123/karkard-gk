@@ -108,7 +108,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
   <div class="card">
     <div class="proj-name">➕ پروژه جدید</div>
     <label class="lbl">اسم پروژه</label>
-    <input class="inp" id="np-name" placeholder="مثلاً ضرابی">
+    <input class="inp" id="np-name">
     <label class="lbl">این پروژه چی داره؟ (تیک بزن)</label>
     <label class="chk"><input type="checkbox" id="ni-cooler"> ❄️ دریچه کولر <small>— تعداد</small></label>
     <label class="chk"><input type="checkbox" id="ni-chand"> 💡 دریچه لوستر <small>— تعداد</small></label>
@@ -172,10 +172,10 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
     <input class="inp" id="w-name" placeholder="اسم شاگرد">
     <div class="grid2">
       <div><label class="lbl">تاریخ</label><input class="inp" id="w-date"></div>
-      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="w-amount" type="number" placeholder="مثلاً 800000"></div>
+      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="w-amount" type="number"></div>
     </div>
     <label class="lbl">توضیح (اختیاری)</label>
-    <input class="inp" id="w-desc" placeholder="مثلاً دستمزد روزانه / تسویه">
+    <input class="inp" id="w-desc">
     <div class="rowbtns" style="margin-top:14px">
       <button class="btn btn-p" id="w-save" onclick="saveWage()">ثبت ✅</button>
       <button class="btn btn-g" id="w-cancel" style="display:none" onclick="cancelWageEdit()">انصراف</button>
@@ -199,10 +199,10 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
     <select class="inp" id="r-proj" onchange="renderRecv()"></select>
     <div class="grid2">
       <div><label class="lbl">تاریخ</label><input class="inp" id="r-date"></div>
-      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="r-amount" type="number" placeholder="مثلاً 5000000"></div>
+      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="r-amount" type="number"></div>
     </div>
     <label class="lbl">توضیح (اختیاری)</label>
-    <input class="inp" id="r-desc" placeholder="مثلاً علی‌الحساب / تسویه">
+    <input class="inp" id="r-desc">
     <div class="rowbtns" style="margin-top:14px">
       <button class="btn btn-p" id="r-save" onclick="saveRecv()">ثبت ✅</button>
       <button class="btn btn-g" id="r-cancel" style="display:none" onclick="cancelRecvEdit()">انصراف</button>
@@ -219,7 +219,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 </section>
 
 <button class="fab hide" id="fab" onclick="openSheet('add')">+</button>
-<div class="vermark">v4</div>
+<div class="vermark">v5</div>
 
 <nav class="bottomnav">
   <button class="navbtn on" id="nb-new" onclick="go('new')"><span class="ic">➕</span>جدید</button>
@@ -236,13 +236,13 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
     <div id="s-proj-wrap"><label class="lbl">پروژه</label><select class="inp" id="s-proj" onchange="buildSheetItems()"></select></div>
     <div class="grid2">
       <div><label class="lbl">تاریخ</label><input class="inp" id="s-date"></div>
-      <div><label class="lbl">تعداد صفحه</label><input class="inp" id="s-pages" type="number" min="0" placeholder="مثلاً ۱۰"></div>
+      <div><label class="lbl">تعداد صفحه</label><input class="inp" id="s-pages" type="number" min="0"></div>
     </div>
     <div id="s-items"></div>
     <label class="lbl">مبلغ توافقی این ثبت (تومان)</label>
-    <input class="inp" id="s-amount" type="number" min="0" placeholder="مثلاً 2000000">
+    <input class="inp" id="s-amount" type="number" min="0">
     <label class="lbl">توضیح (اختیاری)</label>
-    <input class="inp" id="s-desc" placeholder="مثلاً سالن اصلی">
+    <input class="inp" id="s-desc">
     <div class="rowbtns" style="margin-top:16px">
       <button class="btn btn-p" id="s-save" onclick="saveSheet()">ثبت ✅</button>
       <button class="btn btn-g" onclick="closeSheet()">بستن</button>
