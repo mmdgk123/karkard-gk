@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IRANSansX:wght@300;400;500;600;700;800;900;1000&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#07080d;--card:rgba(255,255,255,.04);--card2:rgba(255,255,255,.07);--border:rgba(255,255,255,.09);--text:#f0f2f8;--text2:#9aa0b4;--green:#2de0a5;--gold:#ffc857;--blue:#6c9bff;--red:#ff4d6d;--nav-bg:rgba(13,15,23,.94)}
+:root{--bg:#07080d;--card:rgba(255,255,255,.04);--card2:rgba(255,255,255,.07);--border:rgba(255,255,255,.09);--text:#f0f2f8;--text2:#9aa0b4;--green:#2de0a5;--gold:#ffc857;--blue:#6c9bff;--red:#ff4d6d;--nav-bg:rgba(13,15,23,.94);--fab-grad:linear-gradient(145deg,#ff5f7d,#d01845)}
 html{background:var(--bg)}
 body{font-family:'IRANSansX',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:120px;direction:rtl;-webkit-font-smoothing:antialiased}
 .page{display:none;padding:0 16px;animation:fadeUp .25s ease}
@@ -26,31 +26,34 @@ body{font-family:'IRANSansX',system-ui,sans-serif;background:var(--bg);color:var
 .grand .l{font-size:12px;color:var(--text2);font-weight:600}
 .grand .v{font-size:24px;font-weight:1000;color:var(--gold)}
 .card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;margin-bottom:12px}
-.proj-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.proj-card{cursor:pointer}
+.proj-card:active{transform:scale(.98)}
+.proj-head{display:flex;justify-content:space-between;align-items:center}
 .proj-name{font-size:17px;font-weight:800}
 .proj-amt{font-size:15px;font-weight:800;color:var(--green)}
 .proj-stats{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .stat{flex:1;min-width:70px;background:var(--card2);border-radius:12px;padding:8px 6px;text-align:center}
 .stat .n{font-size:16px;font-weight:800}
 .stat .t{font-size:10.5px;color:var(--text2);margin-top:2px}
-.entries{margin-top:10px;border-top:1px dashed var(--border);padding-top:8px;display:none}
-.entries.open{display:block}
-.ent{display:flex;justify-content:space-between;align-items:center;padding:9px 4px;border-bottom:1px solid var(--border);font-size:13px}
+.ent{display:flex;justify-content:space-between;align-items:center;padding:10px 4px;border-bottom:1px solid var(--border);font-size:13px;gap:6px}
 .ent:last-child{border-bottom:none}
-.ent .d{color:var(--text2);font-size:12px}
+.ent .d{color:var(--text2);font-size:12px;margin-top:3px}
 .ent .q{font-weight:700}
-.ent .del{background:none;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:4px 8px}
+.ent .ops{display:flex;gap:2px;flex-shrink:0}
+.ent .ops button{background:none;border:none;font-size:17px;cursor:pointer;padding:6px}
+.op-edit{color:var(--gold)}
+.op-del{color:var(--red)}
 .rowbtns{display:flex;gap:8px;margin-top:10px}
-.btn{flex:1;border:none;border-radius:14px;padding:11px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
-.btn-p{background:linear-gradient(145deg,#ff5f7d,#d01845);color:#fff}
+.btn{flex:1;border:none;border-radius:14px;padding:12px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
+.btn-p{background:var(--fab-grad);color:#fff}
 .btn-g{background:var(--card2);color:var(--text);border:1px solid var(--border)}
 .btn-b{background:linear-gradient(145deg,#4d7dff,#2b4fc4);color:#fff}
 .btn:active{transform:scale(.97)}
 label.lbl{display:block;font-size:12.5px;color:var(--text2);font-weight:600;margin:12px 0 6px}
-.inp,select.inp{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:14px;color:var(--text);padding:12px 14px;font-family:inherit;font-size:15px;outline:none}
+.inp,select.inp,textarea.inp{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:14px;color:var(--text);padding:12px 14px;font-family:inherit;font-size:15px;outline:none}
 .inp:focus{border-color:var(--gold)}
+textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-align:left}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.preview{margin-top:14px;padding:14px;border-radius:16px;background:rgba(45,224,165,.07);border:1px dashed rgba(45,224,165,.4);text-align:center;font-size:14px;font-weight:700;color:var(--green)}
 .inv-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
 .inv-table th{background:var(--card2);padding:9px 6px;font-weight:800}
 .inv-table td{padding:9px 6px;border-top:1px solid var(--border);text-align:center}
@@ -63,8 +66,17 @@ label.lbl{display:block;font-size:12.5px;color:var(--text2);font-weight:600;marg
 .navbtn .ic{font-size:22px}
 .navbtn.on{color:var(--gold)}
 .empty{text-align:center;color:var(--text2);padding:30px 10px;font-size:14px}
-.rate-edit{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border)}
-.rate-edit.open{display:block}
+.backbtn{background:none;border:none;color:var(--gold);font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;padding:6px 0;margin-bottom:6px}
+/* FAB */
+.fab{position:fixed;left:18px;bottom:104px;z-index:31;width:62px;height:62px;border-radius:50%;border:none;background:var(--fab-grad);color:#fff;font-size:30px;font-weight:300;cursor:pointer;box-shadow:0 8px 24px rgba(224,26,72,.45);display:flex;align-items:center;justify-content:center;line-height:1}
+.fab:active{transform:scale(.92)}
+.fab.hide{display:none}
+/* sheet modal */
+.overlay{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center}
+.overlay.open{display:flex}
+.sheet{width:100%;max-width:520px;background:#14161f;border:1px solid var(--border);border-bottom:none;border-radius:24px 24px 0 0;padding:18px 18px calc(20px + env(safe-area-inset-bottom));animation:slideUp .25s ease;max-height:88vh;overflow-y:auto}
+@keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:none;opacity:1}}
+.sheet h3{font-size:17px;font-weight:800;margin-bottom:4px}
 #printArea{display:none}
 @media print{
   body{background:#fff!important;padding:0!important}
@@ -88,11 +100,10 @@ label.lbl{display:block;font-size:12.5px;color:var(--text2);font-weight:600;marg
   <div class="grand"><div class="l">جمع طلب همه پروژه‌ها</div><div class="v" id="grandTotal">۰</div></div>
 </div>
 
-<!-- ─── Projects ─── -->
-<section id="pg-projects" class="page active">
-  <div id="projList"></div>
+<!-- ─── Tab 1: new project + backup ─── -->
+<section id="pg-new" class="page active">
   <div class="card">
-    <div class="proj-name" style="margin-bottom:4px">➕ پروژه جدید</div>
+    <div class="proj-name">➕ پروژه جدید</div>
     <label class="lbl">اسم پروژه</label>
     <input class="inp" id="np-name" placeholder="مثلاً ضرابی">
     <div class="grid2">
@@ -104,32 +115,41 @@ label.lbl{display:block;font-size:12.5px;color:var(--text2);font-weight:600;marg
     <div style="height:12px"></div>
     <button class="btn btn-p" onclick="addProject()">ساختن پروژه</button>
   </div>
-</section>
-
-<!-- ─── Log work ─── -->
-<section id="pg-add" class="page">
   <div class="card">
-    <div class="proj-name">📝 ثبت کار روزانه</div>
-    <label class="lbl">پروژه</label>
-    <select class="inp" id="f-proj"></select>
-    <div class="grid2">
-      <div><label class="lbl">تاریخ</label><input class="inp" id="f-date" placeholder="۱۴۰۵/۰۶/۱۲"></div>
-      <div><label class="lbl">تعداد صفحه</label><input class="inp" id="f-pages" type="number" min="0" value="1" oninput="updPrev()"></div>
+    <div class="proj-name">💾 بکاپ و بازیابی</div>
+    <div style="font-size:12.5px;color:var(--text2);margin-top:6px">اگه حافظه گوشی پاک شد، با فایل بکاپ همه‌چیز برمی‌گرده. هر چند وقت یه بکاپ بگیر.</div>
+    <div class="rowbtns">
+      <button class="btn btn-b" onclick="backupExport()">⬇️ گرفتن بکاپ</button>
+      <button class="btn btn-g" onclick="backupCopy()">📋 کپی بکاپ</button>
     </div>
-    <div class="grid2">
-      <div><label class="lbl">دریچه کولر</label><input class="inp" id="f-cooler" type="number" min="0" value="0"></div>
-      <div><label class="lbl">دریچه لوستر</label><input class="inp" id="f-chand" type="number" min="0" value="0"></div>
+    <label class="lbl">بازیابی از فایل</label>
+    <input class="inp" id="imp-file" type="file" accept=".json,application/json" onchange="backupImportFile(this)">
+    <label class="lbl">یا چسبوندن متن بکاپ</label>
+    <textarea class="inp" id="imp-text" placeholder="متن بکاپ رو اینجا بچسبون..."></textarea>
+    <div class="rowbtns">
+      <button class="btn btn-p" onclick="backupImportText()">بازیابی ⬆️</button>
+      <button class="btn btn-g" style="color:var(--red)" onclick="wipeAll()">🗑️ پاک کردن همه</button>
     </div>
-    <label class="lbl">توضیح (اختیاری)</label>
-    <input class="inp" id="f-desc" placeholder="مثلاً سالن اصلی">
-    <div class="preview" id="f-prev"></div>
-    <div style="height:12px"></div>
-    <button class="btn btn-p" onclick="addEntry()">ثبت ✅</button>
   </div>
 </section>
 
-<!-- ─── Invoice ─── -->
-<section id="pg-invoice" class="page">
+<!-- ─── Tab 2: projects ─── -->
+<section id="pg-projects" class="page">
+  <div id="projList"></div>
+</section>
+
+<!-- ─── Project detail ─── -->
+<section id="pg-detail" class="page">
+  <button class="backbtn" onclick="backToList()">→ برگشت به لیست</button>
+  <div id="detailBox"></div>
+</section>
+
+<!-- ─── Tab 3: bills ─── -->
+<section id="pg-bills" class="page">
+  <div class="card">
+    <div class="proj-name">📊 خلاصه همه پروژه‌ها</div>
+    <div id="allBox"></div>
+  </div>
   <div class="card">
     <div class="proj-name">🧾 فاکتور پروژه</div>
     <label class="lbl">پروژه</label>
@@ -141,11 +161,35 @@ label.lbl{display:block;font-size:12.5px;color:var(--text2);font-weight:600;marg
   </div>
 </section>
 
+<button class="fab hide" id="fab" onclick="openSheet('add')">+</button>
+
 <nav class="bottomnav">
-  <button class="navbtn on" id="nb-projects" onclick="go('projects')"><span class="ic">🏠</span>پروژه‌ها</button>
-  <button class="navbtn" id="nb-add" onclick="go('add')"><span class="ic">➕</span>ثبت کار</button>
-  <button class="navbtn" id="nb-invoice" onclick="go('invoice')"><span class="ic">🧾</span>فاکتور</button>
+  <button class="navbtn on" id="nb-new" onclick="go('new')"><span class="ic">➕</span>پروژه جدید</button>
+  <button class="navbtn" id="nb-projects" onclick="go('projects')"><span class="ic">📋</span>پروژه‌ها</button>
+  <button class="navbtn" id="nb-bills" onclick="go('bills')"><span class="ic">🧾</span>حساب‌ها</button>
 </nav>
+
+<!-- quick add / edit sheet -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeSheet()">
+  <div class="sheet">
+    <h3 id="s-title">📝 ثبت کار</h3>
+    <div id="s-proj-wrap"><label class="lbl">پروژه</label><select class="inp" id="s-proj"></select></div>
+    <div class="grid2">
+      <div><label class="lbl">تاریخ</label><input class="inp" id="s-date"></div>
+      <div><label class="lbl">تعداد صفحه</label><input class="inp" id="s-pages" type="number" min="0" value="1"></div>
+    </div>
+    <div class="grid2">
+      <div><label class="lbl">دریچه کولر ❄️</label><input class="inp" id="s-cooler" type="number" min="0" value="0"></div>
+      <div><label class="lbl">دریچه لوستر 💡</label><input class="inp" id="s-chand" type="number" min="0" value="0"></div>
+    </div>
+    <label class="lbl">توضیح (اختیاری)</label>
+    <input class="inp" id="s-desc" placeholder="مثلاً سالن اصلی">
+    <div class="rowbtns" style="margin-top:16px">
+      <button class="btn btn-p" id="s-save" onclick="saveSheet()">ثبت ✅</button>
+      <button class="btn btn-g" onclick="closeSheet()">بستن</button>
+    </div>
+  </div>
+</div>
 
 <div id="printArea"></div>
 
@@ -173,101 +217,209 @@ function seed(){
     {id:uid(),date:'۱۴۰۵/۰۶/۱۲',pages:1,cooler:0,chand:0,desc:''}
   ]}]};
 }
-function load(){try{const s=JSON.parse(localStorage.getItem(LS));if(s&&s.projects)return s;}catch(e){}return seed();}
+function load(){try{const s=JSON.parse(localStorage.getItem(LS));if(s&&Array.isArray(s.projects))return s;}catch(e){}return seed();}
 let S=load();
+let curPid=null;
+let editCtx=null;
 function save(){localStorage.setItem(LS,JSON.stringify(S));}
 function totals(p){
   let pages=0,cooler=0,chand=0,amt=0;
   p.entries.forEach(e=>{pages+=+e.pages||0;cooler+=+e.cooler||0;chand+=+e.chand||0;amt+=amtOf(p,e);});
   return {pages,m:pages*3,cooler,chand,amt};
 }
+
+/* ─── nav ─── */
 function go(t){
-  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  ['new','projects','bills','detail'].forEach(x=>document.getElementById('pg-'+x).classList.remove('active'));
   document.getElementById('pg-'+t).classList.add('active');
-  document.querySelectorAll('.navbtn').forEach(x=>x.classList.remove('on'));
-  document.getElementById('nb-'+t).classList.add('on');
-  if(t==='invoice')renderInvoice();
+  ['new','projects','bills'].forEach(x=>document.getElementById('nb-'+x).classList.remove('on'));
+  if(t!=='detail')document.getElementById('nb-'+t).classList.add('on');
+  else document.getElementById('nb-projects').classList.add('on');
+  document.getElementById('fab').classList.toggle('hide',!(t==='projects'||t==='detail'));
+  if(t==='bills')renderBills();
   window.scrollTo(0,0);
 }
-function render(){
-  let grand=0;S.projects.forEach(p=>grand+=totals(p).amt);
-  document.getElementById('grandTotal').textContent=faN(grand)+' تومان';
+function backToList(){curPid=null;go('projects');}
+
+/* ─── tab1: project ─── */
+function addProject(){
+  const name=document.getElementById('np-name').value.trim();
+  if(!name){alert('اسم پروژه رو بنویس');return;}
+  const p={id:uid(),name,rateM:+document.getElementById('np-ratem').value||0,rateCooler:+document.getElementById('np-ratec').value||0,rateChand:+document.getElementById('np-ratech').value||0,entries:[]};
+  S.projects.push(p);
+  document.getElementById('np-name').value='';
+  save();renderAll();openProject(p.id);
+}
+
+/* ─── backup ─── */
+function backupExport(){
+  const blob=new Blob([JSON.stringify(S)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='karkard-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);a.click();a.remove();
+}
+function backupCopy(){
+  const t=document.getElementById('imp-text');
+  t.value=JSON.stringify(S);t.select();
+  const done=()=>alert('کپی شد ✅ بفرستش یه جای امن (تلگرام/گوشی)');
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(JSON.stringify(S)).then(done).catch(()=>{document.execCommand('copy');done();});}
+  else{document.execCommand('copy');done();}
+}
+function backupImportFile(inp){
+  const f=inp.files&&inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>restoreBackup(r.result);
+  r.readAsText(f);
+  inp.value='';
+}
+function backupImportText(){restoreBackup(document.getElementById('imp-text').value);}
+function restoreBackup(txt){
+  try{
+    const o=JSON.parse(txt);
+    if(!o||!Array.isArray(o.projects))throw 0;
+    S=o;save();renderAll();alert('برگردونده شد ✅');
+  }catch(e){alert('متن بکاپ معتبر نیست ❌');}
+}
+function wipeAll(){
+  if(!confirm('همه پروژه‌ها و ثبت‌ها پاک بشه؟'))return;
+  if(!confirm('مطمئنی؟ بکاپ گرفتی؟'))return;
+  S={projects:[]};curPid=null;save();renderAll();
+}
+
+/* ─── tab2: list ─── */
+function renderProjects(){
   const box=document.getElementById('projList');
-  if(!S.projects.length){box.innerHTML='<div class="empty">هنوز پروژه‌ای نداری — از پایین بساز 👇</div>';}
-  else box.innerHTML=S.projects.map(p=>{
+  if(!S.projects.length){box.innerHTML='<div class="empty">هنوز پروژه‌ای نداری — از تب ➕ بساز 👇</div>';return;}
+  box.innerHTML=S.projects.map(p=>{
     const t=totals(p);
-    const ents=[...p.entries].reverse().map(e=>
-      `<div class="ent"><div><div class="q">${e.desc?faD(e.desc)+' • ':''}${faN(e.pages)} صفحه (${faN(mOf(e))} متر)${(+e.cooler||0)?' • ❄️'+faN(e.cooler):''}${(+e.chand||0)?' • 💡'+faN(e.chand):''}</div><div class="d">${faD(e.date)} • ${faN(amtOf(p,e))} تومان</div></div><button class="del" onclick="delEntry('${p.id}','${e.id}')">×</button></div>`
-    ).join('');
-    return `<div class="card">
-      <div class="proj-head" onclick="document.getElementById('ents-${p.id}').classList.toggle('open')">
-        <div class="proj-name">🏗️ ${faD(p.name)}</div><div class="proj-amt">${faN(t.amt)}</div>
-      </div>
+    return `<div class="card proj-card" onclick="openProject('${p.id}')">
+      <div class="proj-head"><div class="proj-name">🏗️ ${faD(p.name)}</div><div class="proj-amt">${faN(t.amt)}</div></div>
       <div class="proj-stats">
         <div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>
         <div class="stat"><div class="n">${faN(t.m)}</div><div class="t">متر</div></div>
         <div class="stat"><div class="n">${faN(t.cooler)}</div><div class="t">❄️ کولر</div></div>
         <div class="stat"><div class="n">${faN(t.chand)}</div><div class="t">💡 لوستر</div></div>
       </div>
-      <div class="entries" id="ents-${p.id}">${ents||'<div class="empty">ثبتی نداره</div>'}</div>
-      <div class="rate-edit" id="re-${p.id}">
-        <div class="grid2">
-          <div><label class="lbl">نرخ متر</label><input class="inp" id="rm-${p.id}" type="number" value="${p.rateM}"></div>
-          <div><label class="lbl">نرخ کولر</label><input class="inp" id="rc-${p.id}" type="number" value="${p.rateCooler}"></div>
-        </div>
-        <label class="lbl">نرخ لوستر</label><input class="inp" id="rh-${p.id}" type="number" value="${p.rateChand}">
-        <div style="height:10px"></div>
-        <button class="btn btn-p" onclick="saveRates('${p.id}')">ذخیره نرخ‌ها</button>
-      </div>
-      <div class="rowbtns">
-        <button class="btn btn-g" onclick="document.getElementById('re-${p.id}').classList.toggle('open')">✏️ نرخ‌ها</button>
-        <button class="btn btn-g" onclick="go('invoice');document.getElementById('i-proj').value='${p.id}';renderInvoice()">🧾 فاکتور</button>
-        <button class="btn btn-g" style="color:var(--red)" onclick="delProject('${p.id}')">🗑️</button>
-      </div>
+      <div style="font-size:11.5px;color:var(--text2);margin-top:8px">${faN(p.entries.length)} ثبت • بزن توش 👆</div>
     </div>`;
   }).join('');
-  const opts=S.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
-  document.getElementById('f-proj').innerHTML=opts;
-  document.getElementById('i-proj').innerHTML=opts;
-  updPrev();
 }
-function addProject(){
-  const name=document.getElementById('np-name').value.trim();
-  if(!name){alert('اسم پروژه رو بنویس');return;}
-  S.projects.push({id:uid(),name,rateM:+document.getElementById('np-ratem').value||0,rateCooler:+document.getElementById('np-ratec').value||0,rateChand:+document.getElementById('np-ratech').value||0,entries:[]});
-  document.getElementById('np-name').value='';
-  save();render();
+
+/* ─── detail ─── */
+function openProject(pid){
+  curPid=pid;renderDetail();go('detail');
 }
-function delProject(id){
+function renderDetail(){
+  const p=S.projects.find(x=>x.id===curPid);
+  const box=document.getElementById('detailBox');
+  if(!p){box.innerHTML='<div class="empty">پروژه پیدا نشد</div>';return;}
+  const t=totals(p);
+  const ents=[...p.entries].reverse().map(e=>
+    `<div class="ent"><div><div class="q">${e.desc?faD(e.desc)+' • ':''}${faN(e.pages)} صفحه (${faN(mOf(e))} متر)${(+e.cooler||0)?' • ❄️'+faN(e.cooler):''}${(+e.chand||0)?' • 💡'+faN(e.chand):''}</div><div class="d">${faD(e.date)} • ${faN(amtOf(p,e))} تومان</div></div>
+    <div class="ops"><button class="op-edit" onclick="openSheet('edit','${p.id}','${e.id}')">✏️</button><button class="op-del" onclick="delEntry('${p.id}','${e.id}')">🗑️</button></div></div>`
+  ).join('');
+  box.innerHTML=`<div class="card">
+      <div class="proj-head"><div class="proj-name">🏗️ ${faD(p.name)}</div><div class="proj-amt">${faN(t.amt)} تومان</div></div>
+      <div class="proj-stats">
+        <div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>
+        <div class="stat"><div class="n">${faN(t.m)}</div><div class="t">متر</div></div>
+        <div class="stat"><div class="n">${faN(t.cooler)}</div><div class="t">❄️ کولر</div></div>
+        <div class="stat"><div class="n">${faN(t.chand)}</div><div class="t">💡 لوستر</div></div>
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-top:10px">نرخ: متری ${faN(p.rateM)} • کولر ${faN(p.rateCooler)} • لوستر ${faN(p.rateChand)}</div>
+      <div class="rowbtns">
+        <button class="btn btn-g" onclick="editRates('${p.id}')">✏️ ویرایش نرخ‌ها</button>
+        <button class="btn btn-g" style="color:var(--red)" onclick="delProject('${p.id}')">🗑️ حذف پروژه</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="proj-name">📝 ثبت‌ها (${faN(p.entries.length)})</div>
+      <div style="margin-top:6px">${ents||'<div class="empty">هنوز ثبتی نداره — با + ثبت کن 👇</div>'}</div>
+    </div>`;
+}
+function editRates(pid){
+  const p=S.projects.find(x=>x.id===pid);if(!p)return;
+  const m=prompt('نرخ هر متر (تومان):',p.rateM);if(m===null)return;
+  const c=prompt('نرخ دریچه کولر:',p.rateCooler);if(c===null)return;
+  const h=prompt('نرخ دریچه لوستر:',p.rateChand);if(h===null)return;
+  p.rateM=+m||0;p.rateCooler=+c||0;p.rateChand=+h||0;
+  save();renderAll();
+}
+function delProject(pid){
   if(!confirm('پروژه و همه ثبت‌هاش پاک شه؟'))return;
-  S={projects:S.projects.filter(p=>p.id!==id)};save();render();
-}
-function saveRates(id){
-  const p=S.projects.find(x=>x.id===id);if(!p)return;
-  p.rateM=+document.getElementById('rm-'+id).value||0;
-  p.rateCooler=+document.getElementById('rc-'+id).value||0;
-  p.rateChand=+document.getElementById('rh-'+id).value||0;
-  save();render();
-}
-function updPrev(){
-  const p=S.projects.find(x=>x.id===document.getElementById('f-proj').value);
-  const pg=+document.getElementById('f-pages').value||0;
-  document.getElementById('f-prev').textContent=p?('= '+faN(pg*3)+' متر'):'';
-}
-function addEntry(){
-  const pid=document.getElementById('f-proj').value;
-  const p=S.projects.find(x=>x.id===pid);
-  if(!p){alert('اول یه پروژه بساز');return;}
-  const pg=+document.getElementById('f-pages').value||0;
-  if(pg<=0&&!(+document.getElementById('f-cooler').value||0)&&!(+document.getElementById('f-chand').value||0)){alert('یه مقداری وارد کن');return;}
-  p.entries.push({id:uid(),date:document.getElementById('f-date').value.trim()||todayJalali(),pages:pg,cooler:+document.getElementById('f-cooler').value||0,chand:+document.getElementById('f-chand').value||0,desc:document.getElementById('f-desc').value.trim()});
-  document.getElementById('f-pages').value=1;document.getElementById('f-cooler').value=0;document.getElementById('f-chand').value=0;document.getElementById('f-desc').value='';
-  save();render();alert('ثبت شد ✅');
+  S={projects:S.projects.filter(p=>p.id!==pid)};
+  curPid=null;save();renderAll();backToList();
 }
 function delEntry(pid,eid){
   if(!confirm('این ثبت پاک شه؟'))return;
   const p=S.projects.find(x=>x.id===pid);if(!p)return;
-  p.entries=p.entries.filter(e=>e.id!==eid);save();render();renderInvoice();
+  p.entries=p.entries.filter(e=>e.id!==eid);save();renderAll();
+}
+
+/* ─── sheet: quick add + edit ─── */
+function openSheet(mode,pid,eid){
+  editCtx=null;
+  const sel=document.getElementById('s-proj');
+  sel.innerHTML=S.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  if(mode==='edit'){
+    const p=S.projects.find(x=>x.id===pid);
+    const e=p&&p.entries.find(x=>x.id===eid);
+    if(!e)return;
+    editCtx={pid,eid};
+    document.getElementById('s-title').textContent='✏️ ویرایش ثبت';
+    document.getElementById('s-proj-wrap').style.display='none';
+    document.getElementById('s-date').value=e.date;
+    document.getElementById('s-pages').value=e.pages;
+    document.getElementById('s-cooler').value=e.cooler||0;
+    document.getElementById('s-chand').value=e.chand||0;
+    document.getElementById('s-desc').value=e.desc||'';
+    document.getElementById('s-save').textContent='ذخیره ✅';
+  }else{
+    document.getElementById('s-title').textContent='📝 ثبت کار جدید';
+    document.getElementById('s-proj-wrap').style.display='';
+    sel.value=(pid&&S.projects.some(p=>p.id===pid))?pid:(curPid||(S.projects[0]&&S.projects[0].id)||'');
+    document.getElementById('s-date').value=todayJalali();
+    document.getElementById('s-pages').value=1;
+    document.getElementById('s-cooler').value=0;
+    document.getElementById('s-chand').value=0;
+    document.getElementById('s-desc').value='';
+    document.getElementById('s-save').textContent='ثبت ✅';
+  }
+  document.getElementById('overlay').classList.add('open');
+}
+function closeSheet(){document.getElementById('overlay').classList.remove('open');editCtx=null;}
+function saveSheet(){
+  const pg=+document.getElementById('s-pages').value||0;
+  const co=+document.getElementById('s-cooler').value||0;
+  const ch=+document.getElementById('s-chand').value||0;
+  const dt=document.getElementById('s-date').value.trim()||todayJalali();
+  const ds=document.getElementById('s-desc').value.trim();
+  if(editCtx){
+    const p=S.projects.find(x=>x.id===editCtx.pid);
+    const e=p&&p.entries.find(x=>x.id===editCtx.eid);
+    if(!e){closeSheet();return;}
+    e.date=dt;e.pages=pg;e.cooler=co;e.chand=ch;e.desc=ds;
+  }else{
+    const p=S.projects.find(x=>x.id===document.getElementById('s-proj').value);
+    if(!p){alert('اول یه پروژه بساز');closeSheet();return;}
+    if(pg<=0&&co<=0&&ch<=0){alert('یه مقداری وارد کن');return;}
+    p.entries.push({id:uid(),date:dt,pages:pg,cooler:co,chand:ch,desc:ds});
+  }
+  save();closeSheet();renderAll();alert(editCtx?'ذخیره شد ✅':'ثبت شد ✅');
+}
+
+/* ─── tab3: bills ─── */
+function renderBills(){
+  const sel=document.getElementById('i-proj');
+  sel.innerHTML=S.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  let grand=0;
+  const rows=S.projects.map(p=>{const t=totals(p);grand+=t.amt;
+    return `<tr><td>${faD(p.name)}</td><td>${faN(t.pages)}</td><td>${faN(t.m)}</td><td>${faN(t.cooler+t.chand)}</td><td>${faN(t.amt)}</td></tr>`;}).join('');
+  document.getElementById('allBox').innerHTML=S.projects.length?
+    `<table class="inv-table"><tr><th>پروژه</th><th>صفحه</th><th>متر</th><th>دریچه</th><th>مبلغ</th></tr>${rows}</table>
+     <div class="inv-total"><div class="v">${faN(grand)} تومان</div></div>`:'<div class="empty">پروژه‌ای نیست</div>';
+  renderInvoice();
 }
 function renderInvoice(){
   const p=S.projects.find(x=>x.id===document.getElementById('i-proj').value)||S.projects[0];
@@ -275,10 +427,8 @@ function renderInvoice(){
   if(!p){box.innerHTML='<div class="empty">پروژه‌ای نیست</div>';return;}
   const showM=document.getElementById('i-money').checked;
   const t=totals(p);
-  let rows=p.entries.map((e,i)=>{
-    const cells=`<td>${faN(i+1)}</td><td>${faD(e.date)}</td><td>${faN(e.pages)}</td><td>${faN(mOf(e))}</td><td>${+e.cooler?faN(e.cooler):'—'}</td><td>${+e.chand?faN(e.chand):'—'}</td>`;
-    return `<tr>${cells}${showM?`<td>${faN(amtOf(p,e))}</td>`:''}</tr>`;
-  }).join('');
+  const rows=p.entries.map((e,i)=>
+    `<tr><td>${faN(i+1)}</td><td>${faD(e.date)}</td><td>${faN(e.pages)}</td><td>${faN(mOf(e))}</td><td>${+e.cooler?faN(e.cooler):'—'}</td><td>${+e.chand?faN(e.chand):'—'}</td>${showM?`<td>${faN(amtOf(p,e))}</td>`:''}</tr>`).join('');
   box.innerHTML=`<table class="inv-table"><tr><th>#</th><th>تاریخ</th><th>صفحه</th><th>متر</th><th>❄️</th><th>💡</th>${showM?'<th>مبلغ</th>':''}</tr>${rows}</table>
   <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع: ${faN(t.pages)} صفحه • ${faN(t.m)} متر • ❄️${faN(t.cooler)} • 💡${faN(t.chand)}</div>${showM?`<div class="v">${faN(t.amt)} تومان</div>`:''}</div>`;
 }
@@ -293,11 +443,19 @@ function doPrint(){
     <div class="sub">تاریخ تنظیم: ${todayJalali()} • گزارش مقادیر اجرا شده${showM?'':' (بدون مبالغ)'}</div>
     <table><tr><th>ردیف</th><th>تاریخ</th><th>شرح</th><th>صفحه</th><th>متراژ</th><th>دریچه کولر</th><th>دریچه لوستر</th>${showM?'<th>مبلغ (تومان)</th>':''}</tr>${rows}</table>
     <div class="tot">جمع کل: ${t.pages} صفحه • ${t.m} متر • ${t.cooler} دریچه کولر • ${t.chand} دریچه لوستر${showM?' • '+t.amt.toLocaleString('en-US')+' تومان':''}</div>
-    <div class="note">این صورت صرفاً مقادیر کار انجام‌شده است${showM?'':''}.</div>`;
+    <div class="note">این صورت مقادیر کار انجام‌شده است.</div>`;
   window.print();
 }
-document.getElementById('f-date').value=todayJalali();
-render();
+
+/* ─── boot ─── */
+function renderAll(){
+  let grand=0;S.projects.forEach(p=>grand+=totals(p).amt);
+  document.getElementById('grandTotal').textContent=faN(grand)+' تومان';
+  renderProjects();
+  if(curPid)renderDetail();
+  if(document.getElementById('pg-bills').classList.contains('active'))renderBills();
+}
+renderAll();
 </script>
 </body>
 </html>
