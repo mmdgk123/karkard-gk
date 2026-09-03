@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="کارکرد">
@@ -69,7 +69,8 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 .chk{display:flex;align-items:center;gap:10px;background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-top:8px;font-size:14px;font-weight:700;cursor:pointer}
 .chk input{width:20px;height:20px;accent-color:var(--gold)}
 .chk small{color:var(--text2);font-weight:400}
-.bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--nav-bg);backdrop-filter:blur(14px);border-top:1px solid var(--border);display:flex;padding:10px 4px calc(10px + env(safe-area-inset-bottom))}
+.bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--nav-bg);backdrop-filter:blur(14px);border-top:1px solid var(--border);display:flex;padding:10px 4px calc(10px + env(safe-area-inset-bottom));transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform}
+body.kb .bottomnav,body.kb .fab,body.kb .creator{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
 .navbtn{flex:1;background:none;border:none;color:var(--text2);font-family:inherit;font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px;cursor:pointer;border-radius:12px}
 .navbtn .ic{font-size:21px}
 .navbtn.on{color:var(--gold)}
@@ -102,7 +103,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v21</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v22</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
 </div>
 
 <!-- ─── Tab 1: new project + backup ─── -->
@@ -958,6 +959,11 @@ function renderAll(){
   if(document.getElementById('pg-costs').classList.contains('active'))renderCosts();
 }
 try{document.getElementById('themeBtn').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'🌙':'☀️';}catch(e){}
+/* keep bottom nav pinned: hide fixed chrome while keyboard is open */
+(function(){var kb=false;function setKb(v){if(v===kb)return;kb=v;try{document.body.classList.toggle('kb',v);}catch(e){}}
+if(window.visualViewport&&window.visualViewport.addEventListener){window.visualViewport.addEventListener('resize',function(){try{setKb(window.visualViewport.height<window.innerHeight*0.8);}catch(e){}});}
+document.addEventListener('focusin',function(e){var t=e.target;if(t&&(t.tagName==='INPUT'||t.tagName==='SELECT'||t.tagName==='TEXTAREA'))setKb(true);});
+document.addEventListener('focusout',function(){setKb(false);});})();
 renderAll();
 </script>
 </body>
