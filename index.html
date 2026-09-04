@@ -99,6 +99,36 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
 .cal-d.today{border-color:var(--gold)}
 .cal-d.sel{background:var(--gold);color:#1a1d2e;font-weight:800}
 #printArea{display:none}
+/* ── v28 performance & animations ── */
+.card{transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .25s,border-color .25s}
+.proj-card:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.proj-card{animation:cardIn .38s cubic-bezier(.22,1,.36,1) backwards}
+.proj-card:nth-child(1){animation-delay:.02s}.proj-card:nth-child(2){animation-delay:.06s}
+.proj-card:nth-child(3){animation-delay:.10s}.proj-card:nth-child(4){animation-delay:.14s}
+.proj-card:nth-child(5){animation-delay:.18s}.proj-card:nth-child(6){animation-delay:.22s}
+.proj-card:nth-child(7){animation-delay:.26s}.proj-card:nth-child(8){animation-delay:.30s}
+@keyframes cardIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+.ent{animation:entIn .3s ease backwards}
+@keyframes entIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+.navbtn .ic{display:inline-block;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.navbtn:active .ic{transform:scale(1.35)}
+.navbtn.on .ic{animation:navPop .45s cubic-bezier(.34,1.56,.64,1)}
+@keyframes navPop{0%{transform:scale(1)}45%{transform:scale(1.45) translateY(-3px)}100%{transform:scale(1)}}
+.fab{animation:fabIn .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes fabIn{from{opacity:0;transform:scale(0) rotate(-90deg)}to{opacity:1;transform:none}}
+.fab{transition:transform .18s}
+.btn{position:relative;overflow:hidden;transition:transform .15s,filter .2s;will-change:transform}
+.btn-p:hover{filter:brightness(1.1)}
+.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.45);transform:scale(0);animation:rip .5s ease-out forwards;pointer-events:none}
+@keyframes rip{to{transform:scale(3.2);opacity:0}}
+.stat .n{display:inline-block}
+.toast{position:fixed;bottom:calc(110px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(20px);background:var(--nav-bg);color:var(--text);border:1px solid var(--green);border-radius:99px;padding:11px 26px;font-size:14px;font-weight:700;z-index:99;opacity:0;transition:opacity .25s,transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;backdrop-filter:blur(10px);box-shadow:0 6px 20px rgba(0,0,0,.4);white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.overlay{transition:background .25s}
+.overlay.open .sheet{animation:slideUp .32s cubic-bezier(.22,1,.36,1)}
+.sheet{will-change:transform}
+.page{will-change:opacity,transform}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 @media print{
   body{background:#fff!important;padding:0!important}
   body>*{display:none!important}
@@ -117,7 +147,7 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v27</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v28</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
   <a class="creator-top" href="https://t.me/mmdGK" target="_blank" rel="noopener">👨‍💻 سازنده: <b>mmdGK</b></a>
 </div>
 
@@ -539,9 +569,10 @@ function itemStr(e){
 /* ─── nav ─── */
 function go(t){
   ['new','projects','bills','wages','recv','costs','detail'].forEach(x=>document.getElementById('pg-'+x).classList.remove('active'));
-  document.getElementById('pg-'+t).classList.add('active');
+  const pg=document.getElementById('pg-'+t);
+  pg.classList.remove('active');void pg.offsetWidth;pg.classList.add('active');
   ['new','projects','bills','wages','recv','costs'].forEach(x=>document.getElementById('nb-'+x).classList.remove('on'));
-  if(t!=='detail')document.getElementById('nb-'+t).classList.add('on');
+  if(t!=='detail'){const nb=document.getElementById('nb-'+t);nb.classList.add('on');const ic=nb.querySelector('.ic');if(ic){ic.classList.remove('navpop');void ic.offsetWidth;ic.style.animation='none';void ic.offsetWidth;ic.style.animation='';}}
   else document.getElementById('nb-projects').classList.add('on');
   document.getElementById('fab').classList.toggle('hide',!(t==='projects'||t==='detail'));
   if(t==='bills')renderBills();
@@ -554,9 +585,33 @@ function backToList(){curPid=null;go('projects');}
 function toggleTheme(){var c=document.documentElement.getAttribute('data-theme');var n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);try{localStorage.setItem('karkard_theme',n);}catch(e){}document.getElementById('themeBtn').textContent=n==='dark'?'🌙':'☀️';}
 
 /* ─── tab1: project ─── */
+function toast(msg){
+  let el=document.getElementById('toastBox');
+  if(!el){el=document.createElement('div');el.id='toastBox';el.className='toast';document.body.appendChild(el);}
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),2200);
+}
+/* count-up for money numbers inside #box */
+function countUp(box){
+  const els=box.querySelectorAll('.inv-total .v,.proj-amt,.stat .n');
+  els.forEach(el=>{
+    if(el.dataset.cu)return;el.dataset.cu='1';
+    const txt=el.textContent.replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[^\d]/g,'');
+    const n=+txt;
+    if(!(n>0)||String(n).length<5)return;
+    const persian=d=>(''+d).replace(/\d/g,x=>'۰۱۲۳۴۵۶۷۸۹'[x]);
+    const t0=performance.now(),dur=600;
+    function step(t){
+      const k=Math.min(1,(t-t0)/dur),ease=1-Math.pow(1-k,3);
+      el.textContent=persian(Math.floor(n*ease).toLocaleString('en-US'));
+      if(k<1)requestAnimationFrame(step);else el.textContent=persian(n.toLocaleString('en-US'));
+    }
+    requestAnimationFrame(step);
+  });
+}
 function addProject(){
   const name=document.getElementById('np-name').value.trim();
-  if(!name){alert('اسم پروژه رو بنویس');return;}
+  if(!name){toast('اسم پروژه رو بنویس');return;}
   const p={id:uid(),name,prices:blankPrices(),entries:[]};
   S.projects.push(p);
   document.getElementById('np-name').value='';
@@ -574,7 +629,7 @@ function backupExport(){
 function backupCopy(){
   const t=document.getElementById('imp-text');
   t.value=JSON.stringify(S);t.select();
-  const done=()=>alert('کپی شد ✅ بفرستش یه جای امن (تلگرام/گوشی)');
+  const done=()=>toast('کپی شد ✅ بفرستش یه جای امن');
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(JSON.stringify(S)).then(done).catch(()=>{document.execCommand('copy');done();});}
   else{document.execCommand('copy');done();}
 }
@@ -590,8 +645,8 @@ function restoreBackup(txt){
   try{
     const o=migrate(JSON.parse(txt));
     if(!o)throw 0;
-    S=o;save();renderAll();alert('برگردونده شد ✅');
-  }catch(e){alert('متن بکاپ معتبر نیست ❌');}
+    S=o;save();renderAll();toast('برگردونده شد ✅');
+  }catch(e){toast('متن بکاپ معتبر نیست ❌');}
 }
 function wipeAll(){
   if(!confirm('همه پروژه‌ها و ثبت‌ها پاک بشه؟'))return;
@@ -674,7 +729,7 @@ function savePrices(pid,silent){
   const p=S.projects.find(x=>x.id===pid);if(!p)return;
   if(!p.prices)p.prices=blankPrices();
   PKEYS.forEach(k=>{const el=document.getElementById('pp-'+k)||document.getElementById('pr-'+k);p.prices[k]=el?num(el.value):0;});
-  save();renderAll();alert('قیمت ثبت شد ✅ روی همه ثبت‌های این پروژه اعمال شد');
+  save();renderAll();toast('قیمت ثبت شد ✅ روی همه ثبت‌ها اعمال شد');
 }
 function delProject(pid){
   if(!confirm('پروژه و همه ثبت‌هاش پاک شه؟'))return;
@@ -737,7 +792,7 @@ function openSheet(mode,pid,eid){
 function closeSheet(){document.getElementById('overlay').classList.remove('open');editCtx=null;clearSheetInputs();}
 function saveSheet(){
   const p=sheetProject();
-  if(!p){alert('اول یه پروژه بساز');closeSheet();return;}
+  if(!p){toast('اول یه پروژه بساز');closeSheet();return;}
   const pg=num(document.getElementById('s-pages').value);
   const vals={};
   IKEYS.forEach(k=>{const el=document.getElementById('si-'+k);vals[k]=el?num(el.value):0;});
@@ -750,11 +805,11 @@ function saveSheet(){
     e.date=dt;e.pages=pg;e.desc=ds;
     IKEYS.forEach(k=>e[k]=vals[k]);
   }else{
-    if(pg<=0&&!IKEYS.some(k=>vals[k]>0)){alert('یه مقداری وارد کن');return;}
+    if(pg<=0&&!IKEYS.some(k=>vals[k]>0)){toast('یه مقداری وارد کن');return;}
     p.entries.push(Object.assign({id:uid(),date:dt,pages:pg,desc:ds},vals));
   }
   const wasEdit=!!editCtx;
-  save();closeSheet();renderAll();alert(wasEdit?'ذخیره شد ✅':'ثبت شد ✅');
+  save();closeSheet();renderAll();toast(wasEdit?'ذخیره شد ✅':'ثبت شد ✅');
 }
 
 /* ─── tab3: bills ─── */
@@ -824,7 +879,7 @@ function buildInvHTML(forPrint){
 }
 function viewInvoice(){
   const h=buildInvHTML(false);
-  if(!h){alert('پروژه‌ای نیست');return;}
+  if(!h){toast('پروژه‌ای نیست');return;}
   document.getElementById('invPreview').innerHTML=h;
   document.getElementById('invOverlay').classList.add('open');
 }
@@ -855,7 +910,7 @@ function renderWages(){
 function saveWage(){
   const name=document.getElementById('w-name').value.trim()||'شاگرد';
   const amount=num(document.getElementById('w-amount').value);
-  if(!amount){alert('مبلغ رو وارد کن');return;}
+  if(!amount){toast('مبلغ رو وارد کن');return;}
   const rec={name,date:normDate(document.getElementById('w-date').value),amount,desc:document.getElementById('w-desc').value.trim()};
   if(wageEditId){
     const w=S.wages.find(x=>x.id===wageEditId);
@@ -863,7 +918,7 @@ function saveWage(){
   }else{
     rec.id=uid();S.wages.push(rec);
   }
-  cancelWageEdit();save();renderAll();alert('ثبت شد ✅');
+  cancelWageEdit();save();renderAll();toast('ثبت شد ✅');
 }
 function editWage(id){
   const w=S.wages.find(x=>x.id===id);if(!w)return;
@@ -913,9 +968,9 @@ function renderRecv(){
 }
 function saveRecv(){
   const source=document.getElementById('r-source').value.trim();
-  if(!source){alert('بنویس از کی گرفتی (شرکت / اسم پیمانکار)');return;}
+  if(!source){toast('بنویس از کی گرفتی');return;}
   const amount=num(document.getElementById('r-amount').value);
-  if(!amount){alert('مبلغ رو وارد کن');return;}
+  if(!amount){toast('مبلغ رو وارد کن');return;}
   const rec={source,date:normDate(document.getElementById('r-date').value),amount,desc:document.getElementById('r-desc').value.trim()};
   if(!Array.isArray(S.receipts))S.receipts=[];
   if(recvEditId){
@@ -925,7 +980,7 @@ function saveRecv(){
     rec.id=uid();S.receipts.push(rec);
   }
   cancelRecvEdit();save();renderAll();renderRecv();
-  alert('ثبت شد ✅');
+  toast('ثبت شد ✅');
 }
 function editRecv(rid){
   const r=(S.receipts||[]).find(x=>x.id===rid);if(!r)return;
@@ -981,7 +1036,7 @@ function renderCosts(){
 }
 function saveCost(){
   const amount=num(document.getElementById('c-amount').value);
-  if(!amount){alert('مبلغ رو وارد کن');return;}
+  if(!amount){toast('مبلغ رو وارد کن');return;}
   const rec={cat:document.getElementById('c-cat').value,pid:document.getElementById('c-proj').value||'',date:normDate(document.getElementById('c-date').value),amount,desc:document.getElementById('c-desc').value.trim()};
   if(!Array.isArray(S.costs))S.costs=[];
   if(costEditId){
@@ -991,7 +1046,7 @@ function saveCost(){
     rec.id=uid();S.costs.push(rec);
   }
   cancelCostEdit();save();renderAll();renderCosts();
-  alert('ثبت شد ✅');
+  toast('ثبت شد ✅');
 }
 function editCost(id){
   const c=(S.costs||[]).find(x=>x.id===id);if(!c)return;
@@ -1030,6 +1085,7 @@ function renderAll(){
   if(document.getElementById('pg-wages').classList.contains('active'))renderWages();
   if(document.getElementById('pg-recv').classList.contains('active'))renderRecv();
   if(document.getElementById('pg-costs').classList.contains('active'))renderCosts();
+  requestAnimationFrame(()=>{countUp(document.getElementById('projList'));countUp(document.getElementById('detailBox'));});
 }
 try{document.getElementById('themeBtn').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'🌙':'☀️';}catch(e){}
 /* keep bottom nav pinned: hide fixed chrome while keyboard is open */
@@ -1038,6 +1094,22 @@ if(window.visualViewport&&window.visualViewport.addEventListener){window.visualV
 document.addEventListener('focusin',function(e){var t=e.target;if(t&&(t.tagName==='INPUT'||t.tagName==='SELECT'||t.tagName==='TEXTAREA'))setKb(true);});
 document.addEventListener('focusout',function(){setKb(false);});})();
 renderAll();
+/* ripple + haptic feedback on buttons */
+document.addEventListener('pointerdown',function(ev){
+  const b=ev.target.closest('.btn,.fab,.navbtn,.cal-d');
+  if(!b)return;
+  if(navigator.vibrate){try{navigator.vibrate(8);}catch(e){}}
+  if(!b.classList.contains('btn')&&!b.classList.contains('fab'))return;
+  const r=b.getBoundingClientRect();
+  const d=Math.max(r.width,r.height);
+  const s=document.createElement('span');
+  s.className='ripple';
+  s.style.width=s.style.height=d+'px';
+  s.style.left=(ev.clientX-r.left-d/2)+'px';
+  s.style.top=(ev.clientY-r.top-d/2)+'px';
+  b.appendChild(s);
+  setTimeout(()=>s.remove(),520);
+},{passive:true});
 </script>
 </body>
 </html>
