@@ -147,7 +147,7 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v32</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v33</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
   <a class="creator-top" href="https://t.me/mmdGK" target="_blank" rel="noopener">👨‍💻 سازنده: <b>mmdGK</b></a>
 </div>
 
@@ -204,7 +204,6 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
 
 <!-- ─── Tab 4: wages ─── -->
 <section id="pg-wages" class="page">
-  <div class="card" style="padding:12px"><button class="btn btn-p" onclick="openWage()">➕ ثبت پرداختی</button></div>
   <div class="overlay" id="wageOverlay" onclick="if(event.target===this)closeWage()">
   <div class="sheet">
     <div class="proj-name" id="w-title">💰 ثبت پرداختی</div>
@@ -234,7 +233,6 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
 
 <!-- ─── Tab 5: received ─── -->
 <section id="pg-recv" class="page">
-  <div class="card" style="padding:12px"><button class="btn btn-p" onclick="openRecv()">➕ ثبت دریافتی</button></div>
   <div class="overlay" id="recvOverlay" onclick="if(event.target===this)closeRecv()">
   <div class="sheet">
     <div class="proj-name" id="r-title">💵 ثبت دریافتی</div>
@@ -266,7 +264,6 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
 
 <!-- ─── Tab 6: costs ─── -->
 <section id="pg-costs" class="page">
-  <div class="card" style="padding:12px"><button class="btn btn-p" onclick="openCost()">➕ ثبت هزینه</button></div>
   <div class="overlay" id="costOverlay" onclick="if(event.target===this)closeCost()">
   <div class="sheet">
     <div class="proj-name" id="c-title">🧰 ثبت هزینه</div>
@@ -598,7 +595,7 @@ function go(t){
   ['projects','bills','wages','recv','costs'].forEach(x=>document.getElementById('nb-'+x).classList.remove('on'));
   if(t!=='detail'){const nb=document.getElementById('nb-'+t);nb.classList.add('on');const ic=nb.querySelector('.ic');if(ic){ic.classList.remove('navpop');void ic.offsetWidth;ic.style.animation='none';void ic.offsetWidth;ic.style.animation='';}}
   else document.getElementById('nb-projects').classList.add('on');
-  document.getElementById('fab').classList.toggle('hide',!(t==='projects'||t==='detail'));
+  document.getElementById('fab').classList.toggle('hide',t==='bills');
   if(t==='bills')renderBills();
   if(t==='wages')renderWages();
   if(t==='recv')renderRecv();
@@ -635,6 +632,9 @@ function countUp(box){
 }
 function fabTap(){
   if(document.getElementById('pg-detail').classList.contains('active')){openSheet('add');return;}
+  if(document.getElementById('pg-wages').classList.contains('active')){openWage();return;}
+  if(document.getElementById('pg-recv').classList.contains('active')){openRecv();return;}
+  if(document.getElementById('pg-costs').classList.contains('active')){openCost();return;}
   document.getElementById('np-name').value='';
   document.getElementById('projOverlay').classList.add('open');
   setTimeout(()=>{const el=document.getElementById('np-name');if(el)el.focus();},300);
