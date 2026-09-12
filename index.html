@@ -148,7 +148,7 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v36</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v37</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
   <a class="creator-top" href="https://t.me/mmdGK" target="_blank" rel="noopener">👨‍💻 سازنده: <b>mmdGK</b></a>
 </div>
 
@@ -185,10 +185,6 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
   <div class="card">
     <div class="proj-name">📊 خلاصه همه پروژه‌ها</div>
     <div id="allBox"></div>
-  </div>
-  <div class="card">
-    <div class="proj-name">📅 جمع ماهانه</div>
-    <div id="monthBox"></div>
   </div>
   <div class="card">
     <div class="proj-name">🧾 فاکتور پروژه</div>
@@ -702,21 +698,6 @@ function recvSum(pid){return (S.receipts||[]).filter(r=>(r.pid||'')===pid).reduc
 function projSearch(v){projQ=enD(v||'').trim();renderProjects();}
 function detSearch(v){detQ=enD(v||'').trim();renderDetail();}
 function openRecvFor(pid){recvPrefillPid=pid||'';go('recv');openRecv();}
-function renderMonthly(){
-  const box=document.getElementById('monthBox');if(!box)return;
-  const M={};
-  const bump=(k,f)=>{if(!k)return;M[k]=M[k]||{work:0,recv:0,wage:0,cost:0,n:0};f(M[k]);};
-  S.projects.forEach(pr=>{const pp=pricesOf(pr);(pr.entries||[]).forEach(e=>{const k=monthKey(e.date);if(!k)return;bump(k,m=>{m.work+=entryAmount(e,pp);m.n++;});});});
-  (S.receipts||[]).forEach(r=>bump(monthKey(r.date),m=>m.recv+=+r.amount||0));
-  (S.wages||[]).forEach(w=>bump(monthKey(w.date),m=>m.wage+=+w.amount||0));
-  (S.costs||[]).forEach(c=>bump(monthKey(c.date),m=>m.cost+=+c.amount||0));
-  const keys=Object.keys(M).sort().reverse().slice(0,12);
-  if(!keys.length){box.innerHTML='<div class="empty">هنوز داده‌ای نیست</div>';return;}
-  box.innerHTML=keys.map(k=>{
-    const m=M[k];const bal=m.work-m.recv-m.wage-m.cost;
-    return `<div class="ent"><div><div class="q">📅 ${faD(k)} • ${faN(m.n)} ثبت کار</div><div class="d">کار ${m.work>0?faN(m.work):'—'} • دریافتی ${faN(m.recv)} • حقوق ${faN(m.wage)} • هزینه ${faN(m.cost)} • مانده ${m.work>0?faN(bal):'—'}</div></div></div>`;
-  }).join('');
-}
 /* ─── tab2: list ─── */
 function renderProjects(){
   const box=document.getElementById('projList');
@@ -895,10 +876,9 @@ function renderBills(){
   const gC=costsTotal();
   document.getElementById('allBox').innerHTML=S.projects.length?
     `<table class="inv-table"><tr><th>پروژه</th><th>مبلغ کار</th></tr>${rows}</table>
-     <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع کار</div><div class="v">${gT>0?faN(gT)+' تومان':(gHas?'نامعلوم':faN(0)+' تومان')}</div>
-     <div style="font-size:13px;color:var(--text2);margin-top:8px">دریافتی: ${faN(gR)} • حقوق: ${faN(wt)} • هزینه‌ها: ${faN(gC)}</div>
+     <div class="inv-total"><div style="font-size:13px;color:var(--text2)">دریافتی: ${faN(gR)} • حقوق: ${faN(wt)} • هزینه‌ها: ${faN(gC)}</div>
      <div style="font-size:13px;color:var(--text2);margin-top:4px">مانده کلی: ${gT>0?faN(gT-gR-wt-gC)+' تومان':(gHas?'نامعلوم':'—')}</div></div>`:'<div class="empty">پروژه‌ای نیست</div>';
-  renderInvoice();renderMonthly();
+  renderInvoice();
 }
 function invCols(p){
   return IKEYS.filter(k=>p.entries.some(e=>+e[k]));
