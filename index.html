@@ -148,7 +148,7 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v38</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v39</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
   <a class="creator-top" href="https://t.me/mmdGK" target="_blank" rel="noopener">👨‍💻 سازنده: <b>mmdGK</b></a>
 </div>
 
@@ -715,7 +715,6 @@ function renderProjects(){
         ${(t.hours||0)>0?`<div class="stat"><div class="n">${faD(String(t.hours))}</div><div class="t">⏱️ ساعت</div></div>`:''}
         <div class="stat"><div class="n">${faN(p.entries.length)}</div><div class="t">📝 ثبت</div></div>
       </div>
-      <div style="font-size:11.5px;color:var(--text2);margin-top:8px">${faN(p.entries.length)} ثبت</div>
     </div>`;
   }).join('');
 }
