@@ -70,6 +70,7 @@ textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-a
 .chk input{width:20px;height:20px;accent-color:var(--gold)}
 .chk small{color:var(--text2);font-weight:400}
 .bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--nav-bg);backdrop-filter:blur(14px);border-top:1px solid var(--border);display:flex;padding:10px 4px calc(10px + env(safe-area-inset-bottom));transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform}
+body.lock{overflow:hidden}
 body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
 .navbtn{flex:1;background:none;border:none;color:var(--text2);font-family:inherit;font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px;cursor:pointer;border-radius:12px}
 .navbtn .ic{font-size:21px}
@@ -147,7 +148,7 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v33</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v34</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
   <a class="creator-top" href="https://t.me/mmdGK" target="_blank" rel="noopener">👨‍💻 سازنده: <b>mmdGK</b></a>
 </div>
 
@@ -1184,6 +1185,8 @@ try{document.getElementById('themeBtn').textContent=document.documentElement.get
 if(window.visualViewport&&window.visualViewport.addEventListener){window.visualViewport.addEventListener('resize',function(){try{setKb(window.visualViewport.height<window.innerHeight*0.8);}catch(e){}});}
 document.addEventListener('focusin',function(e){var t=e.target;if(t&&(t.tagName==='INPUT'||t.tagName==='SELECT'||t.tagName==='TEXTAREA'))setKb(true);});
 document.addEventListener('focusout',function(){setKb(false);});})();
+/* lock background scroll while any sheet is open (stops page sliding under header) */
+new MutationObserver(()=>{try{document.body.classList.toggle('lock',!!document.querySelector('.overlay.open'));}catch(e){}}).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class']});
 renderAll();
 /* ripple + haptic feedback on buttons */
 document.addEventListener('pointerdown',function(ev){
