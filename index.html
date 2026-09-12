@@ -99,7 +99,7 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
 .cal-d.today{border-color:var(--gold)}
 .cal-d.sel{background:var(--gold);color:#1a1d2e;font-weight:800}
 #printArea{display:none}
-/* ── v28 performance & animations ── */
+/* ── v29 performance & animations ── */
 .card{transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .25s,border-color .25s}
 .proj-card:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:0 6px 18px rgba(0,0,0,.25)}
 .proj-card{animation:cardIn .38s cubic-bezier(.22,1,.36,1) backwards}
@@ -147,7 +147,7 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v28</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v29</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
   <a class="creator-top" href="https://t.me/mmdGK" target="_blank" rel="noopener">👨‍💻 سازنده: <b>mmdGK</b></a>
 </div>
 
@@ -315,6 +315,7 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
       <div><label class="lbl">تاریخ</label><div style="display:flex;gap:6px"><input class="inp" id="s-date" inputmode="numeric" oninput="fmtDate(this)" style="flex:1;min-width:0"><button class="btn btn-g" style="padding:10px 10px;font-size:14px" onclick="openCal('s-date')">📅</button><button class="btn btn-g" style="padding:10px 12px;font-size:12px;white-space:nowrap" onclick="setToday('s-date')">امروز</button></div></div>
       <div><label class="lbl">تعداد صفحه</label><input class="inp" id="s-pages" type="text" inputmode="numeric" autocomplete="off" min="0"></div>
     </div>
+    <div><label class="lbl">⏱️ ساعت کار (روزمزدی)</label><input class="inp" id="s-hours" type="text" inputmode="decimal" autocomplete="off" placeholder=""></div>
     <div id="s-items"></div>
     <label class="lbl">توضیح (اختیاری)</label>
     <input class="inp" id="s-desc" autocomplete="off">
@@ -340,6 +341,8 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
     </div>
     <label class="lbl">مبلغ هر متر لاین نوری</label>
     <input class="inp" id="pp-linear" type="text" inputmode="numeric" autocomplete="off" oninput="fmtAmount(this)">
+    <label class="lbl">⏱️ دستمزد هر ساعت (روزمزدی)</label>
+    <input class="inp" id="pp-hour" type="text" inputmode="numeric" autocomplete="off" oninput="fmtAmount(this)">
     <div class="rowbtns" style="margin-top:16px">
       <button class="btn btn-p" onclick="savePriceModal()">ثبت قیمت ✅</button>
       <button class="btn btn-g" onclick="closePrice()">بستن</button>
@@ -442,11 +445,12 @@ const IKEYS=Object.keys(ITEMS);
 const INAME={cooler:'دریچه کولر',chand:'دریچه لوستر',halogen:'هالوژن',linear:'لاین نوری'};
 const IUNIT={cooler:'عدد',chand:'عدد',halogen:'عدد',linear:'متر'};
 function prettyItem(k,n){return faN(n)+' '+IUNIT[k]+' '+INAME[k];}
-const PKEYS=['meter','cooler','chand','halogen','linear'];
-const PLBL={meter:'مبلغ هر متر کناف',cooler:'مبلغ هر دریچه کولر',chand:'مبلغ هر دریچه لوستر',halogen:'مبلغ هر هالوژن',linear:'مبلغ هر متر لاین نوری'};
-function blankPrices(){return {meter:0,cooler:0,chand:0,halogen:0,linear:0};}
+const PKEYS=['meter','cooler','chand','halogen','linear','hour'];
+const PLBL={meter:'مبلغ هر متر کناف',cooler:'مبلغ هر دریچه کولر',chand:'مبلغ هر دریچه لوستر',halogen:'مبلغ هر هالوژن',linear:'مبلغ هر متر لاین نوری',hour:'دستمزد هر ساعت'};
+function blankPrices(){return {meter:0,cooler:0,chand:0,halogen:0,linear:0,hour:0};}
+const numH=v=>{let s=String(v??'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[٫,،]/g,'.').replace(/\//g,'.').replace(/[^0-9.]/g,'');const n=parseFloat(s);return isNaN(n)?0:n;};
 function pricesOf(p){const r=blankPrices();if(p&&p.prices)Object.keys(r).forEach(k=>r[k]=+p.prices[k]||0);return r;}
-function entryAmount(e,pr){return mOf(e)*(+pr.meter||0)+IKEYS.reduce((a,k)=>a+(+e[k]||0)*(+pr[k]||0),0);}
+function entryAmount(e,pr){return mOf(e)*(+pr.meter||0)+IKEYS.reduce((a,k)=>a+(+e[k]||0)*(+pr[k]||0),0)+(numH(e.hours)||0)*(+pr.hour||0);}
 
 function todayJalali(){
   try{
@@ -455,7 +459,7 @@ function todayJalali(){
     return g('year')+'/'+g('month')+'/'+g('day');
   }catch(e){return '';}
 }
-function blankEntry(){return {id:uid(),date:'',pages:0,cooler:0,chand:0,halogen:0,linear:0,desc:''};}
+function blankEntry(){return {id:uid(),date:'',pages:0,cooler:0,chand:0,halogen:0,linear:0,hours:0,desc:''};}
 function seed(){
   return {projects:[{id:'p_zarabi',name:'ضرابی',prices:{meter:220000,cooler:100000,chand:100000,halogen:0,linear:0},entries:[
     {id:uid(),date:'۱۴۰۵/۰۵/۰۳',pages:61,cooler:0,chand:0,halogen:0,linear:0,desc:''},
@@ -483,6 +487,7 @@ function migrate(s){
     if(p.prices&&+p.prices.page>0&&!(+p.prices.meter>0))p.prices.meter=Math.round(+p.prices.page/3);
     if(p.prices)delete p.prices.page;
     if(!p.prices||typeof p.prices!=='object')p.prices=blankPrices();
+    if(!(p.prices.hour>=0))p.prices.hour=0;
     PKEYS.forEach(k=>{p.prices[k]=+p.prices[k]||0;});
     // rates era -> per-entry agreed amounts -> infer unit prices
     if(p.rateM!=null){
@@ -522,6 +527,7 @@ function migrate(s){
       delete e.amount;delete e.aPages;delete e.aCooler;delete e.aChand;delete e.aHalogen;delete e.aLinear;
       if(e.halogen==null)e.halogen=0;
       if(e.linear==null)e.linear=0;
+      if(e.hours==null)e.hours=0;
     });
     delete p.items;delete p.rateM;delete p.rateCooler;delete p.rateChand;
   });
@@ -535,34 +541,37 @@ function save(){localStorage.setItem(LS,JSON.stringify(S));}
 function receivedTotal(){return (S.receipts||[]).reduce((a,r)=>a+(+r.amount||0),0);}
 function entryComplete(e,pr){
   if((+e.pages||0)>0&&!(+pr.meter>0))return false;
+  if((numH(e.hours)||0)>0&&!(+pr.hour>0))return false;
   return IKEYS.every(k=>!(+e[k]>0)||(+pr[k]>0));
 }
 function totals(p){
   const pr=pricesOf(p);
-  let pages=0,amt=0,ok=true;const it={cooler:0,chand:0,halogen:0,linear:0};
+  let pages=0,amt=0,hours=0,ok=true;const it={cooler:0,chand:0,halogen:0,linear:0};
   p.entries.forEach(e=>{
-    pages+=+e.pages||0;
+    pages+=+e.pages||0;hours+=numH(e.hours)||0;
     // old backup without prices: fallback to stored amount
     amt+=(Object.values(pr).some(v=>v>0)?entryAmount(e,pr):(+e.amount||0));
     if(!entryComplete(e,pr))ok=false;
     IKEYS.forEach(k=>it[k]+=+(e[k]||0));
   });
-  return {pages,m:pages*3,it,amt,ok};
+  return {pages,m:pages*3,it,amt,hours,ok};
 }
-function hasWork(t){return t.pages>0||IKEYS.some(k=>t.it[k]>0);}
+function hasWork(t){return t.pages>0||(t.hours||0)>0||IKEYS.some(k=>t.it[k]>0);}
 function amtD(t){if(t.amt>0)return faN(t.amt);return hasWork(t)?'نامعلوم':faN(0);}
-function entryHasQty(e){return (+e.pages||0)>0||IKEYS.some(k=>(+e[k]||0)>0);}
+function entryHasQty(e){return (+e.pages||0)>0||(numH(e.hours)||0)>0||IKEYS.some(k=>(+e[k]||0)>0);}
 function entryAmtD(e,pr){const a=entryAmount(e,pr);if(a>0)return faN(a)+' تومان';return entryHasQty(e)?'نامعلوم':'—';}
 function priceLine(p){
   const pr=pricesOf(p);
   const parts=[`متر ${+pr.meter?faN(pr.meter):'نامعلوم'}`];
   IKEYS.forEach(k=>parts.push(`${ITEMS[k].t} ${+pr[k]?faN(pr[k]):'نامعلوم'}`));
+  if(+pr.hour>0)parts.push(`⏱️ ساعتی ${faN(pr.hour)}`);
   return parts.join(' • ');
 }
 function itemStr(e){
   const parts=[];
   if(+e.pages>0)parts.push(faN(e.pages)+' صفحه ('+faN(mOf(e))+' متر)');
   IKEYS.forEach(k=>{if(+e[k])parts.push(prettyItem(k,+e[k]));});
+  if((numH(e.hours)||0)>0)parts.push('⏱️ '+faD(String(e.hours))+' ساعت');
   return parts.join(' • ');
 }
 
@@ -672,6 +681,7 @@ function renderProjects(){
       <div class="proj-stats">
         <div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>
         <div class="stat"><div class="n">${faN(t.m)}</div><div class="t">متر</div></div>
+        ${(t.hours||0)>0?`<div class="stat"><div class="n">${faD(String(t.hours))}</div><div class="t">⏱️ ساعت</div></div>`:''}
         <div class="stat"><div class="n">${amtD(t)}</div><div class="t">💰 مبلغ کار</div></div>
       </div>
       <div style="font-size:11.5px;color:var(--text2);margin-top:8px">${faN(p.entries.length)} ثبت • بزن توش 👆</div>
@@ -703,6 +713,7 @@ function renderDetail(){
       <div class="proj-stats">
         <div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>
         <div class="stat"><div class="n">${faN(t.m)}</div><div class="t">متر</div></div>
+        ${(t.hours||0)>0?`<div class="stat"><div class="n">${faD(String(t.hours))}</div><div class="t">⏱️ ساعت</div></div>`:''}
         <div class="stat"><div class="n">${amtD(t)}</div><div class="t">💰 مبلغ کار</div></div>
         <div class="stat"><div class="n">${faN(pc)}</div><div class="t">🧰 هزینه</div></div>
         <div class="stat"><div class="n">${profit}</div><div class="t">سود پروژه</div></div>
@@ -748,7 +759,7 @@ function sheetProject(){
   return S.projects.find(x=>x.id===document.getElementById('s-proj').value)||S.projects[0];
 }
 function clearSheetInputs(){
-  ['s-pages','s-desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['s-pages','s-hours','s-desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   IKEYS.forEach(k=>{const el=document.getElementById('si-'+k);if(el)el.value='';});
 }
 function buildSheetItems(){
@@ -774,6 +785,7 @@ function openSheet(mode,pid,eid){
     document.getElementById('s-proj-wrap').style.display='none';
     document.getElementById('s-date').value=e.date;
     document.getElementById('s-pages').value=+e.pages||'';
+    document.getElementById('s-hours').value=(e.hours??'')===''?'':e.hours;
     document.getElementById('s-desc').value=e.desc||'';
     document.getElementById('s-save').textContent='ذخیره ✅';
     buildSheetItems();
@@ -794,6 +806,7 @@ function saveSheet(){
   const p=sheetProject();
   if(!p){toast('اول یه پروژه بساز');closeSheet();return;}
   const pg=num(document.getElementById('s-pages').value);
+  const hrs=numH(document.getElementById('s-hours').value);
   const vals={};
   IKEYS.forEach(k=>{const el=document.getElementById('si-'+k);vals[k]=el?num(el.value):0;});
   IKEYS.forEach(k=>{if(vals[k]==null)vals[k]=0;});
@@ -802,11 +815,11 @@ function saveSheet(){
   if(editCtx){
     const e=p.entries.find(x=>x.id===editCtx.eid);
     if(!e){closeSheet();return;}
-    e.date=dt;e.pages=pg;e.desc=ds;
+    e.date=dt;e.pages=pg;e.hours=hrs;e.desc=ds;
     IKEYS.forEach(k=>e[k]=vals[k]);
   }else{
-    if(pg<=0&&!IKEYS.some(k=>vals[k]>0)){toast('یه مقداری وارد کن');return;}
-    p.entries.push(Object.assign({id:uid(),date:dt,pages:pg,desc:ds},vals));
+    if(pg<=0&&!(hrs>0)&&!IKEYS.some(k=>vals[k]>0)){toast('یه مقداری وارد کن');return;}
+    p.entries.push(Object.assign({id:uid(),date:dt,pages:pg,hours:hrs,desc:ds},vals));
   }
   const wasEdit=!!editCtx;
   save();closeSheet();renderAll();toast(wasEdit?'ذخیره شد ✅':'ثبت شد ✅');
@@ -832,6 +845,7 @@ function renderBills(){
 function invCols(p){
   return IKEYS.filter(k=>p.entries.some(e=>+e[k]));
 }
+function invHasHours(p){return p.entries.some(e=>(numH(e.hours)||0)>0);}
 function renderInvoice(){
   const p=S.projects.find(x=>x.id===document.getElementById('i-proj').value)||S.projects[0];
   const box=document.getElementById('invBox');
@@ -840,15 +854,16 @@ function renderInvoice(){
   const t=totals(p);
   const pr=pricesOf(p);
   const cols=invCols(p);
+  const hasH=invHasHours(p);
   const rows=p.entries.map((e,i)=>{
-    let cells=`<td>${faN(i+1)}</td><td>${faD(e.date)}</td><td>${+e.pages?faN(e.pages):'—'}</td><td>${+e.pages?faN(mOf(e)):'—'}</td>`;
+    let cells=`<td>${faN(i+1)}</td><td>${faD(e.date)}</td><td>${+e.pages?faN(e.pages):'—'}</td><td>${+e.pages?faN(mOf(e)):'—'}</td>${hasH?`<td>${(numH(e.hours)||0)>0?faD(String(e.hours)):'—'}</td>`:''}`;
     cols.forEach(k=>cells+=`<td>${+e[k]?faN(e[k]):'—'}</td>`);
     return `<tr>${cells}${showM?`<td>${entryAmtD(e,pr)}</td>`:''}</tr>`;}).join('');
-  let head=`<tr><th>#</th><th>تاریخ</th><th>صفحه</th><th>متر</th>`;
+  let head=`<tr><th>#</th><th>تاریخ</th><th>صفحه</th><th>متر</th>${hasH?'<th>⏱️ ساعت</th>':''}`;
   cols.forEach(k=>head+=`<th>${INAME[k]}</th>`);
   head+=`${showM?'<th>مبلغ</th>':''}</tr>`;
   const isum=cols.map(k=>prettyItem(k,t.it[k])).join(' • ');
-  const qsum=[t.pages>0?`${faN(t.pages)} صفحه • ${faN(t.m)} متر`:null,isum||null].filter(Boolean).join(' • ');
+  const qsum=[t.pages>0?`${faN(t.pages)} صفحه • ${faN(t.m)} متر`:null,(t.hours||0)>0?`⏱️ ${faD(String(t.hours))} ساعت`:null,isum||null].filter(Boolean).join(' • ');
   box.innerHTML=`<table class="inv-table">${head}${rows}</table>
   <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع: ${qsum||'—'}</div>${showM?`<div class="v">${amtD(t)} تومان</div>`:''}</div>`;
 }
@@ -860,16 +875,18 @@ function buildInvHTML(forPrint){
   const pr=pricesOf(p);
   const cols=invCols(p);
   const F=forPrint?(n=>n.toLocaleString('en-US')):faN;
+  const hasH2=invHasHours(p);
   const rows=p.entries.map((e,i)=>{
-    let cells=`<td>${forPrint?(i+1):faN(i+1)}</td><td>${forPrint?e.date:faD(e.date)}</td><td>${forPrint?(e.desc||''):faD(e.desc||'')}</td><td>${+e.pages?(forPrint?e.pages:faN(e.pages)):'—'}</td><td>${+e.pages?(forPrint?mOf(e):faN(mOf(e))):'—'}</td>`;
+    let cells=`<td>${forPrint?(i+1):faN(i+1)}</td><td>${forPrint?e.date:faD(e.date)}</td><td>${forPrint?(e.desc||''):faD(e.desc||'')}</td><td>${+e.pages?(forPrint?e.pages:faN(e.pages)):'—'}</td><td>${+e.pages?(forPrint?mOf(e):faN(mOf(e))):'—'}</td>${hasH2?`<td>${(numH(e.hours)||0)>0?(forPrint?e.hours:faD(String(e.hours))):'—'}</td>`:''}`;
     cols.forEach(k=>cells+=`<td>${+e[k]?(forPrint?e[k]:faN(e[k])):'—'}</td>`);
     return `<tr>${cells}${showM?`<td>${entryAmount(e,pr)>0?F(entryAmount(e,pr)):'نامعلوم'}</td>`:''}</tr>`;}).join('');
-  let head=`<tr><th>ردیف</th><th>تاریخ</th><th>شرح</th><th>صفحه</th><th>متراژ</th>`;
+  let head=`<tr><th>ردیف</th><th>تاریخ</th><th>شرح</th><th>صفحه</th><th>متراژ</th>${hasH2?'<th>ساعت</th>':''}`;
   cols.forEach(k=>head+=`<th>${INAME[k]} (${IUNIT[k]})</th>`);
   head+=`${showM?'<th>مبلغ (تومان)</th>':''}</tr>`;
   const pq=t.pages>0?(forPrint?`${t.pages} صفحه • ${t.m} متر`:`${faN(t.pages)} صفحه • ${faN(t.m)} متر`):null;
+  const hq=(t.hours||0)>0?(forPrint?`${t.hours} ساعت`:`⏱️ ${faD(String(t.hours))} ساعت`):null;
   const iq=cols.map(k=>t.it[k]>0?(forPrint?`${t.it[k]} ${INAME[k]}`:prettyItem(k,t.it[k])):null).filter(Boolean).join(' • ');
-  const tq=[pq,iq||null].filter(Boolean).join(' • ');
+  const tq=[pq,hq||null,iq||null].filter(Boolean).join(' • ');
   return `
     <h1>صورت کار پروژه ${forPrint?p.name:faD(p.name)}</h1>
     <div class="sub">تاریخ تنظیم: ${todayJalali()} • گزارش مقادیر اجرا شده${showM?'':' (بدون مبالغ)'}</div>
