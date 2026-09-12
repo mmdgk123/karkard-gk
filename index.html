@@ -148,7 +148,7 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v35</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v36</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
   <a class="creator-top" href="https://t.me/mmdGK" target="_blank" rel="noopener">👨‍💻 سازنده: <b>mmdGK</b></a>
 </div>
 
@@ -889,12 +889,12 @@ function renderBills(){
   sel.innerHTML=S.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
   let gT=0,gHas=false;
   const rows=S.projects.map(p=>{const t=totals(p);gT+=t.amt;if(hasWork(t))gHas=true;
-    return `<tr><td>${faD(p.name)}</td><td>${faN(t.pages)}</td><td>${amtD(t)}</td></tr>`;}).join('');
+    return `<tr><td>${faD(p.name)}</td><td>${amtD(t)}</td></tr>`;}).join('');
   const wt=wagesTotal();
   const gR=receivedTotal();
   const gC=costsTotal();
   document.getElementById('allBox').innerHTML=S.projects.length?
-    `<table class="inv-table"><tr><th>پروژه</th><th>صفحه</th><th>مبلغ کار</th></tr>${rows}</table>
+    `<table class="inv-table"><tr><th>پروژه</th><th>مبلغ کار</th></tr>${rows}</table>
      <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع کار</div><div class="v">${gT>0?faN(gT)+' تومان':(gHas?'نامعلوم':faN(0)+' تومان')}</div>
      <div style="font-size:13px;color:var(--text2);margin-top:8px">دریافتی: ${faN(gR)} • حقوق: ${faN(wt)} • هزینه‌ها: ${faN(gC)}</div>
      <div style="font-size:13px;color:var(--text2);margin-top:4px">مانده کلی: ${gT>0?faN(gT-gR-wt-gC)+' تومان':(gHas?'نامعلوم':'—')}</div></div>`:'<div class="empty">پروژه‌ای نیست</div>';
