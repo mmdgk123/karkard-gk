@@ -147,7 +147,7 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v30</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v31</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
   <a class="creator-top" href="https://t.me/mmdGK" target="_blank" rel="noopener">👨‍💻 سازنده: <b>mmdGK</b></a>
 </div>
 
@@ -219,7 +219,9 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
 
 <!-- ─── Tab 4: wages ─── -->
 <section id="pg-wages" class="page">
-  <div class="card">
+  <div class="card" style="padding:12px"><button class="btn btn-p" onclick="openWage()">➕ ثبت پرداختی</button></div>
+  <div class="overlay" id="wageOverlay" onclick="if(event.target===this)closeWage()">
+  <div class="sheet">
     <div class="proj-name" id="w-title">💰 ثبت پرداختی</div>
     <label class="lbl">اسم</label>
     <input class="inp" id="w-name" placeholder="اسم شاگرد">
@@ -231,8 +233,9 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
     <input class="inp" id="w-desc">
     <div class="rowbtns" style="margin-top:14px">
       <button class="btn btn-p" id="w-save" onclick="saveWage()">ثبت ✅</button>
-      <button class="btn btn-g" id="w-cancel" style="display:none" onclick="cancelWageEdit()">انصراف</button>
+      <button class="btn btn-g" onclick="closeWage()">بستن</button>
     </div>
+  </div>
   </div>
   <div class="card">
     <div class="proj-name">📊 جمع پرداختی‌ها</div>
@@ -246,7 +249,9 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
 
 <!-- ─── Tab 5: received ─── -->
 <section id="pg-recv" class="page">
-  <div class="card">
+  <div class="card" style="padding:12px"><button class="btn btn-p" onclick="openRecv()">➕ ثبت دریافتی</button></div>
+  <div class="overlay" id="recvOverlay" onclick="if(event.target===this)closeRecv()">
+  <div class="sheet">
     <div class="proj-name" id="r-title">💵 ثبت دریافتی</div>
     <label class="lbl">از کی گرفتی؟ (شرکت / اسم پیمانکار)</label>
     <input class="inp" id="r-source">
@@ -260,8 +265,9 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
     <input class="inp" id="r-desc">
     <div class="rowbtns" style="margin-top:14px">
       <button class="btn btn-p" id="r-save" onclick="saveRecv()">ثبت ✅</button>
-      <button class="btn btn-g" id="r-cancel" style="display:none" onclick="cancelRecvEdit()">انصراف</button>
+      <button class="btn btn-g" onclick="closeRecv()">بستن</button>
     </div>
+  </div>
   </div>
   <div class="card">
     <div class="proj-name">📊 جمع دریافتی‌ها</div>
@@ -275,7 +281,9 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
 
 <!-- ─── Tab 6: costs ─── -->
 <section id="pg-costs" class="page">
-  <div class="card">
+  <div class="card" style="padding:12px"><button class="btn btn-p" onclick="openCost()">➕ ثبت هزینه</button></div>
+  <div class="overlay" id="costOverlay" onclick="if(event.target===this)closeCost()">
+  <div class="sheet">
     <div class="proj-name" id="c-title">🧰 ثبت هزینه</div>
     <div class="grid2">
       <div><label class="lbl">دسته</label><select class="inp" id="c-cat"><option selected>غذا</option><option>مصالح</option><option>کرایه حمل</option><option>ابزار</option><option>متفرقه</option></select></div>
@@ -289,8 +297,9 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
     <input class="inp" id="c-desc" autocomplete="off">
     <div class="rowbtns" style="margin-top:14px">
       <button class="btn btn-p" id="c-save" onclick="saveCost()">ثبت ✅</button>
-      <button class="btn btn-g" id="c-cancel" style="display:none" onclick="cancelCostEdit()">انصراف</button>
+      <button class="btn btn-g" onclick="closeCost()">بستن</button>
     </div>
+  </div>
   </div>
   <div class="card">
     <div class="proj-name">📊 جمع هزینه‌ها</div>
@@ -685,7 +694,7 @@ function monthKey(d){const m=enD(d).match(/(\d{4})\/(\d{1,2})/);if(!m)return '';
 function recvSum(pid){return (S.receipts||[]).filter(r=>(r.pid||'')===pid).reduce((a,r)=>a+(+r.amount||0),0);}
 function projSearch(v){projQ=enD(v||'').trim();renderProjects();}
 function detSearch(v){detQ=enD(v||'').trim();renderDetail();}
-function openRecvFor(pid){recvPrefillPid=pid||'';go('recv');}
+function openRecvFor(pid){recvPrefillPid=pid||'';go('recv');openRecv();}
 function renderMonthly(){
   const box=document.getElementById('monthBox');if(!box)return;
   const M={};
@@ -983,6 +992,8 @@ function saveWage(){
   }
   cancelWageEdit();save();renderAll();toast('ثبت شد ✅');
 }
+function openWage(){cancelWageEdit();document.getElementById('wageOverlay').classList.add('open');}
+function closeWage(){cancelWageEdit();document.getElementById('wageOverlay').classList.remove('open');}
 function editWage(id){
   const w=S.wages.find(x=>x.id===id);if(!w)return;
   wageEditId=id;
@@ -992,8 +1003,7 @@ function editWage(id){
   document.getElementById('w-desc').value=w.desc||'';
   document.getElementById('w-title').textContent='✏️ ویرایش پرداختی';
   document.getElementById('w-save').textContent='ذخیره ✅';
-  document.getElementById('w-cancel').style.display='';
-  window.scrollTo(0,0);
+  document.getElementById('wageOverlay').classList.add('open');
 }
 function cancelWageEdit(){
   wageEditId=null;
@@ -1003,7 +1013,7 @@ function cancelWageEdit(){
   document.getElementById('w-desc').value='';
   document.getElementById('w-title').textContent='💰 ثبت پرداختی';
   document.getElementById('w-save').textContent='ثبت ✅';
-  document.getElementById('w-cancel').style.display='none';
+  document.getElementById('wageOverlay').classList.remove('open');
 }
 function delWage(id){
   if(!confirm('این پرداخت پاک شه؟'))return;
@@ -1053,6 +1063,8 @@ function saveRecv(){
   cancelRecvEdit();save();renderAll();renderRecv();
   toast('ثبت شد ✅');
 }
+function openRecv(){const keep=recvPrefillPid;cancelRecvEdit();recvPrefillPid=keep;renderRecv();document.getElementById('recvOverlay').classList.add('open');}
+function closeRecv(){cancelRecvEdit();document.getElementById('recvOverlay').classList.remove('open');}
 function editRecv(rid){
   const r=(S.receipts||[]).find(x=>x.id===rid);if(!r)return;
   recvEditId=rid;
@@ -1064,8 +1076,7 @@ function editRecv(rid){
   document.getElementById('r-desc').value=r.desc||'';
   document.getElementById('r-title').textContent='✏️ ویرایش دریافتی';
   document.getElementById('r-save').textContent='ذخیره ✅';
-  document.getElementById('r-cancel').style.display='';
-  window.scrollTo(0,0);
+  document.getElementById('recvOverlay').classList.add('open');
 }
 function cancelRecvEdit(){
   recvEditId=null;recvPrefillPid='';
@@ -1076,7 +1087,7 @@ function cancelRecvEdit(){
   document.getElementById('r-desc').value='';
   document.getElementById('r-title').textContent='💵 ثبت دریافتی';
   document.getElementById('r-save').textContent='ثبت ✅';
-  document.getElementById('r-cancel').style.display='none';
+  document.getElementById('recvOverlay').classList.remove('open');
 }
 function delRecv(rid){
   if(!confirm('این دریافتی پاک شه؟'))return;
@@ -1122,6 +1133,8 @@ function saveCost(){
   cancelCostEdit();save();renderAll();renderCosts();
   toast('ثبت شد ✅');
 }
+function openCost(){cancelCostEdit();renderCosts();document.getElementById('costOverlay').classList.add('open');}
+function closeCost(){cancelCostEdit();document.getElementById('costOverlay').classList.remove('open');}
 function editCost(id){
   const c=(S.costs||[]).find(x=>x.id===id);if(!c)return;
   costEditId=id;
@@ -1133,8 +1146,7 @@ function editCost(id){
   document.getElementById('c-desc').value=c.desc||'';
   document.getElementById('c-title').textContent='✏️ ویرایش هزینه';
   document.getElementById('c-save').textContent='ذخیره ✅';
-  document.getElementById('c-cancel').style.display='';
-  window.scrollTo(0,0);
+  document.getElementById('costOverlay').classList.add('open');
 }
 function cancelCostEdit(){
   costEditId=null;
@@ -1144,7 +1156,7 @@ function cancelCostEdit(){
   document.getElementById('c-desc').value='';
   document.getElementById('c-title').textContent='🧰 ثبت هزینه';
   document.getElementById('c-save').textContent='ثبت ✅';
-  document.getElementById('c-cancel').style.display='none';
+  document.getElementById('costOverlay').classList.remove('open');
 }
 function delCost(id){
   if(!confirm('این هزینه پاک شه؟'))return;
