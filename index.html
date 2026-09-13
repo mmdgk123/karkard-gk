@@ -186,6 +186,16 @@ body>*{position:relative;z-index:1}
 /* Theme toggle hover */
 .theme-toggle{transition:transform .2s,border-color .2s,box-shadow .2s}
 .theme-toggle:hover{border-color:var(--gold);box-shadow:0 0 14px -2px rgba(255,200,87,.4)}
+/* ── v41 overflow fix: long amounts never escape cards ── */
+.proj-head{flex-wrap:wrap;row-gap:6px;gap:8px}
+.proj-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.proj-amt{flex-shrink:0;white-space:nowrap;font-size:clamp(13px,3.8vw,15px)}
+.proj-rem{flex-shrink:0;white-space:nowrap}
+.proj-stats{display:flex}
+.stat{min-width:0;overflow:hidden}
+.stat .n{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:clamp(11px,3.6vw,15px)}
+#allBox,.inv-paper{overflow-x:auto}
+.inv-table td,.inv-table th{white-space:nowrap}
 /* Search input icon glow on focus */
 #projSearch:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,200,87,.15)}
 @media (prefers-reduced-motion:reduce){body::before,.btn-p::after,.fab{animation:none!important}}
@@ -194,7 +204,7 @@ body>*{position:relative;z-index:1}
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v40</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v41</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
   <a class="creator-top" href="https://t.me/mmdGK" target="_blank" rel="noopener">👨‍💻 سازنده: <b>mmdGK</b></a>
 </div>
 
