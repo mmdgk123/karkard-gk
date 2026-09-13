@@ -193,6 +193,8 @@ body>*{position:relative;z-index:1}
 .proj-rem{flex-shrink:0;white-space:nowrap}
 .proj-stats{display:flex}
 .stat{min-width:0;overflow:hidden}
+.stat.wide{flex:1 1 100%;padding:12px 10px;background:linear-gradient(135deg,rgba(255,200,87,.10),transparent),var(--card2);border-color:rgba(255,200,87,.35)}
+.stat.wide .n{font-size:20px;color:var(--gold)}
 .stat .n{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:clamp(11px,3.6vw,15px)}
 #allBox,.inv-paper{overflow-x:auto}
 .inv-table td,.inv-table th{white-space:nowrap}
@@ -204,7 +206,7 @@ body>*{position:relative;z-index:1}
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v41</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">v42</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
   <a class="creator-top" href="https://t.me/mmdGK" target="_blank" rel="noopener">👨‍💻 سازنده: <b>mmdGK</b></a>
 </div>
 
@@ -766,8 +768,8 @@ function renderProjects(){
     return `<div class="card proj-card" onclick="openProject('${p.id}')">
       <div class="proj-head"><div class="proj-name">🏗️ ${faD(p.name)}</div></div>
       <div class="proj-stats">
-        <div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>
-        <div class="stat"><div class="n">${faN(t.m)}</div><div class="t">متر</div></div>
+        ${t.pages>0?`<div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>`:''}
+        ${t.m>0?`<div class="stat"><div class="n">${faN(t.m)}</div><div class="t">متر</div></div>`:''}
         ${(t.hours||0)>0?`<div class="stat"><div class="n">${faD(String(t.hours))}</div><div class="t">⏱️ ساعت</div></div>`:''}
         <div class="stat"><div class="n">${faN(p.entries.length)}</div><div class="t">📝 ثبت</div></div>
       </div>
@@ -802,14 +804,15 @@ function renderDetail(){
       <div class="proj-head"><div class="proj-name">🏗️ ${faD(p.name)}</div><div class="proj-amt">${amtD(t)} تومان</div></div>
       <div style="font-size:12px;color:var(--text2);margin-top:6px">💰 ${priceLine(p)}</div>
       <div class="proj-stats">
-        <div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>
-        <div class="stat"><div class="n">${faN(t.m)}</div><div class="t">متر</div></div>
+        ${t.pages>0?`<div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>`:''}
+        ${t.m>0?`<div class="stat"><div class="n">${faN(t.m)}</div><div class="t">متر</div></div>`:''}
         ${(t.hours||0)>0?`<div class="stat"><div class="n">${faD(String(t.hours))}</div><div class="t">⏱️ ساعت</div></div>`:''}
-        <div class="stat"><div class="n">${amtD(t)}</div><div class="t">💰 مبلغ کار</div></div>
-        <div class="stat"><div class="n">${faN(rc)}</div><div class="t">💵 دریافتی</div></div>
-        <div class="stat"><div class="n">${balD}</div><div class="t">📌 مانده</div></div>
-        <div class="stat"><div class="n">${faN(pc)}</div><div class="t">🧰 هزینه</div></div>
-        <div class="stat"><div class="n">${profit}</div><div class="t">سود پروژه</div></div>
+        ${t.amt>0?`<div class="stat wide"><div class="n">💰 ${amtD(t)} تومان</div><div class="t">مبلغ کار</div></div>`:''}
+        ${rc>0?`<div class="stat"><div class="n">${faN(rc)} تومان</div><div class="t">💵 دریافتی</div></div>`:''}
+        ${t.amt>0?`<div class="stat wide"><div class="n">📌 ${balD}</div><div class="t">مانده</div></div>`:''}
+        ${pc>0?`<div class="stat"><div class="n">${faN(pc)} تومان</div><div class="t">🧰 هزینه</div></div>`:''}
+        ${t.amt>0?`<div class="stat"><div class="n">${profit}</div><div class="t">سود پروژه</div></div>`:''}
+        ${(t.pages||t.m||t.hours||t.amt)?'':`<div class="stat"><div class="n">${faN(p.entries.length)}</div><div class="t">📝 ثبت</div></div>`}
       </div>
       <div class="rowbtns">
         <button class="btn btn-g" onclick="openRecvFor('${p.id}')">💵 ثبت دریافتی</button>
