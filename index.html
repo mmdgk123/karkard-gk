@@ -361,12 +361,12 @@ body>*{position:relative;z-index:1}
 <!-- new project sheet -->
 <div class="overlay" id="projOverlay" onclick="if(event.target===this)closeProj()">
   <div class="sheet">
-    <h3>➕ پروژه جدید</h3>
+    <h3 id="projSheetTitle">➕ پروژه جدید</h3>
     <label class="lbl">اسم پروژه</label>
     <input class="inp" id="np-name" autocomplete="off" onkeydown="if(event.key==='Enter')addProject()">
     <div style="font-size:12px;color:var(--text2);margin-top:8px">قیمت‌ها رو داخل خود پروژه ثبت می‌کنی — هر صفحه = ۳ متر.</div>
     <div class="rowbtns" style="margin-top:16px">
-      <button class="btn btn-p" onclick="addProject()">ساختن پروژه</button>
+      <button class="btn btn-p" id="projSheetBtn" onclick="addProject()">ساختن پروژه</button>
       <button class="btn btn-g" onclick="closeProj()">بستن</button>
     </div>
   </div>
@@ -691,14 +691,20 @@ function fabTap(){
   if(document.getElementById('pg-wages').classList.contains('active')){openWage();return;}
   if(document.getElementById('pg-recv').classList.contains('active')){openRecv();return;}
   if(document.getElementById('pg-costs').classList.contains('active')){openCost();return;}
+  renamePid=null;
+  document.getElementById('projSheetTitle').textContent='➕ پروژه جدید';
+  document.getElementById('projSheetBtn').textContent='ساختن پروژه';
   document.getElementById('np-name').value='';
   document.getElementById('projOverlay').classList.add('open');
   setTimeout(()=>{const el=document.getElementById('np-name');if(el)el.focus();},300);
 }
-function closeProj(){document.getElementById('projOverlay').classList.remove('open');}
+let renamePid=null;
+function closeProj(){document.getElementById('projOverlay').classList.remove('open');renamePid=null;}
+function openRename(pid){const p=S.projects.find(x=>x.id===pid);if(!p)return;renamePid=pid;document.getElementById('projSheetTitle').textContent='✏️ ویرایش اسم پروژه';document.getElementById('projSheetBtn').textContent='ذخیره';document.getElementById('np-name').value=p.name;document.getElementById('projOverlay').classList.add('open');setTimeout(()=>{const el=document.getElementById('np-name');if(el){el.focus();el.select();}},300);}
 function addProject(){
   const name=document.getElementById('np-name').value.trim();
   if(!name){toast('اسم پروژه رو بنویس');return;}
+  if(renamePid){const p=S.projects.find(x=>x.id===renamePid);if(p)p.name=name;const rp=renamePid;renamePid=null;document.getElementById('np-name').value='';closeProj();save();renderAll();if(curPid===rp)renderDetail();toast('اسم عوض شد ✅');return;}
   const p={id:uid(),name,prices:blankPrices(),entries:[]};
   S.projects.push(p);
   document.getElementById('np-name').value='';
@@ -801,7 +807,7 @@ function renderDetail(){
     <div class="ops"><button class="op-edit" onclick="openSheet('edit','${p.id}','${e.id}')">✏️</button><button class="op-del" onclick="delEntry('${p.id}','${e.id}')">🗑️</button></div></div>`;
   }).join('');
   box.innerHTML=`<div class="card">
-      <div class="proj-head"><div class="proj-name">🏗️ ${faD(p.name)}</div><div class="proj-amt">${amtD(t)} تومان</div></div>
+      <div class="proj-head"><div class="proj-name">🏗️ ${faD(p.name)} <button class="op-edit" style="font-size:15px" onclick="openRename('${p.id}')">✏️</button></div><div class="proj-amt">${amtD(t)} تومان</div></div>
       <div style="font-size:12px;color:var(--text2);margin-top:6px">💰 ${priceLine(p)}</div>
       <div class="proj-stats">
         ${t.pages>0?`<div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>`:''}
