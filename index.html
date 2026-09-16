@@ -17,17 +17,17 @@
 [data-theme="light"]{--bg:#f2f3f7;--bg2:#ffffff;--card:rgba(0,0,0,.03);--card2:rgba(0,0,0,.05);--border:rgba(0,0,0,.08);--text:#1a1d2e;--text2:#6b7085;--green:#0da672;--gold:#c9940a;--blue:#3d63d8;--red:#d6335a;--nav-bg:rgba(242,243,247,.94);--fab-grad:linear-gradient(145deg,#ff5f7d,#d01845)}
 html{background:var(--bg)}
 body{font-family:'IRANSansX',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:120px;direction:rtl;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
-.page{display:none;padding:0 16px;animation:fadeUp .25s ease}
+.page{display:none;padding:6px 16px 0;scroll-margin-top:70px;animation:fadeUp .25s ease}
 .page.active{display:block}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.header{padding:20px 16px 12px;position:sticky;top:0;z-index:20;background:linear-gradient(180deg,var(--bg) 72%,transparent)}
+.header{padding:calc(6px + env(safe-area-inset-top)) 16px 6px;position:sticky;top:0;z-index:20;background:linear-gradient(180deg,var(--bg) 72%,transparent)}
 .header-row{display:flex;justify-content:space-between;align-items:center}
-.header h1{font-size:24px;font-weight:1000}
+.header h1{font-size:20px;font-weight:1000}
 .header h1 span{color:var(--gold)}
 .theme-toggle{width:40px;height:40px;border-radius:14px;border:1.5px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px}
 .theme-toggle:active{transform:scale(.9)}
 .ver{font-size:10px;font-weight:700;color:var(--gold);border:1px solid var(--gold);border-radius:99px;padding:2px 9px;opacity:.9;white-space:nowrap}
-.creator-top{display:block;width:fit-content;margin:8px auto 0;font-size:10px;font-weight:600;color:var(--text2);opacity:.8;text-decoration:none;background:var(--card);border:1px solid var(--border);border-radius:99px;padding:3px 12px;white-space:nowrap}
+.creator-top{display:block;width:fit-content;margin:6px auto 0;font-size:10px;font-weight:600;color:var(--text2);opacity:.8;text-decoration:none;background:var(--card);border:1px solid var(--border);border-radius:99px;padding:2px 12px;white-space:nowrap}
 .creator-top b{color:var(--gold);font-weight:800}
 .card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;margin-bottom:12px}
 .proj-card{cursor:pointer}
@@ -147,7 +147,11 @@ body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;
 /* Ambient gold aura */
 body::before{content:'';position:fixed;top:-120px;right:-80px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(255,200,87,.09),transparent 65%);pointer-events:none;z-index:0}
 body>*{position:relative;z-index:1}
-.bottomnav,.fab,.overlay,.toast{z-index:30}
+/* ── header/sheet layering: sheets & modals always above header ── */
+.header{z-index:20}
+.bottomnav,.fab{z-index:30}
+.overlay{z-index:50}
+.toast{z-index:99}
 /* Frosted header + gold title */
 .header{background:linear-gradient(180deg,var(--bg) 55%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .header h1{background:linear-gradient(135deg,var(--text) 30%,var(--gold) 90%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
@@ -206,7 +210,7 @@ body>*{position:relative;z-index:1}
 <body>
 
 <div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">1.0</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
+  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">1.1</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
   <a class="creator-top" href="https://t.me/mmdGK" target="_blank" rel="noopener">👨‍💻 سازنده: <b>mmdGK</b></a>
 </div>
 
