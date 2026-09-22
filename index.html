@@ -376,6 +376,18 @@ body>*{position:relative;z-index:1}
   </div>
 </div>
 
+<!-- pin/long-press menu -->
+<div class="overlay" id="pinOverlay" onclick="if(event.target===this)closePinMenu()">
+  <div class="sheet">
+    <h3>📌 <span id="pinProjName"></span></h3>
+    <div style="font-size:12px;color:var(--text2);margin-top:4px" id="pinHint">با نگه‌داشتن روی پروژه این منو باز می‌شه</div>
+    <div class="rowbtns" style="margin-top:16px">
+      <button class="btn btn-p" id="pinToggleBtn" onclick="togglePin()"></button>
+      <button class="btn btn-g" onclick="closePinMenu()">بستن</button>
+    </div>
+  </div>
+</div>
+
 <!-- quick add / edit sheet -->
 <div class="overlay" id="overlay" onclick="if(event.target===this)closeSheet()">
   <div class="sheet">
@@ -773,12 +785,12 @@ function renderProjects(){
   const box=document.getElementById('projList');
   if(!S.projects.length){box.innerHTML='<div class="empty">هنوز پروژه‌ای نداری — از تب ➕ بساز 👇</div>';return;}
   const q=(projQ||'').toLowerCase();
-  const list=S.projects.filter(p=>!q||enD(p.name).toLowerCase().includes(q));
+  const list=S.projects.filter(p=>!q||enD(p.name).toLowerCase().includes(q)).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
   if(!list.length){box.innerHTML='<div class="empty">پروژه‌ای پیدا نشد 🔍</div>';return;}
   box.innerHTML=list.map(p=>{
     const t=totals(p);
-    return `<div class="card proj-card" onclick="openProject('${p.id}')">
-      <div class="proj-head"><div class="proj-name">🏗️ ${faD(p.name)}</div></div>
+    return `<div class="card proj-card" data-pid="${p.id}" onclick="openProject('${p.id}')">
+      <div class="proj-head"><div class="proj-name">${p.pinned?'📌 ':' '}🏗️ ${faD(p.name)}</div></div>
       <div class="proj-stats">
         ${t.pages>0?`<div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>`:''}
         ${t.meter>0?`<div class="stat"><div class="n">${faN(t.meter)}</div><div class="t">📐 متر روکار</div></div>`:''}
@@ -789,6 +801,35 @@ function renderProjects(){
     </div>`;
   }).join('');
 }
+
+/* ─── long-press pin menu ─── */
+let pinPid=null,lpTimer=null,lpFired=false,lpX=0,lpY=0;
+function openPinMenu(pid){
+  const p=S.projects.find(x=>x.id===pid); if(!p)return;
+  pinPid=pid;
+  document.getElementById('pinProjName').textContent=faD(p.name);
+  document.getElementById('pinToggleBtn').textContent=p.pinned?'❌ پین رو بردار':'📌 پین کن (همیشه بالای لیست)';
+  document.getElementById('pinOverlay').classList.add('open');
+}
+function closePinMenu(){document.getElementById('pinOverlay').classList.remove('open');pinPid=null;}
+function togglePin(){
+  const p=S.projects.find(x=>x.id===pinPid); if(!p)return;
+  p.pinned=!p.pinned; save(); closePinMenu(); renderProjects();
+  toast(p.pinned?'پین شد 📌 بالای لیست':'پین برداشته شد');
+}
+(function(){
+  const box=document.getElementById('projList'); if(!box||box._lp)return; box._lp=1;
+  function lpUp(){clearTimeout(lpTimer);lpTimer=null;}
+  box.addEventListener('pointerdown',e=>{
+    const card=e.target.closest&&e.target.closest('.proj-card'); if(!card)return;
+    lpFired=false;lpX=e.clientX;lpY=e.clientY;
+    lpUp();
+    lpTimer=setTimeout(()=>{lpFired=true;if(navigator.vibrate)navigator.vibrate(25);openPinMenu(card.getAttribute('data-pid'));},500);
+  });
+  box.addEventListener('pointermove',e=>{if(lpTimer&&(Math.abs(e.clientX-lpX)>10||Math.abs(e.clientY-lpY)>10))lpUp();});
+  ['pointerup','pointercancel','pointerleave'].forEach(ev=>box.addEventListener(ev,lpUp));
+  box.addEventListener('click',e=>{if(lpFired){lpFired=false;e.stopPropagation();e.preventDefault();}},true);
+})();
 
 /* ─── detail ─── */
 function openProject(pid){
