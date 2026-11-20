@@ -45,7 +45,7 @@ function buildEntryItems(vals) {
   if (!p) { box.innerHTML = ''; return; }
   const v = vals || {};
   box.innerHTML = ITEM_KEYS.map(k => `<div class="field"><label class="label">${ITEMS[k].icon} ${ITEMS[k].label} (${ITEMS[k].unit})</label>` +
-    `<input class="input" id="si-${k}" inputmode="text" autocomplete="off" placeholder="۰" value="${v[k] ? dec(v[k]) : ''}" oninput="updateEntryPreview()"></div>`).join('');
+    `<input class="input" id="si-${k}" inputmode="decimal" autocomplete="off" placeholder="۰" value="${v[k] ? dec(v[k]) : ''}" oninput="updateEntryPreview()"></div>`).join('');
 }
 function readEntryForm() {
   const f = {

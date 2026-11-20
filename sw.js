@@ -1,5 +1,5 @@
 // کارکرد — سرویس‌ورکر: شبکه اول، و کش برای کار آفلاین
-const CACHE = 'karkard-v3';
+const CACHE = 'karkard-v4';
 const CORE = ['./', './index.html', './css/app.css', './js/util.js', './js/store.js', './js/ui.js', './js/views.js', './js/app.js', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {

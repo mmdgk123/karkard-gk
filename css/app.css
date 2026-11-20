@@ -20,7 +20,7 @@
 
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg)}
-body{font-family:'Vazirmatn',system-ui,-apple-system,sans-serif;color:var(--text);min-height:100vh;padding-bottom:calc(112px + env(safe-area-inset-bottom));direction:rtl;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .3s,color .3s}
+body{font-family:'Vazirmatn',system-ui,-apple-system,sans-serif;color:var(--text);min-height:100vh;padding-bottom:calc(112px + env(safe-area-inset-bottom));direction:rtl;-webkit-font-smoothing:antialiased;overflow-x:hidden;touch-action:manipulation;transition:background .3s,color .3s}
 body.lock{overflow:hidden}
 button,input,select,textarea{font-family:inherit;color:inherit}
 button{cursor:pointer;border:0;background:none}

@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl" data-theme="dark" data-accent="gold">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover,interactive-widget=resizes-content">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -113,11 +113,11 @@ try{
     <div class="field" id="seProjWrap"><label class="label">پروژه</label><select class="input" id="seProj" onchange="buildEntryItems();updateEntryPreview()"></select></div>
     <div class="field"><label class="label">تاریخ</label><input class="input" id="seDate" readonly onclick="openCal(this)"></div>
     <div class="grid2">
-      <div class="field"><label class="label">تعداد صفحه</label><input class="input" id="sePages" inputmode="text" placeholder="۰" autocomplete="off" oninput="updateEntryPreview()"></div>
-      <div class="field"><label class="label">متراژ روکار (متر)</label><input class="input" id="seMeter" inputmode="text" placeholder="۰" autocomplete="off" oninput="updateEntryPreview()"></div>
+      <div class="field"><label class="label">تعداد صفحه</label><input class="input" id="sePages" inputmode="numeric" placeholder="۰" autocomplete="off" oninput="updateEntryPreview()"></div>
+      <div class="field"><label class="label">متراژ روکار (متر)</label><input class="input" id="seMeter" inputmode="decimal" placeholder="۰" autocomplete="off" oninput="updateEntryPreview()"></div>
     </div>
     <div class="grid2">
-      <div class="field"><label class="label">ساعت کار</label><input class="input" id="seHours" inputmode="text" placeholder="۰" autocomplete="off" oninput="updateEntryPreview()"></div>
+      <div class="field"><label class="label">ساعت کار</label><input class="input" id="seHours" inputmode="decimal" placeholder="۰" autocomplete="off" oninput="updateEntryPreview()"></div>
       <div class="field"><label class="label">متراژ کل</label><input class="input ro" id="seArea" readonly tabindex="-1" value="۰ متر"></div>
     </div>
     <div class="item-grid" id="seItems"></div>
@@ -139,16 +139,16 @@ try{
     <div class="sheet-head"><h3 id="ppTitle">قیمت‌های پروژه</h3><button class="icon-btn sm" onclick="closeSheet('sh-prices')">✕</button></div>
     <p class="hint">یک‌بار قیمت بده؛ خودکار روی همه ثبت‌های این پروژه حساب می‌شه.</p>
     <div class="grid2">
-      <div class="field"><label class="label">هر متر کناف</label><input class="input money" id="ppMeter" inputmode="text" autocomplete="off" oninput="pricesPreview()"></div>
-      <div class="field"><label class="label">هر متر لاین نوری</label><input class="input money" id="ppLinear" inputmode="text" autocomplete="off" oninput="pricesPreview()"></div>
+      <div class="field"><label class="label">هر متر کناف</label><input class="input money" id="ppMeter" inputmode="numeric" autocomplete="off" oninput="pricesPreview()"></div>
+      <div class="field"><label class="label">هر متر لاین نوری</label><input class="input money" id="ppLinear" inputmode="numeric" autocomplete="off" oninput="pricesPreview()"></div>
     </div>
     <div class="grid2">
-      <div class="field"><label class="label">هر دریچه کولر</label><input class="input money" id="ppCooler" inputmode="text" autocomplete="off" oninput="pricesPreview()"></div>
-      <div class="field"><label class="label">هر دریچه لوستر</label><input class="input money" id="ppChand" inputmode="text" autocomplete="off" oninput="pricesPreview()"></div>
+      <div class="field"><label class="label">هر دریچه کولر</label><input class="input money" id="ppCooler" inputmode="numeric" autocomplete="off" oninput="pricesPreview()"></div>
+      <div class="field"><label class="label">هر دریچه لوستر</label><input class="input money" id="ppChand" inputmode="numeric" autocomplete="off" oninput="pricesPreview()"></div>
     </div>
     <div class="grid2">
-      <div class="field"><label class="label">هر هالوژن</label><input class="input money" id="ppHalogen" inputmode="text" autocomplete="off" oninput="pricesPreview()"></div>
-      <div class="field"><label class="label">دستمزد هر ساعت</label><input class="input money" id="ppHour" inputmode="text" autocomplete="off" oninput="pricesPreview()"></div>
+      <div class="field"><label class="label">هر هالوژن</label><input class="input money" id="ppHalogen" inputmode="numeric" autocomplete="off" oninput="pricesPreview()"></div>
+      <div class="field"><label class="label">دستمزد هر ساعت</label><input class="input money" id="ppHour" inputmode="numeric" autocomplete="off" oninput="pricesPreview()"></div>
     </div>
     <div class="live"><span>ارزش فعلی کار این پروژه</span><b id="ppPreview">—</b></div>
     <div class="row-btns">
@@ -163,7 +163,7 @@ try{
   <div class="sheet">
     <div class="handle"></div>
     <div class="sheet-head"><h3 id="srTitle">ثبت دریافتی</h3><button class="icon-btn sm" onclick="closeSheet('sh-receipt')">✕</button></div>
-    <div class="field"><label class="label">مبلغ (تومان) <span class="req">*</span></label><input class="input big money" id="srAmount" inputmode="text" autocomplete="off" placeholder="۰"></div>
+    <div class="field"><label class="label">مبلغ (تومان) <span class="req">*</span></label><input class="input big money" id="srAmount" inputmode="numeric" autocomplete="off" placeholder="۰"></div>
     <div class="field"><label class="label">از کی گرفتی</label><input class="input" id="srSource" placeholder="اسم کارفرما / شرکت" autocomplete="off"></div>
     <div class="field"><label class="label">پروژه</label><select class="input" id="srProj"></select></div>
     <div class="grid2">
@@ -184,7 +184,7 @@ try{
   <div class="sheet">
     <div class="handle"></div>
     <div class="sheet-head"><h3 id="scTitle">ثبت هزینه</h3><button class="icon-btn sm" onclick="closeSheet('sh-cost')">✕</button></div>
-    <div class="field"><label class="label">مبلغ (تومان) <span class="req">*</span></label><input class="input big money" id="scAmount" inputmode="text" autocomplete="off" placeholder="۰"></div>
+    <div class="field"><label class="label">مبلغ (تومان) <span class="req">*</span></label><input class="input big money" id="scAmount" inputmode="numeric" autocomplete="off" placeholder="۰"></div>
     <div class="field"><label class="label">دسته</label>
       <div class="chips" id="scCats"></div>
       <div class="inline-add"><input class="input" id="scNewCat" placeholder="دسته جدید..." autocomplete="off"><button class="btn btn-soft btn-sm" onclick="addCostCatInline()">افزودن</button></div>
@@ -224,7 +224,7 @@ try{
     <div class="handle"></div>
     <div class="sheet-head"><h3 id="swTitle">ثبت پرداخت</h3><button class="icon-btn sm" onclick="closeSheet('sh-wage')">✕</button></div>
     <div class="field"><label class="label">کارگر <span class="req">*</span></label><select class="input" id="swStaff"></select></div>
-    <div class="field"><label class="label">مبلغ (تومان) <span class="req">*</span></label><input class="input big money" id="swAmount" inputmode="text" autocomplete="off" placeholder="۰"></div>
+    <div class="field"><label class="label">مبلغ (تومان) <span class="req">*</span></label><input class="input big money" id="swAmount" inputmode="numeric" autocomplete="off" placeholder="۰"></div>
     <div class="field"><label class="label">نوع پرداخت</label>
       <div class="seg" id="swKind">
         <button class="on" data-v="salary" onclick="pickSeg(this)">دستمزد</button>
