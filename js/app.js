@@ -7,11 +7,12 @@ const PRICE_IDS = { meter: 'ppMeter', linear: 'ppLinear', cooler: 'ppCooler', ch
 function moneyVal(n) { return n > 0 ? faD(sep(String(Math.round(n)))) : ''; }
 function defaultPid() {
   if (ST.page === 'project' && findP(ST.pid)) return ST.pid;
-  return S.projects[0] ? S.projects[0].id : '';
+  const ps = sortedProjects();
+  return ps[0] ? ps[0].id : '';
 }
 function projOptions(withGeneral) {
   const head = withGeneral ? '<option value="">عمومی (بدون پروژه)</option>' : '';
-  return head + S.projects.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
+  return head + sortedProjects().map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
 }
 function fillSelect(id, html, value) {
   const el = $(id);
@@ -350,7 +351,7 @@ function saveProject() {
   if (p) {
     Object.assign(p, rec);
   } else {
-    const np = Object.assign({ id: uid(), pinned: false, prices: blankPrices(), entries: [] }, rec);
+    const np = Object.assign({ id: uid(), created: Date.now(), pinned: false, prices: blankPrices(), entries: [] }, rec);
     S.projects.push(np);
     ST.pid = np.id;
   }

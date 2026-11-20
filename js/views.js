@@ -72,7 +72,7 @@ function renderDashboard() {
     return;
   }
   const g = globalStats();
-  const active = S.projects.filter(p => p.status === 'active');
+  const active = sortedProjects().filter(p => p.status === 'active');
   ST.feed = activityFeed(8);
   el.innerHTML = `
     <section class="hero">
@@ -113,10 +113,9 @@ function renderProjectList() {
     return;
   }
   const q = ST.pq;
-  const list = S.projects
+  const list = sortedProjects()
     .filter(p => (ST.pfilter === 'all' || p.status === ST.pfilter) &&
-      (!q || [p.name, p.client, p.address].some(x => toEn(x).toLowerCase().includes(q))))
-    .sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+      (!q || [p.name, p.client, p.address].some(x => toEn(x).toLowerCase().includes(q))));
   box.innerHTML = list.length ? list.map(projectCard).join('') : emptyBox('🔍', 'پروژه‌ای پیدا نشد', '');
 }
 
@@ -241,7 +240,7 @@ function renderMoney() {
 /* ─── گزارش ─── */
 function renderReports() {
   const g = globalStats();
-  const rows = S.projects.map(p => {
+  const rows = sortedProjects().map(p => {
     const st = projStats(p);
     return `<tr onclick="go('project','${p.id}')"><td>${esc(p.name)}</td><td>${dec(st.area)}</td>` +
       `<td>${st.priced ? faN(st.amount) : '—'}</td><td>${faN(st.received)}</td>` +

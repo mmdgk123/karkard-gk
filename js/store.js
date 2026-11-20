@@ -42,12 +42,15 @@ function normalize(raw) {
   d.settings = Object.assign({ theme: 'dark', accent: 'gold', welcomed: true }, raw.settings || {});
   if (!['dark', 'light', 'auto'].includes(d.settings.theme)) d.settings.theme = 'dark';
 
-  d.projects = raw.projects.map(p => {
+  d.projects = raw.projects.map((p, i) => {
     const pr = blankPrices(); const src = p.prices || {};
     PRICE_KEYS.forEach(k => pr[k] = num(src[k]));
     if (!pr.meter && num(src.page) > 0) pr.meter = Math.round(num(src.page) / 3); // نسخه‌های خیلی قدیمی
     return {
-      id: p.id || uid(), name: String(p.name || '').trim() || 'بی‌نام',
+      id: p.id || uid(),
+      // ترتیب نمایش: جدیدترین بالا. داده‌ی قدیمی تاریخ ساخت نداره، از ترتیب ذخیره‌ش شناخته می‌شه
+      created: num(p.created) || (Date.now() - (raw.projects.length - i) * 1000),
+      name: String(p.name || '').trim() || 'بی‌نام',
       client: String(p.client || ''), phone: String(p.phone || ''), address: String(p.address || ''),
       start: toEn(p.start || ''), status: p.status === 'done' ? 'done' : 'active',
       note: String(p.note || ''), pinned: !!p.pinned, prices: pr,
@@ -113,6 +116,13 @@ function save() {
 /* ─── دسترسی و کمکی‌ها ─── */
 const sumBy = (arr, fn) => arr.reduce((a, x) => a + (+fn(x) || 0), 0);
 const findP = id => S.projects.find(p => p.id === id);
+/* پین‌شده‌ها بالا، بعد جدیدترین‌ها به قدیمی‌تر */
+function projectSort(a, b) {
+  const pa = a.pinned ? 1 : 0, pb = b.pinned ? 1 : 0;
+  if (pa !== pb) return pb - pa;
+  return (+b.created || 0) - (+a.created || 0);
+}
+function sortedProjects() { return S.projects.slice().sort(projectSort); }
 const findStaff = id => S.staff.find(s => s.id === id);
 const projName = pid => { const p = findP(pid); return p ? p.name : ''; };
 const staffName = sid => { const s = findStaff(sid); return s ? s.name : 'نامشخص'; };
@@ -230,7 +240,7 @@ function demoData() {
   const d = blankData();
   d.settings.welcomed = true;
   const p = {
-    id: uid(), name: 'ویلای نمونه', client: 'آقای رضایی', phone: '', address: '', start: '1405/05/01',
+    id: uid(), created: Date.now(), name: 'ویلای نمونه', client: 'آقای رضایی', phone: '', address: '', start: '1405/05/01',
     status: 'active', note: '', pinned: true,
     prices: { meter: 220000, cooler: 100000, chand: 100000, halogen: 0, linear: 0, hour: 0 },
     entries: [

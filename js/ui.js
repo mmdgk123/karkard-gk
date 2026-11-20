@@ -138,3 +138,11 @@ document.addEventListener('input', e => {
     t.value = n > 0 ? faD(sep(String(Math.round(n)))) : '';
   }
 });
+
+/* جلوگیری از زوم خودکار iOS وقتی کیبورد باز می‌شه (فونت زیر ۱۶ پیکسل زوم می‌کنه) */
+document.addEventListener('focusin', e => {
+  const t = e.target;
+  if (!t || !t.tagName || !/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)) return;
+  const fs = parseFloat(window.getComputedStyle(t).fontSize) || 0;
+  if (fs < 16) t.style.fontSize = '16px';
+});

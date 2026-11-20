@@ -140,12 +140,12 @@ main{position:relative;z-index:1;padding:14px 16px 0}
 .empty .btn{flex:0 0 auto;display:inline-flex;padding:12px 20px;margin-top:12px}
 
 /* ── forms ── */
-.input{width:100%;min-width:0;background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:13px 14px;font-size:15px;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
+.input{width:100%;min-width:0;background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:13px 14px;font-size:16px;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
 .input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
 .input[readonly]{cursor:pointer}
 .input.ro{opacity:.75;cursor:default}
 .input.big{font-size:22px;font-weight:800;text-align:center;letter-spacing:.5px}
-textarea.input{min-height:96px;font-size:12px;direction:ltr;text-align:left;resize:vertical;line-height:1.6}
+textarea.input{min-height:96px;font-size:16px;direction:ltr;text-align:left;resize:vertical;line-height:1.7}
 .search-row .input{padding:13px 16px}
 .inline-add{display:flex;gap:8px;margin-top:10px}
 .inline-add .input{flex:1}
