@@ -1,1302 +1,338 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl" data-theme="dark">
+<html lang="fa" dir="rtl" data-theme="dark" data-accent="gold">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="کارکرد">
-<meta name="theme-color" content="#07080d"><script>try{var _t=localStorage.getItem("karkard_theme");if(_t)document.documentElement.setAttribute("data-theme",_t);}catch(e){}</script>
+<meta name="format-detection" content="telephone=no">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#07090f" id="metaTheme">
+<title>کارکرد — دفتر کارگاه</title>
+<link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
-<title>کارکرد</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IRANSansX:wght@300;400;500;600;700;800;900;1000&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#07080d;--bg2:#14161f;--card:rgba(255,255,255,.04);--card2:rgba(255,255,255,.07);--border:rgba(255,255,255,.09);--text:#f0f2f8;--text2:#9aa0b4;--green:#2de0a5;--gold:#ffc857;--blue:#6c9bff;--red:#ff4d6d;--nav-bg:rgba(13,15,23,.94);--fab-grad:linear-gradient(145deg,#ff5f7d,#d01845)}
-[data-theme="light"]{--bg:#f2f3f7;--bg2:#ffffff;--card:rgba(0,0,0,.03);--card2:rgba(0,0,0,.05);--border:rgba(0,0,0,.08);--text:#1a1d2e;--text2:#6b7085;--green:#0da672;--gold:#c9940a;--blue:#3d63d8;--red:#d6335a;--nav-bg:rgba(242,243,247,.94);--fab-grad:linear-gradient(145deg,#ff5f7d,#d01845)}
-html{background:var(--bg)}
-body{font-family:'IRANSansX',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:120px;direction:rtl;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
-.page{display:none;padding:6px 16px 0;scroll-margin-top:70px;animation:fadeUp .25s ease}
-.page.active{display:block}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.header{padding:calc(6px + env(safe-area-inset-top)) 16px 6px;position:sticky;top:0;z-index:20;background:linear-gradient(180deg,var(--bg) 72%,transparent)}
-.header-row{display:flex;justify-content:space-between;align-items:center}
-.header h1{font-size:20px;font-weight:1000}
-.header h1 span{color:var(--gold)}
-.theme-toggle{width:40px;height:40px;border-radius:14px;border:1.5px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px}
-.theme-toggle:active{transform:scale(.9)}
-.ver{font-size:10px;font-weight:700;color:var(--gold);border:1px solid var(--gold);border-radius:99px;padding:2px 9px;opacity:.9;white-space:nowrap}
-.creator-top{display:block;width:fit-content;margin:6px auto 0;font-size:10px;font-weight:600;color:var(--text2);opacity:.8;text-decoration:none;background:var(--card);border:1px solid var(--border);border-radius:99px;padding:2px 12px;white-space:nowrap}
-.creator-top b{color:var(--gold);font-weight:800}
-.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;margin-bottom:12px}
-.proj-card{cursor:pointer}
-.proj-card:active{transform:scale(.98)}
-.proj-head{display:flex;justify-content:space-between;align-items:center}
-.proj-name{font-size:17px;font-weight:800}
-.proj-amt{font-size:15px;font-weight:800;color:var(--green)}
-.proj-rem{font-size:12px;font-weight:700;color:var(--gold)}
-.proj-stats{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.stat{flex:1;min-width:70px;background:var(--card2);border-radius:12px;padding:8px 6px;text-align:center}
-.stat .n{font-size:16px;font-weight:800}
-.stat .t{font-size:10.5px;color:var(--text2);margin-top:2px}
-.ent{display:flex;justify-content:space-between;align-items:center;padding:10px 4px;border-bottom:1px solid var(--border);font-size:13px;gap:6px}
-.ent:last-child{border-bottom:none}
-.ent .d{color:var(--text2);font-size:12px;margin-top:3px}
-.ent .q{font-weight:700}
-.ent .ops{display:flex;gap:2px;flex-shrink:0}
-.ent .ops button{background:none;border:none;font-size:17px;cursor:pointer;padding:6px}
-.op-edit{color:var(--gold)}
-.op-del{color:var(--red)}
-.rowbtns{display:flex;gap:8px;margin-top:10px}
-.btn{flex:1;border:none;border-radius:14px;padding:12px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
-.btn-p{background:var(--fab-grad);color:#fff}
-.btn-g{background:var(--card2);color:var(--text);border:1px solid var(--border)}
-.btn-b{background:linear-gradient(145deg,#4d7dff,#2b4fc4);color:#fff}
-.btn:active{transform:scale(.97)}
-label.lbl{display:block;font-size:12.5px;color:var(--text2);font-weight:600;margin:12px 0 6px}
-.inp,select.inp,textarea.inp{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:14px;color:var(--text);padding:12px 14px;font-family:inherit;font-size:15px;outline:none}
-.inp:focus{border-color:var(--gold)}
-textarea.inp{min-height:90px;resize:vertical;font-size:12px;direction:ltr;text-align:left}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.inv-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
-.inv-table th{background:var(--card2);padding:9px 6px;font-weight:800}
-.inv-table td{padding:9px 6px;border-top:1px solid var(--border);text-align:center}
-.inv-total{margin-top:12px;padding:14px;border-radius:16px;background:linear-gradient(135deg,rgba(45,224,165,.14),rgba(45,224,165,.04));border:1px solid rgba(45,224,165,.35);text-align:center}
-.inv-total .v{font-size:22px;font-weight:1000;color:var(--green)}
-.toggle{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13.5px}
-.toggle input{width:20px;height:20px;accent-color:var(--gold)}
-.chk{display:flex;align-items:center;gap:10px;background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-top:8px;font-size:14px;font-weight:700;cursor:pointer}
-.chk input{width:20px;height:20px;accent-color:var(--gold)}
-.chk small{color:var(--text2);font-weight:400}
-.bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--nav-bg);backdrop-filter:blur(14px);border-top:1px solid var(--border);display:flex;padding:10px 4px calc(10px + env(safe-area-inset-bottom));transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform}
-body.lock{overflow:hidden}
-body.kb .bottomnav,body.kb .fab{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
-.navbtn{flex:1;background:none;border:none;color:var(--text2);font-family:inherit;font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px;cursor:pointer;border-radius:12px}
-.navbtn .ic{font-size:21px}
-.navbtn.on{color:var(--gold)}
-.empty{text-align:center;color:var(--text2);padding:30px 10px;font-size:14px}
-.backbtn{background:none;border:none;color:var(--gold);font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;padding:6px 0;margin-bottom:6px}
-.fab{position:fixed;left:18px;bottom:104px;z-index:31;width:62px;height:62px;border-radius:50%;border:none;background:var(--fab-grad);color:#fff;font-size:30px;font-weight:300;cursor:pointer;box-shadow:0 8px 24px rgba(224,26,72,.45);display:flex;align-items:center;justify-content:center;line-height:1}
-.fab:active{transform:scale(.92)}
-.fab.hide{display:none}
-.overlay{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center}
-.overlay.open{display:flex}
-.sheet{width:100%;max-width:520px;background:var(--bg2);border:1px solid var(--border);border-bottom:none;border-radius:24px 24px 0 0;padding:18px 18px calc(20px + env(safe-area-inset-bottom));animation:slideUp .25s ease;max-height:88vh;overflow-y:auto}
-@keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:none;opacity:1}}
-.sheet h3{font-size:17px;font-weight:800;margin-bottom:4px}
-.inv-paper{background:#fff;color:#1a1d2e;border-radius:14px;padding:18px 14px}
-.inv-paper h1{text-align:center;font-size:18px;color:#1a2b5c;margin-bottom:4px}
-.inv-paper .sub{text-align:center;font-size:11px;color:#555;margin-bottom:12px}
-.inv-paper table{width:100%;border-collapse:collapse;font-size:11px}
-.inv-paper th{background:#1a2b5c;color:#fff;padding:7px 4px}
-.inv-paper td{border:1px solid #bbb;padding:7px 4px;text-align:center;color:#1a1d2e}
-.inv-paper .tot{margin-top:12px;background:#eef;border:2px solid #1a2b5c;border-radius:8px;padding:10px;text-align:center;font-weight:800;font-size:13px;color:#1a1d2e}
-.inv-paper .note{text-align:center;font-size:10px;color:#777;margin-top:8px}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:6px}
-.cal-w{text-align:center;font-size:11px;color:var(--text2);font-weight:800;padding:6px 0}
-.cal-d{border:1px solid transparent;background:var(--card2);color:var(--text);border-radius:12px;padding:9px 0;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
-.cal-d:active{transform:scale(.92)}
-.cal-d.today{border-color:var(--gold)}
-.cal-d.sel{background:var(--gold);color:#1a1d2e;font-weight:800}
-#printArea{display:none}
-/* ── v29 performance & animations ── */
-.card{transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .25s,border-color .25s}
-.proj-card:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:0 6px 18px rgba(0,0,0,.25)}
-.proj-card{animation:cardIn .38s cubic-bezier(.22,1,.36,1) backwards}
-.proj-card:nth-child(1){animation-delay:.02s}.proj-card:nth-child(2){animation-delay:.06s}
-.proj-card:nth-child(3){animation-delay:.10s}.proj-card:nth-child(4){animation-delay:.14s}
-.proj-card:nth-child(5){animation-delay:.18s}.proj-card:nth-child(6){animation-delay:.22s}
-.proj-card:nth-child(7){animation-delay:.26s}.proj-card:nth-child(8){animation-delay:.30s}
-@keyframes cardIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
-.ent{animation:entIn .3s ease backwards}
-@keyframes entIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
-.navbtn .ic{display:inline-block;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
-.navbtn:active .ic{transform:scale(1.35)}
-.navbtn.on .ic{animation:navPop .45s cubic-bezier(.34,1.56,.64,1)}
-@keyframes navPop{0%{transform:scale(1)}45%{transform:scale(1.45) translateY(-3px)}100%{transform:scale(1)}}
-.fab{animation:fabIn .5s cubic-bezier(.34,1.56,.64,1)}
-@keyframes fabIn{from{opacity:0;transform:scale(0) rotate(-90deg)}to{opacity:1;transform:none}}
-.fab{transition:transform .18s}
-.btn{position:relative;overflow:hidden;transition:transform .15s,filter .2s;will-change:transform}
-.btn-p:hover{filter:brightness(1.1)}
-.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.45);transform:scale(0);animation:rip .5s ease-out forwards;pointer-events:none}
-@keyframes rip{to{transform:scale(3.2);opacity:0}}
-.stat .n{display:inline-block}
-.toast{position:fixed;bottom:calc(110px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(20px);background:var(--nav-bg);color:var(--text);border:1px solid var(--green);border-radius:99px;padding:11px 26px;font-size:14px;font-weight:700;z-index:99;opacity:0;transition:opacity .25s,transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;backdrop-filter:blur(10px);box-shadow:0 6px 20px rgba(0,0,0,.4);white-space:nowrap}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.overlay{transition:background .25s}
-.overlay.open .sheet{animation:slideUp .32s cubic-bezier(.22,1,.36,1)}
-.sheet{will-change:transform}
-.page{will-change:opacity,transform}
-@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
-@media print{
-  body{background:#fff!important;padding:0!important}
-  body>*{display:none!important}
-  #printArea{display:block!important;color:#000;font-family:'IRANSansX',Tahoma,sans-serif;direction:rtl;padding:20px}
-  #printArea h1{text-align:center;font-size:22px;color:#1a2b5c;margin-bottom:4px}
-  #printArea .sub{text-align:center;font-size:12px;color:#555;margin-bottom:16px}
-  #printArea table{width:100%;border-collapse:collapse;font-size:12px}
-  #printArea th{background:#1a2b5c!important;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:8px}
-  #printArea td{border:1px solid #999;padding:8px;text-align:center}
-  #printArea .tot{margin-top:14px;background:#eef!important;border:2px solid #1a2b5c;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-radius:8px;padding:12px;text-align:center;font-weight:bold;font-size:15px}
-  #printArea .note{text-align:center;font-size:11px;color:#555;margin-top:10px}
-}
-@page{size:A4;margin:12mm}
-/* ── v40 premium visual layer ── */
-/* Ambient gold aura */
-body::before{content:'';position:fixed;top:-120px;right:-80px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(255,200,87,.09),transparent 65%);pointer-events:none;z-index:0}
-body>*{position:relative;z-index:1}
-/* ── header/sheet layering: sheets & modals always above header ── */
-.header{z-index:20}
-.bottomnav,.fab{z-index:30}
-.overlay{z-index:50}
-.toast{z-index:99}
-/* Frosted header + gold title */
-.header{background:linear-gradient(180deg,var(--bg) 55%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-.header h1{background:linear-gradient(135deg,var(--text) 30%,var(--gold) 90%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.header h1 span{-webkit-text-fill-color:initial}
-/* Project cards: gold accent bar + tint */
-.proj-card{position:relative;overflow:hidden;background:radial-gradient(130% 110% at 50% 0%,rgba(255,200,87,.07),transparent 60%),var(--card)}
-.proj-card::before{content:'';position:absolute;top:0;right:16px;left:16px;height:3px;border-radius:0 0 4px 4px;background:linear-gradient(90deg,transparent,var(--gold),transparent);box-shadow:0 2px 12px -1px var(--gold)}
-.proj-card:hover{transform:translateY(-3px);border-color:rgba(255,200,87,.5);box-shadow:0 14px 30px -14px rgba(255,200,87,.35)}
-.proj-amt,.proj-rem,.stat .n,.inv-total .v{font-variant-numeric:tabular-nums}
-.proj-name{letter-spacing:-.3px}
-/* Summary + invoice heroes */
-.inv-total{background:linear-gradient(135deg,rgba(45,224,165,.18),rgba(45,224,165,.05));box-shadow:0 12px 30px -16px rgba(45,224,165,.4)}
-/* Stat tiles polish */
-.stat{background:linear-gradient(180deg,var(--card2),transparent);border:1px solid var(--border);border-top:2px solid rgba(255,200,87,.4)}
-/* FAB glow ring + shine */
-.fab{box-shadow:0 8px 24px rgba(224,26,72,.45),0 0 0 0 rgba(255,95,125,.5);animation:fabIn .5s cubic-bezier(.34,1.56,.64,1),fabRing 2.6s ease-out 1s infinite}
-@keyframes fabRing{0%{box-shadow:0 8px 24px rgba(224,26,72,.45),0 0 0 0 rgba(255,95,125,.45)}70%{box-shadow:0 8px 24px rgba(224,26,72,.45),0 0 0 16px rgba(255,95,125,0)}100%{box-shadow:0 8px 24px rgba(224,26,72,.45),0 0 0 0 rgba(255,95,125,0)}}
-/* Glass sheet */
-.sheet{background:linear-gradient(180deg,var(--card2),var(--bg2));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 -18px 50px -12px rgba(0,0,0,.6)}
-/* Nav active gold dot */
-.navbtn{position:relative}
-.navbtn.on::after{content:'';position:absolute;bottom:2px;width:4px;height:4px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold)}
-.navbtn.on .ic{filter:drop-shadow(0 0 6px rgba(255,200,87,.5))}
-/* Inputs focus glow */
-.inp{transition:border-color .2s,box-shadow .2s}
-.inp:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,200,87,.15)}
-/* Primary button shine */
-.btn-p{position:relative;overflow:hidden}
-.btn-p::after{content:'';position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);animation:btnShine 3.2s ease-in-out infinite}
-@keyframes btnShine{0%,60%{left:-60%}100%{left:140%}}
-/* Entry stagger */
-.ent:nth-child(2){animation-delay:.04s}.ent:nth-child(3){animation-delay:.08s}.ent:nth-child(4){animation-delay:.12s}.ent:nth-child(5){animation-delay:.16s}.ent:nth-child(6){animation-delay:.2s}.ent:nth-child(7){animation-delay:.24s}.ent:nth-child(8){animation-delay:.28s}
-/* Calendar selected glow */
-.cal-d.sel{box-shadow:0 4px 14px -4px rgba(255,200,87,.6)}
-.cal-d.today{box-shadow:inset 0 0 0 1px var(--gold)}
-/* Theme toggle hover */
-.theme-toggle{transition:transform .2s,border-color .2s,box-shadow .2s}
-.theme-toggle:hover{border-color:var(--gold);box-shadow:0 0 14px -2px rgba(255,200,87,.4)}
-/* ── v41 overflow fix: long amounts never escape cards ── */
-.proj-head{flex-wrap:wrap;row-gap:6px;gap:8px}
-.proj-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.proj-amt{flex-shrink:0;white-space:nowrap;font-size:clamp(13px,3.8vw,15px)}
-.proj-rem{flex-shrink:0;white-space:nowrap}
-.proj-stats{display:flex}
-.stat{min-width:0;overflow:hidden}
-.stat.wide{flex:1 1 100%;padding:12px 10px;background:linear-gradient(135deg,rgba(255,200,87,.10),transparent),var(--card2);border-color:rgba(255,200,87,.35)}
-.stat.wide .n{font-size:20px;color:var(--gold)}
-.stat .n{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:clamp(11px,3.6vw,15px)}
-#allBox,.inv-paper{overflow-x:auto}
-.inv-table td,.inv-table th{white-space:nowrap}
-/* Search input icon glow on focus */
-#projSearch:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,200,87,.15)}
-@media (prefers-reduced-motion:reduce){body::before,.btn-p::after,.fab{animation:none!important}}
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+<script>
+/* تم را قبل از رندر ست کن تا صفحه سفید نزنه */
+try{
+  var s=JSON.parse(localStorage.getItem('karkard_v2')||'null')||JSON.parse(localStorage.getItem('karkard_v1')||'null');
+  var t=s&&s.settings?s.settings.theme:'dark';
+  var dark=t==='dark'||(t!=='light'&&!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches));
+  document.documentElement.setAttribute('data-theme',dark?'dark':'light');
+  if(s&&s.settings&&s.settings.accent)document.documentElement.setAttribute('data-accent',s.settings.accent);
+}catch(e){}
+</script>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-row"><div style="display:flex;align-items:center;gap:8px"><h1>کارکرد <span>🏗️</span></h1><span class="ver">1.2</span></div><div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div></div>
-  <a class="creator-top" href="https://t.me/mmdGK" target="_blank" rel="noopener">👨‍💻 سازنده: <b>mmdGK</b></a>
-</div>
+<div class="bg-glow" aria-hidden="true"></div>
 
-<!-- ─── Tab: projects ─── -->
-<section id="pg-projects" class="page active">
-  <div class="card" style="padding:10px 12px"><input class="inp" id="projSearch" placeholder="🔍 جستجوی پروژه..." oninput="projSearch(this.value)" autocomplete="off"></div>
-  <div id="projList"></div>
-  <details class="card" style="padding:10px 14px">
-    <summary style="font-size:12.5px;font-weight:700;color:var(--text2);cursor:pointer">💾 بکاپ و بازیابی</summary>
-    <div class="rowbtns" style="margin-top:10px">
-      <button class="btn btn-g" style="padding:9px;font-size:12px" onclick="backupExport()">⬇️ بکاپ</button>
-      <button class="btn btn-g" style="padding:9px;font-size:12px" onclick="backupCopy()">📋 کپی</button>
-      <button class="btn btn-g" style="padding:9px;font-size:12px" onclick="checkUpdate()">🔄 آپدیت</button>
+<header class="app-header">
+  <div class="brand">
+    <div class="brand-logo">🏗️</div>
+    <div class="brand-txt">
+      <h1 id="hTitle">کارکرد</h1>
+      <p>دفتر کارگاه</p>
     </div>
-    <label class="lbl">بازیابی از فایل</label>
-    <input class="inp" id="imp-file" type="file" accept=".json,application/json" onchange="backupImportFile(this)">
-    <label class="lbl">یا چسبوندن متن بکاپ</label>
-    <textarea class="inp" id="imp-text" rows="2" placeholder="متن بکاپ..."></textarea>
-    <div class="rowbtns" style="margin-top:10px">
-      <button class="btn btn-g" style="padding:9px;font-size:12px" onclick="backupImportText()">بازیابی ⬆️</button>
-      <button class="btn btn-g" style="padding:9px;font-size:12px;color:var(--red)" onclick="wipeAll()">🗑️ پاک همه</button>
-    </div>
-  </details>
-</section>
+  </div>
+  <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" aria-label="تغییر تم">🌙</button>
+</header>
 
-<!-- ─── Project detail ─── -->
-<section id="pg-detail" class="page">
-  <button class="backbtn" onclick="backToList()">→ برگشت به لیست</button>
-  <div id="detailBox"></div>
-</section>
+<main id="main">
+  <section id="pg-dashboard" class="page"></section>
+  <section id="pg-projects" class="page"></section>
+  <section id="pg-project" class="page"></section>
+  <section id="pg-money" class="page"></section>
+  <section id="pg-reports" class="page"></section>
+  <section id="pg-settings" class="page"></section>
+</main>
 
-<!-- ─── Tab 3: bills ─── -->
-<section id="pg-bills" class="page">
-  <div class="card">
-    <div class="proj-name">📊 خلاصه همه پروژه‌ها</div>
-    <div id="allBox"></div>
-  </div>
-  <div class="card">
-    <div class="proj-name">🧾 فاکتور پروژه</div>
-    <label class="lbl">پروژه</label>
-    <select class="inp" id="i-proj" onchange="renderInvoice()"></select>
-    <label class="toggle"><input type="checkbox" id="i-money" checked onchange="renderInvoice()"> نمایش مبالغ توی فاکتور</label>
-    <div id="invBox"></div>
-    <div style="height:12px"></div>
-    <div class="rowbtns">
-      <button class="btn btn-b" onclick="viewInvoice()">👁️ مشاهده فاکتور</button>
-    </div>
-  </div>
-</section>
-
-<!-- ─── Tab 4: wages ─── -->
-<section id="pg-wages" class="page">
-  <div class="overlay" id="wageOverlay" onclick="if(event.target===this)closeWage()">
-  <div class="sheet">
-    <div class="proj-name" id="w-title">💰 ثبت پرداختی</div>
-    <label class="lbl">اسم</label>
-    <input class="inp" id="w-name" placeholder="اسم شاگرد">
-    <div class="grid2">
-      <div><label class="lbl">تاریخ</label><div style="display:flex;gap:6px"><input class="inp" id="w-date" inputmode="numeric" oninput="fmtDate(this)" style="flex:1;min-width:0"><button class="btn btn-g" style="padding:10px 10px;font-size:14px" onclick="openCal('w-date')">📅</button><button class="btn btn-g" style="padding:10px 12px;font-size:12px;white-space:nowrap" onclick="setToday('w-date')">امروز</button></div></div>
-      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="w-amount" type="text" inputmode="numeric" oninput="fmtAmount(this)"></div>
-    </div>
-    <label class="lbl">توضیح (اختیاری)</label>
-    <input class="inp" id="w-desc">
-    <div class="rowbtns" style="margin-top:14px">
-      <button class="btn btn-p" id="w-save" onclick="saveWage()">ثبت ✅</button>
-      <button class="btn btn-g" onclick="closeWage()">بستن</button>
-    </div>
-  </div>
-  </div>
-  <div class="card">
-    <div class="proj-name">📊 جمع پرداختی‌ها</div>
-    <div id="wSum"></div>
-  </div>
-  <div class="card">
-    <div class="proj-name">📝 سوابق پرداخت</div>
-    <div id="wList" style="margin-top:6px"></div>
-  </div>
-</section>
-
-<!-- ─── Tab 5: received ─── -->
-<section id="pg-recv" class="page">
-  <div class="overlay" id="recvOverlay" onclick="if(event.target===this)closeRecv()">
-  <div class="sheet">
-    <div class="proj-name" id="r-title">💵 ثبت دریافتی</div>
-    <label class="lbl">از کی گرفتی؟ (شرکت / اسم پیمانکار)</label>
-    <input class="inp" id="r-source">
-    <label class="lbl">پروژه (اختیاری — برای مانده پروژه)</label>
-    <select class="inp" id="r-proj"></select>
-    <div class="grid2">
-      <div><label class="lbl">تاریخ</label><div style="display:flex;gap:6px"><input class="inp" id="r-date" inputmode="numeric" oninput="fmtDate(this)" style="flex:1;min-width:0"><button class="btn btn-g" style="padding:10px 10px;font-size:14px" onclick="openCal('r-date')">📅</button><button class="btn btn-g" style="padding:10px 12px;font-size:12px;white-space:nowrap" onclick="setToday('r-date')">امروز</button></div></div>
-      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="r-amount" type="text" inputmode="numeric" oninput="fmtAmount(this)"></div>
-    </div>
-    <label class="lbl">توضیح (اختیاری)</label>
-    <input class="inp" id="r-desc">
-    <div class="rowbtns" style="margin-top:14px">
-      <button class="btn btn-p" id="r-save" onclick="saveRecv()">ثبت ✅</button>
-      <button class="btn btn-g" onclick="closeRecv()">بستن</button>
-    </div>
-  </div>
-  </div>
-  <div class="card">
-    <div class="proj-name">📊 جمع دریافتی‌ها</div>
-    <div id="rSum"></div>
-  </div>
-  <div class="card">
-    <div class="proj-name">📝 سوابق دریافت</div>
-    <div id="rList" style="margin-top:6px"></div>
-  </div>
-</section>
-
-<!-- ─── Tab 6: costs ─── -->
-<section id="pg-costs" class="page">
-  <div class="overlay" id="costOverlay" onclick="if(event.target===this)closeCost()">
-  <div class="sheet">
-    <div class="proj-name" id="c-title">🧰 ثبت هزینه</div>
-    <div class="grid2">
-      <div><label class="lbl">دسته</label><select class="inp" id="c-cat"><option selected>غذا</option><option>مصالح</option><option>کرایه حمل</option><option>ابزار</option><option>متفرقه</option></select></div>
-      <div><label class="lbl">پروژه (اختیاری)</label><select class="inp" id="c-proj"></select></div>
-    </div>
-    <div class="grid2">
-      <div><label class="lbl">تاریخ</label><div style="display:flex;gap:6px"><input class="inp" id="c-date" inputmode="numeric" oninput="fmtDate(this)" style="flex:1;min-width:0"><button class="btn btn-g" style="padding:10px 10px;font-size:14px" onclick="openCal('c-date')">📅</button><button class="btn btn-g" style="padding:10px 12px;font-size:12px;white-space:nowrap" onclick="setToday('c-date')">امروز</button></div></div>
-      <div><label class="lbl">مبلغ (تومان)</label><input class="inp" id="c-amount" type="text" inputmode="numeric" autocomplete="off" oninput="fmtAmount(this)"></div>
-    </div>
-    <label class="lbl">توضیح (اختیاری)</label>
-    <input class="inp" id="c-desc" autocomplete="off">
-    <div class="rowbtns" style="margin-top:14px">
-      <button class="btn btn-p" id="c-save" onclick="saveCost()">ثبت ✅</button>
-      <button class="btn btn-g" onclick="closeCost()">بستن</button>
-    </div>
-  </div>
-  </div>
-  <div class="card">
-    <div class="proj-name">📊 جمع هزینه‌ها</div>
-    <div id="cSum"></div>
-  </div>
-  <div class="card">
-    <div class="proj-name">📝 سوابق هزینه</div>
-    <div id="cList" style="margin-top:6px"></div>
-  </div>
-</section>
-
-<button class="fab" id="fab" onclick="fabTap()">+</button>
+<button class="fab" id="fab" onclick="toggleQuickAdd()" aria-label="افزودن">+</button>
 
 <nav class="bottomnav">
-  <button class="navbtn on" id="nb-projects" onclick="go('projects')"><span class="ic">📋</span>پروژه‌ها</button>
-  <button class="navbtn" id="nb-bills" onclick="go('bills')"><span class="ic">🧾</span>حساب‌ها</button>
-  <button class="navbtn" id="nb-wages" onclick="go('wages')"><span class="ic">💰</span>حقوق</button>
-  <button class="navbtn" id="nb-recv" onclick="go('recv')"><span class="ic">💵</span>دریافتی</button>
-  <button class="navbtn" id="nb-costs" onclick="go('costs')"><span class="ic">🧰</span>هزینه‌ها</button>
+  <button class="navbtn on" data-page="dashboard" onclick="go('dashboard')"><span class="ic">🏠</span><span>داشبورد</span></button>
+  <button class="navbtn" data-page="projects" onclick="go('projects')"><span class="ic">🏗️</span><span>پروژه‌ها</span></button>
+  <button class="navbtn" data-page="money" onclick="go('money')"><span class="ic">💵</span><span>پول</span></button>
+  <button class="navbtn" data-page="reports" onclick="go('reports')"><span class="ic">📊</span><span>گزارش</span></button>
+  <button class="navbtn" data-page="settings" onclick="go('settings')"><span class="ic">⚙️</span><span>تنظیمات</span></button>
 </nav>
 
-<!-- new project sheet -->
-<div class="overlay" id="projOverlay" onclick="if(event.target===this)closeProj()">
+<!-- ═══════════ افزودن سریع ═══════════ -->
+<div class="overlay" id="sh-quick">
   <div class="sheet">
-    <h3 id="projSheetTitle">➕ پروژه جدید</h3>
-    <label class="lbl">اسم پروژه</label>
-    <input class="inp" id="np-name" autocomplete="off" onkeydown="if(event.key==='Enter')addProject()">
-    <div style="font-size:12px;color:var(--text2);margin-top:8px">قیمت‌ها رو داخل خود پروژه ثبت می‌کنی — هر صفحه = ۳ متر. کار بدون صفحه رو با «متراژ روکار» ثبت کن.</div>
-    <div class="rowbtns" style="margin-top:16px">
-      <button class="btn btn-p" id="projSheetBtn" onclick="addProject()">ساختن پروژه</button>
-      <button class="btn btn-g" onclick="closeProj()">بستن</button>
+    <div class="handle"></div>
+    <div class="sheet-head"><h3>افزودن سریع</h3><button class="icon-btn sm" onclick="closeSheet('sh-quick')">✕</button></div>
+    <div class="quick-grid">
+      <button class="quick" onclick="openEntrySheet()"><span class="qi">📝</span><b>ثبت کار</b><small>صفحه، متر، آیتم</small></button>
+      <button class="quick" onclick="openReceiptSheet()"><span class="qi">💵</span><b>دریافتی</b><small>پولی گرفتی</small></button>
+      <button class="quick" onclick="openCostSheet()"><span class="qi">🧰</span><b>هزینه</b><small>خرید و کرایه</small></button>
+      <button class="quick" onclick="openWageSheet()"><span class="qi">💰</span><b>پرداخت</b><small>دستمزد کارگر</small></button>
+      <button class="quick" onclick="openProjectSheet()"><span class="qi">🏗️</span><b>پروژه جدید</b><small>کارگاه تازه</small></button>
+      <button class="quick" onclick="openStaffSheet()"><span class="qi">👷</span><b>کارگر جدید</b><small>افزودن نفر</small></button>
     </div>
   </div>
 </div>
 
-<!-- pin/long-press menu -->
-<div class="overlay" id="pinOverlay" onclick="if(event.target===this)closePinMenu()">
+<!-- ═══════════ پروژه ═══════════ -->
+<div class="overlay" id="sh-project">
   <div class="sheet">
-    <h3>📌 <span id="pinProjName"></span></h3>
-    <div style="font-size:12px;color:var(--text2);margin-top:4px" id="pinHint">با نگه‌داشتن روی پروژه این منو باز می‌شه</div>
-    <div class="rowbtns" style="margin-top:16px">
-      <button class="btn btn-p" id="pinToggleBtn" onclick="togglePin()"></button>
-      <button class="btn btn-g" onclick="closePinMenu()">بستن</button>
-    </div>
-  </div>
-</div>
-
-<!-- quick add / edit sheet -->
-<div class="overlay" id="overlay" onclick="if(event.target===this)closeSheet()">
-  <div class="sheet">
-    <h3 id="s-title">📝 ثبت کار</h3>
-    <div id="s-proj-wrap"><label class="lbl">پروژه</label><select class="inp" id="s-proj" onchange="buildSheetItems()"></select></div>
+    <div class="handle"></div>
+    <div class="sheet-head"><h3 id="spTitle">پروژه جدید</h3><button class="icon-btn sm" onclick="closeSheet('sh-project')">✕</button></div>
+    <div class="field"><label class="label">اسم پروژه <span class="req">*</span></label><input class="input" id="spName" placeholder="مثلاً ویلای کرج" autocomplete="off"></div>
     <div class="grid2">
-      <div><label class="lbl">تاریخ</label><div style="display:flex;gap:6px"><input class="inp" id="s-date" inputmode="numeric" oninput="fmtDate(this)" style="flex:1;min-width:0"><button class="btn btn-g" style="padding:10px 10px;font-size:14px" onclick="openCal('s-date')">📅</button><button class="btn btn-g" style="padding:10px 12px;font-size:12px;white-space:nowrap" onclick="setToday('s-date')">امروز</button></div></div>
-      <div><label class="lbl">تعداد صفحه</label><input class="inp" id="s-pages" type="text" inputmode="numeric" autocomplete="off" min="0"></div>
+      <div class="field"><label class="label">کارفرما</label><input class="input" id="spClient" placeholder="اسم کارفرما" autocomplete="off"></div>
+      <div class="field"><label class="label">شماره تماس</label><input class="input" id="spPhone" inputmode="tel" placeholder="۰۹۱۲..." autocomplete="off"></div>
     </div>
-    <div><label class="lbl">⏱️ ساعت کار (روزمزدی)</label><input class="inp" id="s-hours" type="text" inputmode="decimal" autocomplete="off" placeholder=""></div>
-    <div><label class="lbl">📐 متراژ روکار (متر)</label><input class="inp" id="s-meter" type="text" inputmode="decimal" autocomplete="off" min="0" placeholder="وقتی کارت صفحه‌ای حساب نمی‌شه، متر بزن"></div>
-    <div id="s-items"></div>
-    <label class="lbl">توضیح (اختیاری)</label>
-    <input class="inp" id="s-desc" autocomplete="off">
-    <div class="rowbtns" style="margin-top:16px">
-      <button class="btn btn-p" id="s-save" onclick="saveSheet()">ثبت ✅</button>
-      <button class="btn btn-g" onclick="closeSheet()">بستن</button>
+    <div class="field"><label class="label">آدرس</label><input class="input" id="spAddress" placeholder="اختیاری" autocomplete="off"></div>
+    <div class="grid2">
+      <div class="field"><label class="label">تاریخ شروع</label><input class="input" id="spStart" readonly onclick="openCal(this)"></div>
+      <div class="field"><label class="label">وضعیت</label>
+        <select class="input" id="spStatus"><option value="active">در جریان</option><option value="done">تمام‌شده</option></select>
+      </div>
     </div>
+    <div class="field"><label class="label">یادداشت</label><input class="input" id="spNote" placeholder="اختیاری" autocomplete="off"></div>
+    <div class="row-btns">
+      <button class="btn btn-primary" id="spSave" onclick="saveProject()">ساختن پروژه</button>
+      <button class="btn btn-ghost" onclick="closeSheet('sh-project')">بستن</button>
+    </div>
+    <button class="btn btn-danger-ghost hidden" id="spDel" onclick="deleteProjectFromSheet()">حذف پروژه</button>
   </div>
 </div>
 
-<!-- price modal -->
-<div class="overlay" id="priceOverlay" onclick="if(event.target===this)closePrice()">
+<!-- ═══════════ ثبت کار ═══════════ -->
+<div class="overlay" id="sh-entry">
   <div class="sheet">
-    <h3>💰 قیمت‌های پروژه</h3>
-    <div style="font-size:12px;color:var(--text2);margin-bottom:10px">یه بار قیمت بده — خودکار روی همه ثبت‌های همین پروژه اعمال میشه.</div>
+    <div class="handle"></div>
+    <div class="sheet-head"><h3 id="seTitle">ثبت کار جدید</h3><button class="icon-btn sm" onclick="closeSheet('sh-entry')">✕</button></div>
+    <div class="field" id="seProjWrap"><label class="label">پروژه</label><select class="input" id="seProj" onchange="buildEntryItems();updateEntryPreview()"></select></div>
+    <div class="field"><label class="label">تاریخ</label><input class="input" id="seDate" readonly onclick="openCal(this)"></div>
     <div class="grid2">
-      <div><label class="lbl">مبلغ هر متر کناف</label><input class="inp" id="pp-meter" type="text" inputmode="numeric" autocomplete="off" oninput="fmtAmount(this)"></div>
-      <div><label class="lbl">مبلغ هر دریچه کولر</label><input class="inp" id="pp-cooler" type="text" inputmode="numeric" autocomplete="off" oninput="fmtAmount(this)"></div>
+      <div class="field"><label class="label">تعداد صفحه</label><input class="input" id="sePages" inputmode="numeric" placeholder="۰" autocomplete="off" oninput="updateEntryPreview()"></div>
+      <div class="field"><label class="label">متراژ روکار (متر)</label><input class="input" id="seMeter" inputmode="decimal" placeholder="۰" autocomplete="off" oninput="updateEntryPreview()"></div>
     </div>
     <div class="grid2">
-      <div><label class="lbl">مبلغ هر دریچه لوستر</label><input class="inp" id="pp-chand" type="text" inputmode="numeric" autocomplete="off" oninput="fmtAmount(this)"></div>
-      <div><label class="lbl">مبلغ هر هالوژن</label><input class="inp" id="pp-halogen" type="text" inputmode="numeric" autocomplete="off" oninput="fmtAmount(this)"></div>
+      <div class="field"><label class="label">ساعت کار</label><input class="input" id="seHours" inputmode="decimal" placeholder="۰" autocomplete="off" oninput="updateEntryPreview()"></div>
+      <div class="field"><label class="label">متراژ کل</label><input class="input ro" id="seArea" readonly tabindex="-1" value="۰ متر"></div>
     </div>
-    <label class="lbl">مبلغ هر متر لاین نوری</label>
-    <input class="inp" id="pp-linear" type="text" inputmode="numeric" autocomplete="off" oninput="fmtAmount(this)">
-    <label class="lbl">⏱️ دستمزد هر ساعت (روزمزدی)</label>
-    <input class="inp" id="pp-hour" type="text" inputmode="numeric" autocomplete="off" oninput="fmtAmount(this)">
-    <div class="rowbtns" style="margin-top:16px">
-      <button class="btn btn-p" onclick="savePriceModal()">ثبت قیمت ✅</button>
-      <button class="btn btn-g" onclick="closePrice()">بستن</button>
+    <div class="item-grid" id="seItems"></div>
+    <div class="field"><label class="label">توضیح</label><input class="input" id="seDesc" placeholder="اختیاری" autocomplete="off"></div>
+    <div class="live"><span>مبلغ این ثبت</span><b id="seAmount">۰ تومان</b></div>
+    <div id="seHint" class="hint hidden"></div>
+    <div class="row-btns">
+      <button class="btn btn-primary" id="seSave" onclick="saveEntry()">ثبت</button>
+      <button class="btn btn-ghost" onclick="closeSheet('sh-entry')">بستن</button>
+    </div>
+    <button class="btn btn-danger-ghost hidden" id="seDel" onclick="deleteEntryFromSheet()">حذف این ثبت</button>
+  </div>
+</div>
+
+<!-- ═══════════ قیمت‌ها ═══════════ -->
+<div class="overlay" id="sh-prices">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-head"><h3 id="ppTitle">قیمت‌های پروژه</h3><button class="icon-btn sm" onclick="closeSheet('sh-prices')">✕</button></div>
+    <p class="hint">یک‌بار قیمت بده؛ خودکار روی همه ثبت‌های این پروژه حساب می‌شه.</p>
+    <div class="grid2">
+      <div class="field"><label class="label">هر متر کناف</label><input class="input money" id="ppMeter" inputmode="numeric" autocomplete="off" oninput="pricesPreview()"></div>
+      <div class="field"><label class="label">هر متر لاین نوری</label><input class="input money" id="ppLinear" inputmode="numeric" autocomplete="off" oninput="pricesPreview()"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label class="label">هر دریچه کولر</label><input class="input money" id="ppCooler" inputmode="numeric" autocomplete="off" oninput="pricesPreview()"></div>
+      <div class="field"><label class="label">هر دریچه لوستر</label><input class="input money" id="ppChand" inputmode="numeric" autocomplete="off" oninput="pricesPreview()"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label class="label">هر هالوژن</label><input class="input money" id="ppHalogen" inputmode="numeric" autocomplete="off" oninput="pricesPreview()"></div>
+      <div class="field"><label class="label">دستمزد هر ساعت</label><input class="input money" id="ppHour" inputmode="numeric" autocomplete="off" oninput="pricesPreview()"></div>
+    </div>
+    <div class="live"><span>ارزش فعلی کار این پروژه</span><b id="ppPreview">—</b></div>
+    <div class="row-btns">
+      <button class="btn btn-primary" onclick="savePrices()">ذخیره قیمت‌ها</button>
+      <button class="btn btn-ghost" onclick="closeSheet('sh-prices')">بستن</button>
     </div>
   </div>
 </div>
 
-<!-- invoice preview -->
-<div class="overlay" id="invOverlay" onclick="if(event.target===this)closeInv()">
+<!-- ═══════════ دریافتی ═══════════ -->
+<div class="overlay" id="sh-receipt">
   <div class="sheet">
-    <h3>🧾 فاکتور پروژه</h3>
-    <div style="height:10px"></div>
-    <div class="inv-paper" id="invPreview"></div>
-    <div class="rowbtns" style="margin-top:14px">
-      <button class="btn btn-b" onclick="saveInvPDF()">📥 ذخیره PDF / چاپ</button>
-      <button class="btn btn-g" onclick="closeInv()">بستن</button>
+    <div class="handle"></div>
+    <div class="sheet-head"><h3 id="srTitle">ثبت دریافتی</h3><button class="icon-btn sm" onclick="closeSheet('sh-receipt')">✕</button></div>
+    <div class="field"><label class="label">مبلغ (تومان) <span class="req">*</span></label><input class="input big money" id="srAmount" inputmode="numeric" autocomplete="off" placeholder="۰"></div>
+    <div class="field"><label class="label">از کی گرفتی</label><input class="input" id="srSource" placeholder="اسم کارفرما / شرکت" autocomplete="off"></div>
+    <div class="field"><label class="label">پروژه</label><select class="input" id="srProj"></select></div>
+    <div class="grid2">
+      <div class="field"><label class="label">تاریخ</label><input class="input" id="srDate" readonly onclick="openCal(this)"></div>
+      <div class="field"><label class="label">روش</label><select class="input" id="srMethod"></select></div>
     </div>
+    <div class="field"><label class="label">توضیح</label><input class="input" id="srDesc" placeholder="اختیاری" autocomplete="off"></div>
+    <div class="row-btns">
+      <button class="btn btn-primary" id="srSave" onclick="saveReceipt()">ثبت</button>
+      <button class="btn btn-ghost" onclick="closeSheet('sh-receipt')">بستن</button>
+    </div>
+    <button class="btn btn-danger-ghost hidden" id="srDel" onclick="deleteReceiptFromSheet()">حذف این دریافتی</button>
   </div>
 </div>
 
-<!-- jalali calendar picker -->
-<div class="overlay" id="calOverlay" onclick="if(event.target===this)closeCal()">
+<!-- ═══════════ هزینه ═══════════ -->
+<div class="overlay" id="sh-cost">
   <div class="sheet">
-    <h3>📅 انتخاب تاریخ</h3>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin:10px 0 4px">
-      <button class="btn btn-g" style="padding:8px 16px" onclick="calGo(1)">‹</button>
-      <div style="font-weight:800;font-size:15px" id="calTitle"></div>
-      <button class="btn btn-g" style="padding:8px 16px" onclick="calGo(-1)">›</button>
+    <div class="handle"></div>
+    <div class="sheet-head"><h3 id="scTitle">ثبت هزینه</h3><button class="icon-btn sm" onclick="closeSheet('sh-cost')">✕</button></div>
+    <div class="field"><label class="label">مبلغ (تومان) <span class="req">*</span></label><input class="input big money" id="scAmount" inputmode="numeric" autocomplete="off" placeholder="۰"></div>
+    <div class="field"><label class="label">دسته</label>
+      <div class="chips" id="scCats"></div>
+      <div class="inline-add"><input class="input" id="scNewCat" placeholder="دسته جدید..." autocomplete="off"><button class="btn btn-soft btn-sm" onclick="addCostCatInline()">افزودن</button></div>
+    </div>
+    <div class="field"><label class="label">پروژه</label><select class="input" id="scProj"></select></div>
+    <div class="field"><label class="label">تاریخ</label><input class="input" id="scDate" readonly onclick="openCal(this)"></div>
+    <div class="field"><label class="label">توضیح</label><input class="input" id="scDesc" placeholder="اختیاری" autocomplete="off"></div>
+    <div class="row-btns">
+      <button class="btn btn-primary" id="scSave" onclick="saveCost()">ثبت</button>
+      <button class="btn btn-ghost" onclick="closeSheet('sh-cost')">بستن</button>
+    </div>
+    <button class="btn btn-danger-ghost hidden" id="scDel" onclick="deleteCostFromSheet()">حذف این هزینه</button>
+  </div>
+</div>
+
+<!-- ═══════════ کارگر ═══════════ -->
+<div class="overlay" id="sh-staff">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-head"><h3 id="ssTitle">کارگر جدید</h3><button class="icon-btn sm" onclick="closeSheet('sh-staff')">✕</button></div>
+    <div class="field"><label class="label">اسم <span class="req">*</span></label><input class="input" id="ssName" placeholder="اسم کارگر" autocomplete="off"></div>
+    <div class="grid2">
+      <div class="field"><label class="label">شماره تماس</label><input class="input" id="ssPhone" inputmode="tel" placeholder="اختیاری" autocomplete="off"></div>
+      <div class="field"><label class="label">سمت</label><input class="input" id="ssRole" placeholder="کناف‌کار، شاگرد..." autocomplete="off"></div>
+    </div>
+    <div class="row-btns">
+      <button class="btn btn-primary" onclick="saveStaff()">ذخیره</button>
+      <button class="btn btn-ghost" onclick="closeSheet('sh-staff')">بستن</button>
+    </div>
+    <button class="btn btn-danger-ghost hidden" id="ssDel" onclick="deleteStaffFromSheet()">حذف این کارگر</button>
+  </div>
+</div>
+
+<!-- ═══════════ پرداخت دستمزد ═══════════ -->
+<div class="overlay" id="sh-wage">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-head"><h3 id="swTitle">ثبت پرداخت</h3><button class="icon-btn sm" onclick="closeSheet('sh-wage')">✕</button></div>
+    <div class="field"><label class="label">کارگر <span class="req">*</span></label><select class="input" id="swStaff"></select></div>
+    <div class="field"><label class="label">مبلغ (تومان) <span class="req">*</span></label><input class="input big money" id="swAmount" inputmode="numeric" autocomplete="off" placeholder="۰"></div>
+    <div class="field"><label class="label">نوع پرداخت</label>
+      <div class="seg" id="swKind">
+        <button class="on" data-v="salary" onclick="pickSeg(this)">دستمزد</button>
+        <button data-v="advance" onclick="pickSeg(this)">علی‌الحساب</button>
+      </div>
+    </div>
+    <div class="field"><label class="label">پروژه</label><select class="input" id="swProj"></select></div>
+    <div class="field"><label class="label">تاریخ</label><input class="input" id="swDate" readonly onclick="openCal(this)"></div>
+    <div class="field"><label class="label">توضیح</label><input class="input" id="swDesc" placeholder="اختیاری" autocomplete="off"></div>
+    <div class="row-btns">
+      <button class="btn btn-primary" id="swSave" onclick="saveWage()">ثبت</button>
+      <button class="btn btn-ghost" onclick="closeSheet('sh-wage')">بستن</button>
+    </div>
+    <button class="btn btn-danger-ghost hidden" id="swDel" onclick="deleteWageFromSheet()">حذف این پرداخت</button>
+  </div>
+</div>
+
+<!-- ═══════════ تقویم ═══════════ -->
+<div class="overlay" id="sh-cal">
+  <div class="sheet small">
+    <div class="handle"></div>
+    <div class="cal-head">
+      <button class="icon-btn sm" onclick="calGoYear(-1)" aria-label="سال قبل">»</button>
+      <button class="icon-btn sm" onclick="calGo(-1)" aria-label="ماه قبل">›</button>
+      <div class="cal-title" id="calTitle"></div>
+      <button class="icon-btn sm" onclick="calGo(1)" aria-label="ماه بعد">‹</button>
+      <button class="icon-btn sm" onclick="calGoYear(1)" aria-label="سال بعد">«</button>
     </div>
     <div class="cal-grid" id="calGrid"></div>
-    <div class="rowbtns" style="margin-top:12px">
-      <button class="btn btn-p" onclick="calToday()">امروز</button>
-      <button class="btn btn-g" onclick="closeCal()">بستن</button>
+    <div class="row-btns">
+      <button class="btn btn-primary" onclick="calToday()">امروز</button>
+      <button class="btn btn-ghost" onclick="closeCal()">بستن</button>
     </div>
   </div>
 </div>
 
+<!-- ═══════════ فاکتور ═══════════ -->
+<div class="overlay" id="sh-invoice">
+  <div class="sheet wide">
+    <div class="handle"></div>
+    <div class="sheet-head"><h3>صورت‌کار / فاکتور</h3><button class="icon-btn sm" onclick="closeSheet('sh-invoice')">✕</button></div>
+    <div class="chips" id="invOpts">
+      <button class="chip on" data-v="money" onclick="toggleInvOpt(this)">💰 نمایش مبالغ</button>
+      <button class="chip on" data-v="detail" onclick="toggleInvOpt(this)">📋 شرح ردیف‌ها</button>
+    </div>
+    <div class="inv-scroll"><div class="invoice" id="invPreview"></div></div>
+    <div class="row-btns">
+      <button class="btn btn-primary" onclick="printInvoice()">🖨 چاپ / PDF</button>
+      <button class="btn btn-soft" onclick="shareInvoice()">📤 اشتراک</button>
+    </div>
+    <button class="btn btn-ghost btn-block mt" onclick="closeSheet('sh-invoice')">بستن</button>
+  </div>
+</div>
+
+<!-- ═══════════ منوی پروژه ═══════════ -->
+<div class="overlay" id="sh-actions">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-head"><h3 id="saTitle">عملیات پروژه</h3><button class="icon-btn sm" onclick="closeSheet('sh-actions')">✕</button></div>
+    <div class="quick-grid">
+      <button class="quick" onclick="actionsPin()"><span class="qi">📌</span><b id="saPin">پین</b><small>بالای لیست</small></button>
+      <button class="quick" onclick="actionsEdit()"><span class="qi">✏️</span><b>ویرایش</b><small>اطلاعات پروژه</small></button>
+      <button class="quick" onclick="actionsPrices()"><span class="qi">💰</span><b>قیمت‌ها</b><small>نرخ این پروژه</small></button>
+      <button class="quick" onclick="actionsInvoice()"><span class="qi">🧾</span><b>فاکتور</b><small>صورت‌کار</small></button>
+      <button class="quick" onclick="actionsStatus()"><span class="qi">✅</span><b id="saStatus">تمام شد</b><small>تغییر وضعیت</small></button>
+      <button class="quick" onclick="actionsDelete()"><span class="qi">🗑️</span><b style="color:var(--red)">حذف</b><small>پاک کردن پروژه</small></button>
+    </div>
+    <button class="btn btn-ghost btn-block mt" onclick="closeSheet('sh-actions')">بستن</button>
+  </div>
+</div>
+
+<!-- ═══════════ تایید ═══════════ -->
+<div class="overlay" id="sh-confirm">
+  <div class="sheet small">
+    <div class="handle"></div>
+    <h3 id="cfTitle">مطمئنی؟</h3>
+    <p class="cf-text" id="cfText"></p>
+    <div class="row-btns">
+      <button class="btn btn-danger" onclick="confirmOk()">بله</button>
+      <button class="btn btn-ghost" onclick="closeSheet('sh-confirm')">بی‌خیال</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ خوش‌آمد ═══════════ -->
+<div class="overlay" id="sh-welcome">
+  <div class="sheet small">
+    <div class="handle"></div>
+    <div class="welcome">
+      <div class="w-ico">🏗️</div>
+      <h3>به کارکرد خوش اومدی</h3>
+      <p>دفتر کارگاهت، توی گوشی: پروژه‌ها، صفحه و متر کناف، آیتم‌ها، دریافتی، هزینه، دستمزد کارگرها و فاکتور. همه‌چی آفلاین و روی همین گوشی ذخیره می‌شه.</p>
+    </div>
+    <div class="row-btns">
+      <button class="btn btn-primary" onclick="welcomeStart('empty')">شروع خالی</button>
+      <button class="btn btn-soft" onclick="welcomeStart('demo')">دیدن نمونه</button>
+    </div>
+    <p class="hint center">هر وقت خواستی از تنظیمات داده‌های نمونه رو پاک کن.</p>
+  </div>
+</div>
+
+<div id="toastBox" class="toast"></div>
 <div id="printArea"></div>
 
-<script>
-const LS='karkard_v1';
-const uid=()=>Date.now().toString(36)+Math.floor(Math.random()*999);
-const faN=n=>(+n||0).toLocaleString('fa-IR');
-const faD=s=>String(s??'').replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
-const num=v=>{const s=String(v??'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[٫,،]/g,'.').replace(/[^0-9.]/g,'');const n=parseFloat(s);return isNaN(n)?0:n;};
-function fmtAmount(el){const n=num(el.value);el.value=n>0?n.toLocaleString('fa-IR'):'';}
-function fmtDate(el){let d=String(el.value??'').replace(/[۰-۹]/g,x=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(x)).replace(/[٠-٩]/g,x=>'٠١٢٣٤٥٦٧٨٩'.indexOf(x)).replace(/\D/g,'');let out=d;if(d.length>=3&&d.length<=4){const dd=d.slice(0,2),mm=d.slice(2);if(d.length===4){const y=(todayJalali().split('/')[0]||'');out=y+'/'+mm+'/'+dd;}else out=dd+(mm?'/'+mm:'');}else if(d.length>4){d=d.slice(0,8);out=d.slice(0,4)+'/'+d.slice(4);if(d.length>6)out=d.slice(0,4)+'/'+d.slice(4,6)+'/'+d.slice(6);}el.value=out;}
-function normDate(v){v=String(v||'').trim();if(!v)return todayJalali();const ty=todayJalali().split('/');const pad=x=>String(x).padStart(2,'0');const dg=v.replace(/\D/g,'');const p=v.split('/').map(x=>x.trim()).filter(x=>x!=='');if(p.length===3)return v;if(p.length===2&&p[0]&&p[1])return ty[0]+'/'+pad(p[1])+'/'+pad(p[0]);if(dg.length===4)return ty[0]+'/'+dg.slice(2)+'/'+dg.slice(0,2);if(dg.length===3)return ty[0]+'/'+dg.slice(1)+'/'+pad(dg.slice(0,1));if(dg.length>=5){const d=dg.slice(0,8);return d.slice(0,4)+'/'+d.slice(4,6)+'/'+d.slice(6);}if(dg.length>0)return ty[0]+'/'+ty[1]+'/'+pad(dg);return v;}
-function setToday(id){document.getElementById(id).value=todayJalali();}
-/* ─── Jalali calendar core (offline, no library) ─── */
-const JBR=[-61,9,38,199,426,686,756,818,1111,1181,1210,1635,2060,2097,2192,2262,2324,2394,2456,3178];
-function jDiv(a,b){return ~~(a/b);}
-function jMod(a,b){return a-~~(a/b)*b;}
-function jalCal(jy,withoutLeap){
-  const bl=JBR.length;let gy=jy+621,leapJ=-14,jp=JBR[0],jm=0,jump=0,leap=0,leapG=0,march=0,n=0;
-  for(let i=1;i<bl;i++){jm=JBR[i];jump=jm-jp;if(jy<jm)break;leapJ=leapJ+jDiv(jump,33)*8+jDiv(jMod(jump,33),4);jp=jm;}
-  n=jy-jp;
-  leapJ=leapJ+jDiv(n,33)*8+jDiv(jMod(n,33)+3,4);
-  if(jMod(jump,33)===4&&jump-n===4)leapJ+=1;
-  leapG=jDiv(gy,4)-jDiv((jDiv(gy,100)+1)*3,4)-150;
-  march=20+leapJ-leapG;
-  if(withoutLeap)return {gy:gy,march:march};
-  if(jump-n<6)n=n-jump+jDiv(jump+4,33)*33;
-  leap=jMod(jMod(n+1,33)-1,4);
-  if(leap===-1)leap=4;
-  return {leap:leap,gy:gy,march:march};
-}
-function jG2d(gy,gm,gd){let d=jDiv((gy+jDiv(gm-8,6)+100100)*1461,4)+jDiv(153*jMod(gm+9,12)+2,5)+gd-34840408;d=d-jDiv(jDiv(gy+100100+jDiv(gm-8,6),100)*3,4)+752;return d;}
-function jD2g(jdn){let j=4*jdn+139361631;j=j+jDiv(jDiv(4*jdn+183187720,146097)*3,4)*4-3908;const i=jDiv(jMod(j,1461),4)*5+308;const gd=jDiv(jMod(i,153),5)+1;const gm=jMod(jDiv(i,153),12)+1;const gy=jDiv(j,1461)-100100+jDiv(8-gm,6);return {gy:gy,gm:gm,gd:gd};}
-function jJ2d(jy,jm,jd){const r=jalCal(jy,true);return jG2d(r.gy,3,r.march)+(jm-1)*31-jDiv(jm,7)*(jm-7)+jd-1;}
-function jD2j(jdn){const gy=jD2g(jdn).gy;let jy=gy-621;const r=jalCal(jy,false);const jdn1f=jG2d(gy,3,r.march);let jd,jm;let k=jdn-jdn1f;if(k>=0){if(k<=185){jm=1+jDiv(k,31);jd=jMod(k,31)+1;return {jy:jy,jm:jm,jd:jd};}k-=186;}else{jy-=1;k+=179;if(r.leap===1)k+=1;}jm=7+jDiv(k,30);jd=jMod(k,30)+1;return {jy:jy,jm:jm,jd:jd};}
-function jMonthLen(jy,jm){if(jm<=6)return 31;if(jm<=11)return 30;return jalCal(jy,false).leap===0?30:29;}
-/* ─── calendar picker UI ─── */
-const JMONTHS=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
-const JWDAYS=['ش','ی','د','س','چ','پ','ج'];
-let calY=0,calM=0,calTarget=null;
-const pad2=x=>String(x).padStart(2,'0');
-function parseJal(str){const m=String(str||'').match(/(\d{4})\/(\d{1,2})\/(\d{1,2})/);if(m)return {y:+m[1],m:+m[2],d:+m[3]};return null;}
-function openCal(id){calTarget=id;const el=document.getElementById(id);let cur=parseJal(normDate(el?el.value:''));if(!cur||!(cur.m>=1&&cur.m<=12)){const t=todayJalali().split('/');cur={y:+t[0],m:+t[1],d:+t[2]};}calY=cur.y;calM=cur.m;if(el&&el.blur)el.blur();renderCal();document.getElementById('calOverlay').classList.add('open');}
-function closeCal(){document.getElementById('calOverlay').classList.remove('open');calTarget=null;}
-function calGo(d){calM+=d;if(calM<1){calM=12;calY--;}if(calM>12){calM=1;calY++;}renderCal();}
-function calToday(){if(calTarget)document.getElementById(calTarget).value=todayJalali();closeCal();}
-function calPick(d){if(calTarget)document.getElementById(calTarget).value=calY+'/'+pad2(calM)+'/'+pad2(d);closeCal();}
-function renderCal(){
-  document.getElementById('calTitle').textContent=JMONTHS[calM-1]+' '+faN(calY);
-  const len=jMonthLen(calY,calM);
-  const first=(jMod(jJ2d(calY,calM,1),7)+2)%7;
-  const t=todayJalali().split('/');const ty=+t[0],tm=+t[1],td=+t[2];
-  let sel=null;
-  if(calTarget){const p=parseJal(normDate(document.getElementById(calTarget).value));if(p)sel=p;}
-  let h=JWDAYS.map(w=>`<div class="cal-w">${w}</div>`).join('');
-  for(let i=0;i<first;i++)h+='<div></div>';
-  for(let d=1;d<=len;d++){let c='cal-d';if(d===td&&calY===ty&&calM===tm)c+=' today';if(sel&&d===sel.d&&calY===sel.y&&calM===sel.m)c+=' sel';h+=`<button class="${c}" onclick="calPick(${d})">${faN(d)}</button>`;}
-  const tail=(first+len)%7;if(tail>0)for(let i=tail;i<7;i++)h+='<div></div>';
-  document.getElementById('calGrid').innerHTML=h;
-}
-const mOf=e=>(+e.pages||0)*3+(+e.meter||0);
-const ITEMS={cooler:{t:'❄️ کولر',u:'عدد'},chand:{t:'💡 لوستر',u:'عدد'},halogen:{t:'🔆 هالوژن',u:'عدد'},linear:{t:'➖ لاین',u:'متر'}};
-const IKEYS=Object.keys(ITEMS);
-const INAME={cooler:'دریچه کولر',chand:'دریچه لوستر',halogen:'هالوژن',linear:'لاین نوری'};
-const IUNIT={cooler:'عدد',chand:'عدد',halogen:'عدد',linear:'متر'};
-function prettyItem(k,n){return faN(n)+' '+IUNIT[k]+' '+INAME[k];}
-const PKEYS=['meter','cooler','chand','halogen','linear','hour'];
-const PLBL={meter:'مبلغ هر متر کناف',cooler:'مبلغ هر دریچه کولر',chand:'مبلغ هر دریچه لوستر',halogen:'مبلغ هر هالوژن',linear:'مبلغ هر متر لاین نوری',hour:'دستمزد هر ساعت'};
-function blankPrices(){return {meter:0,cooler:0,chand:0,halogen:0,linear:0,hour:0};}
-const numH=v=>{let s=String(v??'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[٫,،]/g,'.').replace(/\//g,'.').replace(/[^0-9.]/g,'');const n=parseFloat(s);return isNaN(n)?0:n;};
-function pricesOf(p){const r=blankPrices();if(p&&p.prices)Object.keys(r).forEach(k=>r[k]=+p.prices[k]||0);return r;}
-function entryAmount(e,pr){return mOf(e)*(+pr.meter||0)+IKEYS.reduce((a,k)=>a+(+e[k]||0)*(+pr[k]||0),0)+(numH(e.hours)||0)*(+pr.hour||0);}
-
-function todayJalali(){
-  try{
-    const p=new Intl.DateTimeFormat('en-u-ca-persian',{year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
-    const g=t=>(p.find(x=>x.type===t)||{}).value;
-    return g('year')+'/'+g('month')+'/'+g('day');
-  }catch(e){return '';}
-}
-function blankEntry(){return {id:uid(),date:'',pages:0,meter:0,cooler:0,chand:0,halogen:0,linear:0,hours:0,desc:''};}
-function seed(){
-  return {projects:[{id:'p_zarabi',name:'ضرابی',prices:{meter:220000,cooler:100000,chand:100000,halogen:0,linear:0},entries:[
-    {id:uid(),date:'۱۴۰۵/۰۵/۰۳',pages:61,cooler:0,chand:0,halogen:0,linear:0,desc:''},
-    {id:uid(),date:'۱۴۰۵/۰۵/۱۷',pages:10,cooler:5,chand:0,halogen:0,linear:0,desc:''},
-    {id:uid(),date:'۱۴۰۵/۰۶/۰۳',pages:67,cooler:4,chand:1,halogen:0,linear:0,desc:''},
-    {id:uid(),date:'۱۴۰۵/۰۶/۰۷',pages:20,cooler:0,chand:0,halogen:0,linear:0,desc:'کناف'},
-    {id:uid(),date:'۱۴۰۵/۰۶/۱۰',pages:0,cooler:0,chand:7,halogen:0,linear:0,desc:'دریچه لوستر'},
-    {id:uid(),date:'۱۴۰۵/۰۶/۱۲',pages:1,cooler:0,chand:0,halogen:0,linear:0,desc:''}
-  ]}],receipts:[],costs:[]};
-}
-function seedWages(){return [{id:uid(),name:'سجاد',date:'۱۴۰۵/۰۶/۰۸',amount:18600000,desc:'تسویه تا ۸ شهریور'}];}
-/* migrate old shapes -> project prices (automatic on all entries) */
-function migrate(s){
-  if(!s||!Array.isArray(s.projects))return null;
-  if(!Array.isArray(s.wages))s.wages=seedWages();
-  if(!Array.isArray(s.receipts))s.receipts=[];
-  s.receipts.forEach(r=>{if(r.pid==null){const hit=(s.projects||[]).find(pr=>pr.name===(r.source||'').trim());r.pid=hit?hit.id:'';}});
-  if(!Array.isArray(s.costs))s.costs=[];
-  // old shape: payments lived inside each project -> move to global receipts
-  s.projects.forEach(p=>{
-    if(Array.isArray(p.payments)&&p.payments.length){
-      p.payments.forEach(r=>s.receipts.push({id:r.id||uid(),source:p.name,date:r.date,amount:r.amount,desc:r.desc||''}));
-    }
-    delete p.payments;
-    // v12 stored knauf price per page -> convert to per meter
-    if(p.prices&&+p.prices.page>0&&!(+p.prices.meter>0))p.prices.meter=Math.round(+p.prices.page/3);
-    if(p.prices)delete p.prices.page;
-    if(!p.prices||typeof p.prices!=='object')p.prices=blankPrices();
-    if(!(p.prices.hour>=0))p.prices.hour=0;
-    PKEYS.forEach(k=>{p.prices[k]=+p.prices[k]||0;});
-    // rates era -> per-entry agreed amounts -> infer unit prices
-    if(p.rateM!=null){
-      p.entries.forEach(e=>{
-        if(e.amount==null)e.amount=(+e.pages||0)*3*p.rateM+(+e.cooler||0)*(p.rateCooler||0)+(+e.chand||0)*(p.rateChand||0);
-        if(e.halogen==null)e.halogen=0;
-        if(e.linear==null)e.linear=0;
-      });
-      delete p.rateM;delete p.rateCooler;delete p.rateChand;
-    }
-    // agreed-amount era (amount / aPages / aCooler...) -> infer project unit prices once
-    const hasPrice=Object.values(p.prices).some(v=>v>0);
-    if(!hasPrice){
-      const guess={meter:[],cooler:[],chand:[],halogen:[],linear:[]};
-      p.entries.forEach(e=>{
-        if(+e.pages>0){
-          if(+e.aPages>0)guess.meter.push(Math.round(+e.aPages/(+e.pages*3)));
-          else if(+e.amount>0&&!(+e.cooler||+e.chand||+e.halogen||+e.linear))guess.meter.push(Math.round(+e.amount/(+e.pages*3)));
-        }
-        IKEYS.forEach(k=>{
-          const ak='a'+k[0].toUpperCase()+k.slice(1);
-          if(+e[k]>0&&+e[ak]>0)guess[k].push(Math.round(+e[ak]/+e[k]));
-        });
-      });
-      const med=a=>a.length?a.sort((x,y)=>x-y)[Math.floor(a.length/2)]:0;
-      p.prices.meter=med(guess.meter);
-      IKEYS.forEach(k=>p.prices[k]=med(guess[k]));
-      // zarabi fallback (known old rates)
-      if(p.id==='p_zarabi'){
-        if(!p.prices.meter)p.prices.meter=220000;
-        if(!p.prices.cooler)p.prices.cooler=100000;
-        if(!p.prices.chand)p.prices.chand=100000;
-      }
-    }
-    // drop per-entry amounts: totals are now computed from project prices
-    p.entries.forEach(e=>{
-      delete e.amount;delete e.aPages;delete e.aCooler;delete e.aChand;delete e.aHalogen;delete e.aLinear;
-      if(e.halogen==null)e.halogen=0;
-      if(e.linear==null)e.linear=0;
-      if(e.hours==null)e.hours=0;
-    });
-    delete p.items;delete p.rateM;delete p.rateCooler;delete p.rateChand;
-  });
-  return s;
-}
-function load(){try{const s=migrate(JSON.parse(localStorage.getItem(LS)));if(s)return s;}catch(e){}const f=seed();f.wages=seedWages();return f;}
-let S=load();
-let curPid=null;
-let editCtx=null;
-function save(){localStorage.setItem(LS,JSON.stringify(S));}
-function receivedTotal(){return (S.receipts||[]).reduce((a,r)=>a+(+r.amount||0),0);}
-function entryComplete(e,pr){
-  if((+e.pages||0)>0&&!(+pr.meter>0))return false;
-  if((numH(e.hours)||0)>0&&!(+pr.hour>0))return false;
-  return IKEYS.every(k=>!(+e[k]>0)||(+pr[k]>0));
-}
-function totals(p){
-  const pr=pricesOf(p);
-  let pages=0,meter=0,amt=0,hours=0,ok=true;const it={cooler:0,chand:0,halogen:0,linear:0};
-  p.entries.forEach(e=>{
-    pages+=+e.pages||0;meter+=+e.meter||0;hours+=numH(e.hours)||0;
-    // old backup without prices: fallback to stored amount
-    amt+=(Object.values(pr).some(v=>v>0)?entryAmount(e,pr):(+e.amount||0));
-    if(!entryComplete(e,pr))ok=false;
-    IKEYS.forEach(k=>it[k]+=+(e[k]||0));
-  });
-  return {pages,meter,m:pages*3+meter,it,amt,hours,ok};
-}
-function hasWork(t){return t.pages>0||(t.meter||0)>0||(t.hours||0)>0||IKEYS.some(k=>t.it[k]>0);}
-function amtD(t){if(t.amt>0)return faN(t.amt);return hasWork(t)?'نامعلوم':faN(0);}
-function entryHasQty(e){return (+e.pages||0)>0||(+e.meter||0)>0||(numH(e.hours)||0)>0||IKEYS.some(k=>(+e[k]||0)>0);}
-function entryAmtD(e,pr){const a=entryAmount(e,pr);if(a>0)return faN(a)+' تومان';return entryHasQty(e)?'نامعلوم':'—';}
-function priceLine(p){
-  const pr=pricesOf(p);
-  const parts=[`متر ${+pr.meter?faN(pr.meter):'نامعلوم'}`];
-  IKEYS.forEach(k=>parts.push(`${ITEMS[k].t} ${+pr[k]?faN(pr[k]):'نامعلوم'}`));
-  if(+pr.hour>0)parts.push(`⏱️ ساعتی ${faN(pr.hour)}`);
-  return parts.join(' • ');
-}
-function itemStr(e){
-  const parts=[];
-  if(+e.pages>0)parts.push(faN(e.pages)+' صفحه ('+faN((+e.pages||0)*3)+' متر)');
-  if(+e.meter>0)parts.push(faN(e.meter)+' متر روکار');
-  IKEYS.forEach(k=>{if(+e[k])parts.push(prettyItem(k,+e[k]));});
-  if((numH(e.hours)||0)>0)parts.push('⏱️ '+faD(String(e.hours))+' ساعت');
-  return parts.join(' • ');
-}
-
-/* ─── nav ─── */
-function go(t){
-  ['projects','bills','wages','recv','costs','detail'].forEach(x=>document.getElementById('pg-'+x).classList.remove('active'));
-  document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open'));
-  const pg=document.getElementById('pg-'+t);
-  pg.classList.remove('active');void pg.offsetWidth;pg.classList.add('active');
-  ['projects','bills','wages','recv','costs'].forEach(x=>document.getElementById('nb-'+x).classList.remove('on'));
-  if(t!=='detail'){const nb=document.getElementById('nb-'+t);nb.classList.add('on');const ic=nb.querySelector('.ic');if(ic){ic.classList.remove('navpop');void ic.offsetWidth;ic.style.animation='none';void ic.offsetWidth;ic.style.animation='';}}
-  else document.getElementById('nb-projects').classList.add('on');
-  document.getElementById('fab').classList.toggle('hide',t==='bills');
-  if(t==='bills')renderBills();
-  if(t==='wages')renderWages();
-  if(t==='recv')renderRecv();
-  if(t==='costs')renderCosts();
-  window.scrollTo(0,0);
-}
-function backToList(){curPid=null;go('projects');}
-function toggleTheme(){var c=document.documentElement.getAttribute('data-theme');var n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);try{localStorage.setItem('karkard_theme',n);}catch(e){}document.getElementById('themeBtn').textContent=n==='dark'?'🌙':'☀️';}
-
-/* ─── tab1: project ─── */
-function toast(msg){
-  let el=document.getElementById('toastBox');
-  if(!el){el=document.createElement('div');el.id='toastBox';el.className='toast';document.body.appendChild(el);}
-  el.textContent=msg;el.classList.add('show');
-  clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),2200);
-}
-/* count-up for money numbers inside #box */
-function countUp(box){
-  const els=box.querySelectorAll('.inv-total .v,.proj-amt,.stat .n');
-  els.forEach(el=>{
-    if(el.dataset.cu)return;el.dataset.cu='1';
-    const txt=el.textContent.replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[^\d]/g,'');
-    const n=+txt;
-    if(!(n>0)||String(n).length<5)return;
-    const persian=d=>(''+d).replace(/\d/g,x=>'۰۱۲۳۴۵۶۷۸۹'[x]);
-    const t0=performance.now(),dur=600;
-    function step(t){
-      const k=Math.min(1,(t-t0)/dur),ease=1-Math.pow(1-k,3);
-      el.textContent=persian(Math.floor(n*ease).toLocaleString('en-US'));
-      if(k<1)requestAnimationFrame(step);else el.textContent=persian(n.toLocaleString('en-US'));
-    }
-    requestAnimationFrame(step);
-  });
-}
-function fabTap(){
-  if(document.getElementById('pg-detail').classList.contains('active')){openSheet('add');return;}
-  if(document.getElementById('pg-wages').classList.contains('active')){openWage();return;}
-  if(document.getElementById('pg-recv').classList.contains('active')){openRecv();return;}
-  if(document.getElementById('pg-costs').classList.contains('active')){openCost();return;}
-  renamePid=null;
-  document.getElementById('projSheetTitle').textContent='➕ پروژه جدید';
-  document.getElementById('projSheetBtn').textContent='ساختن پروژه';
-  document.getElementById('np-name').value='';
-  document.getElementById('projOverlay').classList.add('open');
-  setTimeout(()=>{const el=document.getElementById('np-name');if(el)el.focus();},300);
-}
-let renamePid=null;
-function closeProj(){document.getElementById('projOverlay').classList.remove('open');renamePid=null;}
-function openRename(pid){const p=S.projects.find(x=>x.id===pid);if(!p)return;renamePid=pid;document.getElementById('projSheetTitle').textContent='✏️ ویرایش اسم پروژه';document.getElementById('projSheetBtn').textContent='ذخیره';document.getElementById('np-name').value=p.name;document.getElementById('projOverlay').classList.add('open');setTimeout(()=>{const el=document.getElementById('np-name');if(el){el.focus();el.select();}},300);}
-function addProject(){
-  const name=document.getElementById('np-name').value.trim();
-  if(!name){toast('اسم پروژه رو بنویس');return;}
-  if(renamePid){const p=S.projects.find(x=>x.id===renamePid);if(p)p.name=name;const rp=renamePid;renamePid=null;document.getElementById('np-name').value='';closeProj();save();renderAll();if(curPid===rp)renderDetail();toast('اسم عوض شد ✅');return;}
-  const p={id:uid(),name,prices:blankPrices(),entries:[]};
-  S.projects.push(p);
-  document.getElementById('np-name').value='';
-  closeProj();save();renderAll();openProject(p.id);
-}
-
-/* ─── backup ─── */
-function backupExport(){
-  const blob=new Blob([JSON.stringify(S)],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='karkard-backup-'+new Date().toISOString().slice(0,10)+'.json';
-  document.body.appendChild(a);a.click();a.remove();
-}
-function backupCopy(){
-  const t=document.getElementById('imp-text');
-  t.value=JSON.stringify(S);t.select();
-  const done=()=>toast('کپی شد ✅ بفرستش یه جای امن');
-  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(JSON.stringify(S)).then(done).catch(()=>{document.execCommand('copy');done();});}
-  else{document.execCommand('copy');done();}
-}
-function backupImportFile(inp){
-  const f=inp.files&&inp.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=()=>restoreBackup(r.result);
-  r.readAsText(f);
-  inp.value='';
-}
-function backupImportText(){restoreBackup(document.getElementById('imp-text').value);}
-function restoreBackup(txt){
-  try{
-    const o=migrate(JSON.parse(txt));
-    if(!o)throw 0;
-    S=o;save();renderAll();toast('برگردونده شد ✅');
-  }catch(e){toast('متن بکاپ معتبر نیست ❌');}
-}
-function wipeAll(){
-  if(!confirm('همه پروژه‌ها و ثبت‌ها پاک بشه؟'))return;
-  if(!confirm('مطمئنی؟ بکاپ گرفتی؟'))return;
-  S={projects:[],wages:[],receipts:[],costs:[]};curPid=null;save();renderAll();
-}
-function checkUpdate(){
-  if(!confirm('کش برنامه پاک و تازه‌سازی بشه؟ (داده‌هات پاک نمیشه)'))return;
-  const done=()=>{try{location.reload(true);}catch(e){location.reload();}};
-  if('serviceWorker' in navigator){
-    Promise.all([caches.keys().then(ks=>Promise.all(ks.map(k=>caches.delete(k)))),navigator.serviceWorker.getRegistrations().then(rs=>Promise.all(rs.map(r=>r.unregister())))]).then(done).catch(done);
-  }else done();
-}
-
-/* ─── v30: balance + monthly + search ─── */
-let projQ='',detQ='',recvPrefillPid='';
-function enD(s){return String(s??'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));}
-function monthKey(d){const m=enD(d).match(/(\d{4})\/(\d{1,2})/);if(!m)return '';return m[1]+'/'+String(+m[2]).padStart(2,'0');}
-function recvSum(pid){return (S.receipts||[]).filter(r=>(r.pid||'')===pid).reduce((a,r)=>a+(+r.amount||0),0);}
-function projSearch(v){projQ=enD(v||'').trim();renderProjects();}
-function detSearch(v){detQ=enD(v||'').trim();renderDetail();}
-function openRecvFor(pid){recvPrefillPid=pid||'';go('recv');openRecv();}
-/* ─── tab2: list ─── */
-function renderProjects(){
-  const box=document.getElementById('projList');
-  if(!S.projects.length){box.innerHTML='<div class="empty">هنوز پروژه‌ای نداری — از تب ➕ بساز 👇</div>';return;}
-  const q=(projQ||'').toLowerCase();
-  const list=S.projects.filter(p=>!q||enD(p.name).toLowerCase().includes(q)).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
-  if(!list.length){box.innerHTML='<div class="empty">پروژه‌ای پیدا نشد 🔍</div>';return;}
-  box.innerHTML=list.map(p=>{
-    const t=totals(p);
-    return `<div class="card proj-card" data-pid="${p.id}" onclick="openProject('${p.id}')">
-      <div class="proj-head"><div class="proj-name">${p.pinned?'📌 ':' '}🏗️ ${faD(p.name)}</div></div>
-      <div class="proj-stats">
-        ${t.pages>0?`<div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>`:''}
-        ${t.meter>0?`<div class="stat"><div class="n">${faN(t.meter)}</div><div class="t">📐 متر روکار</div></div>`:''}
-        ${t.m>0?`<div class="stat"><div class="n">${faN(t.m)}</div><div class="t">متر</div></div>`:''}
-        ${(t.hours||0)>0?`<div class="stat"><div class="n">${faD(String(t.hours))}</div><div class="t">⏱️ ساعت</div></div>`:''}
-        <div class="stat"><div class="n">${faN(p.entries.length)}</div><div class="t">📝 ثبت</div></div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-/* ─── long-press pin menu ─── */
-let pinPid=null,lpTimer=null,lpFired=false,lpX=0,lpY=0;
-function openPinMenu(pid){
-  const p=S.projects.find(x=>x.id===pid); if(!p)return;
-  pinPid=pid;
-  document.getElementById('pinProjName').textContent=faD(p.name);
-  document.getElementById('pinToggleBtn').textContent=p.pinned?'❌ پین رو بردار':'📌 پین کن (همیشه بالای لیست)';
-  document.getElementById('pinOverlay').classList.add('open');
-}
-function closePinMenu(){document.getElementById('pinOverlay').classList.remove('open');pinPid=null;}
-function togglePin(){
-  const p=S.projects.find(x=>x.id===pinPid); if(!p)return;
-  p.pinned=!p.pinned; save(); closePinMenu(); renderProjects();
-  toast(p.pinned?'پین شد 📌 بالای لیست':'پین برداشته شد');
-}
-(function(){
-  const box=document.getElementById('projList'); if(!box||box._lp)return; box._lp=1;
-  function lpUp(){clearTimeout(lpTimer);lpTimer=null;}
-  box.addEventListener('pointerdown',e=>{
-    const card=e.target.closest&&e.target.closest('.proj-card'); if(!card)return;
-    lpFired=false;lpX=e.clientX;lpY=e.clientY;
-    lpUp();
-    lpTimer=setTimeout(()=>{lpFired=true;if(navigator.vibrate)navigator.vibrate(25);openPinMenu(card.getAttribute('data-pid'));},500);
-  });
-  box.addEventListener('pointermove',e=>{if(lpTimer&&(Math.abs(e.clientX-lpX)>10||Math.abs(e.clientY-lpY)>10))lpUp();});
-  ['pointerup','pointercancel','pointerleave'].forEach(ev=>box.addEventListener(ev,lpUp));
-  box.addEventListener('click',e=>{if(lpFired){lpFired=false;e.stopPropagation();e.preventDefault();}},true);
-})();
-
-/* ─── detail ─── */
-function openProject(pid){
-  curPid=pid;detQ='';renderDetail();go('detail');
-}
-function renderDetail(){
-  const p=S.projects.find(x=>x.id===curPid);
-  const box=document.getElementById('detailBox');
-  if(!p){box.innerHTML='<div class="empty">پروژه پیدا نشد</div>';return;}
-  const t=totals(p);
-  const pr=pricesOf(p);
-  const pc=costsOf(p.id);
-  const rc=recvSum(p.id);
-  const bal=t.amt>0?t.amt-rc:0;
-  const balD=t.amt>0?faN(bal)+' تومان':'—';
-  const profit=t.amt>0?faN(t.amt-pc)+' تومان':'نامعلوم';
-  const dq=(detQ||'').toLowerCase();
-  const fents=[...p.entries].reverse().filter(e=>!dq||(enD((e.desc||'')+' '+e.date+' '+itemStr(e)).toLowerCase().includes(dq)));
-  const ents=fents.map(e=>{
-    const is=itemStr(e);
-    const ea=entryAmount(e,pr);
-    return `<div class="ent"><div><div class="q">${e.desc?faD(e.desc)+' • ':''}${is}</div><div class="d">${faD(e.date)} • ${entryAmtD(e,pr)}</div></div>
-    <div class="ops"><button class="op-edit" onclick="openSheet('edit','${p.id}','${e.id}')">✏️</button><button class="op-del" onclick="delEntry('${p.id}','${e.id}')">🗑️</button></div></div>`;
-  }).join('');
-  box.innerHTML=`<div class="card">
-      <div class="proj-head"><div class="proj-name">🏗️ ${faD(p.name)} <button class="op-edit" style="font-size:15px" onclick="openRename('${p.id}')">✏️</button></div><div class="proj-amt">${amtD(t)} تومان</div></div>
-      <div style="font-size:12px;color:var(--text2);margin-top:6px">💰 ${priceLine(p)}</div>
-      <div class="proj-stats">
-        ${t.pages>0?`<div class="stat"><div class="n">${faN(t.pages)}</div><div class="t">صفحه</div></div>`:''}
-        ${t.meter>0?`<div class="stat"><div class="n">${faN(t.meter)}</div><div class="t">📐 متر روکار</div></div>`:''}
-        ${t.m>0?`<div class="stat"><div class="n">${faN(t.m)}</div><div class="t">متر</div></div>`:''}
-        ${(t.hours||0)>0?`<div class="stat"><div class="n">${faD(String(t.hours))}</div><div class="t">⏱️ ساعت</div></div>`:''}
-        ${t.amt>0?`<div class="stat wide"><div class="n">💰 ${amtD(t)} تومان</div><div class="t">مبلغ کار</div></div>`:''}
-        ${rc>0?`<div class="stat"><div class="n">${faN(rc)} تومان</div><div class="t">💵 دریافتی</div></div>`:''}
-        ${t.amt>0?`<div class="stat wide"><div class="n">📌 ${balD}</div><div class="t">مانده</div></div>`:''}
-        ${pc>0?`<div class="stat"><div class="n">${faN(pc)} تومان</div><div class="t">🧰 هزینه</div></div>`:''}
-        ${t.amt>0?`<div class="stat"><div class="n">${profit}</div><div class="t">سود پروژه</div></div>`:''}
-        ${(t.pages||t.m||t.hours||t.amt)?'':`<div class="stat"><div class="n">${faN(p.entries.length)}</div><div class="t">📝 ثبت</div></div>`}
-      </div>
-      <div class="rowbtns">
-        <button class="btn btn-g" onclick="openRecvFor('${p.id}')">💵 ثبت دریافتی</button>
-        <button class="btn btn-g" style="color:var(--red)" onclick="delProject('${p.id}')">🗑️ حذف پروژه</button>
-      </div>
-    </div>
-    <div class="card" style="padding:12px 14px">
-      <div class="proj-head"><div class="proj-name" style="font-size:14px">💰 قیمت‌ها</div><button class="btn btn-p" style="padding:8px 14px;font-size:12px" onclick="openPrice('${p.id}')">ثبت / ویرایش ✏️</button></div>
-      <div style="font-size:12px;color:var(--text2);margin-top:8px">💰 ${priceLine(p)}</div>
-    </div>
-    <div class="card">
-      <div class="proj-name">📝 ثبت‌ها (${faN(p.entries.length)})</div>
-      <input class="inp" placeholder="🔍 جستجو تو ثبت‌ها..." oninput="detSearch(this.value)" autocomplete="off" style="margin-top:10px">
-      <div style="margin-top:6px">${ents||'<div class="empty">موردی پیدا نشد 🔍</div>'}</div>
-    </div>`;
-}
-let curPricePid=null;
-function openPrice(pid){const p=S.projects.find(x=>x.id===pid);if(!p)return;curPricePid=pid;const pr=pricesOf(p);PKEYS.forEach(k=>{const el=document.getElementById('pp-'+k);if(el)el.value=+pr[k]>0?(+pr[k]).toLocaleString('fa-IR'):'';});document.getElementById('priceOverlay').classList.add('open');}
-function closePrice(){document.getElementById('priceOverlay').classList.remove('open');curPricePid=null;}
-function savePriceModal(){if(!curPricePid)return;savePrices(curPricePid,true);closePrice();}
-function savePrices(pid,silent){
-  const p=S.projects.find(x=>x.id===pid);if(!p)return;
-  if(!p.prices)p.prices=blankPrices();
-  PKEYS.forEach(k=>{const el=document.getElementById('pp-'+k)||document.getElementById('pr-'+k);p.prices[k]=el?num(el.value):0;});
-  save();renderAll();toast('قیمت ثبت شد ✅ روی همه ثبت‌ها اعمال شد');
-}
-function delProject(pid){
-  if(!confirm('پروژه و همه ثبت‌هاش پاک شه؟'))return;
-  S={projects:S.projects.filter(p=>p.id!==pid),wages:S.wages||[],receipts:(S.receipts||[]).map(r=>r.pid===pid?Object.assign({},r,{pid:''}):r),costs:(S.costs||[]).map(c=>c.pid===pid?Object.assign({},c,{pid:''}):c)};
-  curPid=null;save();renderAll();backToList();
-}
-function delEntry(pid,eid){
-  if(!confirm('این ثبت پاک شه؟'))return;
-  const p=S.projects.find(x=>x.id===pid);if(!p)return;
-  p.entries=p.entries.filter(e=>e.id!==eid);save();renderAll();
-}
-
-/* ─── sheet: quick add + edit ─── */
-function sheetProject(){
-  if(editCtx){const p=S.projects.find(x=>x.id===editCtx.pid);if(p)return p;}
-  return S.projects.find(x=>x.id===document.getElementById('s-proj').value)||S.projects[0];
-}
-function clearSheetInputs(){
-  ['s-pages','s-hours','s-desc','s-meter'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  IKEYS.forEach(k=>{const el=document.getElementById('si-'+k);if(el)el.value='';});
-}
-function buildSheetItems(){
-  const p=sheetProject();
-  const box=document.getElementById('s-items');
-  if(!p){box.innerHTML='';return;}
-  let e=null;
-  if(editCtx)e=p.entries.find(x=>x.id===editCtx.eid);
-  box.innerHTML=IKEYS.map(k=>
-    `<div><label class="lbl">${INAME[k]} (${IUNIT[k]})</label><input class="inp" id="si-${k}" type="text" inputmode="numeric" autocomplete="off" min="0" value="${e&&+e[k]?e[k]:''}"></div>`
-  ).join('');
-}
-function openSheet(mode,pid,eid){
-  editCtx=null;
-  const sel=document.getElementById('s-proj');
-  sel.innerHTML=S.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
-  if(mode==='edit'){
-    const p=S.projects.find(x=>x.id===pid);
-    const e=p&&p.entries.find(x=>x.id===eid);
-    if(!e)return;
-    editCtx={pid,eid};
-    document.getElementById('s-title').textContent='✏️ ویرایش ثبت';
-    document.getElementById('s-proj-wrap').style.display='none';
-    document.getElementById('s-date').value=e.date;
-    document.getElementById('s-pages').value=+e.pages||'';
-    document.getElementById('s-meter').value=+e.meter||'';
-    document.getElementById('s-hours').value=(e.hours??'')===''?'':e.hours;
-    document.getElementById('s-desc').value=e.desc||'';
-    document.getElementById('s-save').textContent='ذخیره ✅';
-    buildSheetItems();
-  }else{
-    document.getElementById('s-title').textContent='📝 ثبت کار جدید';
-    document.getElementById('s-proj-wrap').style.display='';
-    sel.value=(pid&&S.projects.some(p=>p.id===pid))?pid:(curPid||(S.projects[0]&&S.projects[0].id)||'');
-    document.getElementById('s-date').value=todayJalali();
-    document.getElementById('s-pages').value='';
-    document.getElementById('s-desc').value='';
-    document.getElementById('s-save').textContent='ثبت ✅';
-    buildSheetItems();clearSheetInputs();
-  }
-  document.getElementById('overlay').classList.add('open');
-}
-function closeSheet(){document.getElementById('overlay').classList.remove('open');editCtx=null;clearSheetInputs();}
-function saveSheet(){
-  const p=sheetProject();
-  if(!p){toast('اول یه پروژه بساز');closeSheet();return;}
-  const pg=num(document.getElementById('s-pages').value);
-  const mt=num(document.getElementById('s-meter').value);
-  const hrs=numH(document.getElementById('s-hours').value);
-  const vals={};
-  IKEYS.forEach(k=>{const el=document.getElementById('si-'+k);vals[k]=el?num(el.value):0;});
-  IKEYS.forEach(k=>{if(vals[k]==null)vals[k]=0;});
-  const dt=normDate(document.getElementById('s-date').value);
-  const ds=document.getElementById('s-desc').value.trim();
-  if(editCtx){
-    const e=p.entries.find(x=>x.id===editCtx.eid);
-    if(!e){closeSheet();return;}
-    e.date=dt;e.pages=pg;e.meter=mt;e.hours=hrs;e.desc=ds;
-    IKEYS.forEach(k=>e[k]=vals[k]);
-  }else{
-    if(pg<=0&&mt<=0&&!(hrs>0)&&!IKEYS.some(k=>vals[k]>0)){toast('یه مقداری وارد کن');return;}
-    p.entries.push(Object.assign({id:uid(),date:dt,pages:pg,meter:mt,hours:hrs,desc:ds},vals));
-  }
-  const wasEdit=!!editCtx;
-  save();closeSheet();renderAll();toast(wasEdit?'ذخیره شد ✅':'ثبت شد ✅');
-}
-
-/* ─── tab3: bills ─── */
-function renderBills(){
-  const sel=document.getElementById('i-proj');
-  sel.innerHTML=S.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
-  let gT=0,gHas=false;
-  const rows=S.projects.map(p=>{const t=totals(p);gT+=t.amt;if(hasWork(t))gHas=true;
-    return `<tr><td>${faD(p.name)}</td><td>${amtD(t)}</td></tr>`;}).join('');
-  const wt=wagesTotal();
-  const gR=receivedTotal();
-  const gC=costsTotal();
-  document.getElementById('allBox').innerHTML=S.projects.length?
-    `<table class="inv-table"><tr><th>پروژه</th><th>مبلغ کار</th></tr>${rows}</table>
-     <div class="inv-total"><div style="font-size:13px;color:var(--text2)">دریافتی: ${faN(gR)} • حقوق: ${faN(wt)} • هزینه‌ها: ${faN(gC)}</div>
-     <div style="font-size:13px;color:var(--text2);margin-top:4px">مانده کلی: ${gT>0?faN(gT-gR-wt-gC)+' تومان':(gHas?'نامعلوم':'—')}</div></div>`:'<div class="empty">پروژه‌ای نیست</div>';
-  renderInvoice();
-}
-function invCols(p){
-  return IKEYS.filter(k=>p.entries.some(e=>+e[k]));
-}
-function invHasHours(p){return p.entries.some(e=>(numH(e.hours)||0)>0);}
-function renderInvoice(){
-  const p=S.projects.find(x=>x.id===document.getElementById('i-proj').value)||S.projects[0];
-  const box=document.getElementById('invBox');
-  if(!p){box.innerHTML='<div class="empty">پروژه‌ای نیست</div>';return;}
-  const showM=document.getElementById('i-money').checked;
-  const t=totals(p);
-  const pr=pricesOf(p);
-  const cols=invCols(p);
-  const hasH=invHasHours(p);
-  const rows=p.entries.map((e,i)=>{
-    let cells=`<td>${faN(i+1)}</td><td>${faD(e.date)}</td><td>${+e.pages?faN(e.pages):'—'}</td><td>${+e.pages?faN((+e.pages||0)*3):'—'}</td><td>${+e.meter?faN(e.meter):'—'}</td>${hasH?`<td>${(numH(e.hours)||0)>0?faD(String(e.hours)):'—'}</td>`:''}`;
-    cols.forEach(k=>cells+=`<td>${+e[k]?faN(e[k]):'—'}</td>`);
-    return `<tr>${cells}${showM?`<td>${entryAmtD(e,pr)}</td>`:''}</tr>`;}).join('');
-  let head=`<tr><th>#</th><th>تاریخ</th><th>صفحه</th><th>متر صفحه</th><th>📐 متر روکار</th>${hasH?'<th>⏱️ ساعت</th>':''}`;
-  cols.forEach(k=>head+=`<th>${INAME[k]}</th>`);
-  head+=`${showM?'<th>مبلغ</th>':''}</tr>`;
-  const isum=cols.map(k=>prettyItem(k,t.it[k])).join(' • ');
-  const qsum=[t.pages>0?`${faN(t.pages)} صفحه • ${faN(t.pages*3)} متر`:null,t.meter>0?`${faN(t.meter)} متر روکار`:null,(t.hours||0)>0?`⏱️ ${faD(String(t.hours))} ساعت`:null,isum||null].filter(Boolean).join(' • ');
-  box.innerHTML=`<table class="inv-table">${head}${rows}</table>
-  <div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع: ${qsum||'—'}</div>${showM?`<div class="v">${amtD(t)} تومان</div>`:''}</div>`;
-}
-function buildInvHTML(forPrint){
-  const p=S.projects.find(x=>x.id===document.getElementById('i-proj').value)||S.projects[0];
-  if(!p)return null;
-  const showM=document.getElementById('i-money').checked;
-  const t=totals(p);
-  const pr=pricesOf(p);
-  const cols=invCols(p);
-  const F=forPrint?(n=>n.toLocaleString('en-US')):faN;
-  const hasH2=invHasHours(p);
-  const rows=p.entries.map((e,i)=>{
-    let cells=`<td>${forPrint?(i+1):faN(i+1)}</td><td>${forPrint?e.date:faD(e.date)}</td><td>${forPrint?(e.desc||''):faD(e.desc||'')}</td><td>${+e.pages?(forPrint?e.pages:faN(e.pages)):'—'}</td><td>${+e.pages?(forPrint?(+e.pages||0)*3:faN((+e.pages||0)*3)):'—'}</td><td>${+e.meter?(forPrint?e.meter:faN(e.meter)):'—'}</td>${hasH2?`<td>${(numH(e.hours)||0)>0?(forPrint?e.hours:faD(String(e.hours))):'—'}</td>`:''}`;
-    cols.forEach(k=>cells+=`<td>${+e[k]?(forPrint?e[k]:faN(e[k])):'—'}</td>`);
-    return `<tr>${cells}${showM?`<td>${entryAmount(e,pr)>0?F(entryAmount(e,pr)):'نامعلوم'}</td>`:''}</tr>`;}).join('');
-  let head=`<tr><th>ردیف</th><th>تاریخ</th><th>شرح</th><th>صفحه</th><th>متراژ صفحه</th><th>متراژ روکار</th>${hasH2?'<th>ساعت</th>':''}`;
-  cols.forEach(k=>head+=`<th>${INAME[k]} (${IUNIT[k]})</th>`);
-  head+=`${showM?'<th>مبلغ (تومان)</th>':''}</tr>`;
-  const pq=t.pages>0?(forPrint?`${t.pages} صفحه • ${t.pages*3} متر`:`${faN(t.pages)} صفحه • ${faN(t.pages*3)} متر`):null;
-  const mq=t.meter>0?(forPrint?`${t.meter} متر روکار`:`${faN(t.meter)} متر روکار`):null;
-  const hq=(t.hours||0)>0?(forPrint?`${t.hours} ساعت`:`⏱️ ${faD(String(t.hours))} ساعت`):null;
-  const iq=cols.map(k=>t.it[k]>0?(forPrint?`${t.it[k]} ${INAME[k]}`:prettyItem(k,t.it[k])):null).filter(Boolean).join(' • ');
-  const tq=[pq,mq,hq||null,iq||null].filter(Boolean).join(' • ');
-  return `
-    <h1>صورت کار پروژه ${forPrint?p.name:faD(p.name)}</h1>
-    <div class="sub">تاریخ تنظیم: ${todayJalali()} • گزارش مقادیر اجرا شده${showM?'':' (بدون مبالغ)'}</div>
-    <table>${head}${rows}</table>
-    <div class="tot">جمع کل: ${tq||'—'}${showM?' • '+(t.amt>0?F(t.amt)+' تومان':'نامعلوم'):''}</div>
-    <div class="note">این صورت مقادیر کار انجام‌شده است.</div>`;
-}
-function viewInvoice(){
-  const h=buildInvHTML(false);
-  if(!h){toast('پروژه‌ای نیست');return;}
-  document.getElementById('invPreview').innerHTML=h;
-  document.getElementById('invOverlay').classList.add('open');
-}
-function closeInv(){document.getElementById('invOverlay').classList.remove('open');}
-function saveInvPDF(){
-  const h=buildInvHTML(true);
-  if(!h)return;
-  document.getElementById('printArea').innerHTML=h;
-  window.print();
-}
-
-/* ─── tab4: wages ─── */
-let wageEditId=null;
-function wagesTotal(){return (S.wages||[]).reduce((a,w)=>a+(+w.amount||0),0);}
-function renderWages(){
-  const di=document.getElementById('w-date');
-  if(!di.value&&!wageEditId)di.value=todayJalali();
-  const by={};
-  (S.wages||[]).forEach(w=>{const k=w.name||'شاگرد';by[k]=by[k]||{total:0,n:0};by[k].total+=+w.amount||0;by[k].n++;});
-  const names=Object.keys(by);
-  document.getElementById('wSum').innerHTML=names.length?('<div class="proj-stats" style="margin-top:10px">'+names.map(k=>
-    `<div class="stat"><div class="n">${faN(by[k].total)}</div><div class="t">${faD(k)} • ${faN(by[k].n)} پرداخت</div></div>`).join('')+'</div>'):'<div class="empty">هنوز پرداختی ثبت نشده</div>';
-  const rows=[...(S.wages||[])].reverse().map(w=>
-    `<div class="ent"><div><div class="q">${faD(w.name||'شاگرد')} • ${faN(w.amount)} تومان${w.desc?' • '+faD(w.desc):''}</div><div class="d">${faD(w.date)}</div></div>
-    <div class="ops"><button class="op-edit" onclick="editWage('${w.id}')">✏️</button><button class="op-del" onclick="delWage('${w.id}')">🗑️</button></div></div>`).join('');
-  document.getElementById('wList').innerHTML=rows||'<div class="empty">سوابقی نیست</div>';
-}
-function saveWage(){
-  const name=document.getElementById('w-name').value.trim()||'شاگرد';
-  const amount=num(document.getElementById('w-amount').value);
-  if(!amount){toast('مبلغ رو وارد کن');return;}
-  const rec={name,date:normDate(document.getElementById('w-date').value),amount,desc:document.getElementById('w-desc').value.trim()};
-  if(wageEditId){
-    const w=S.wages.find(x=>x.id===wageEditId);
-    if(w)Object.assign(w,rec);
-  }else{
-    rec.id=uid();S.wages.push(rec);
-  }
-  cancelWageEdit();save();renderAll();toast('ثبت شد ✅');
-}
-function openWage(){cancelWageEdit();document.getElementById('wageOverlay').classList.add('open');}
-function closeWage(){cancelWageEdit();document.getElementById('wageOverlay').classList.remove('open');}
-function editWage(id){
-  const w=S.wages.find(x=>x.id===id);if(!w)return;
-  wageEditId=id;
-  document.getElementById('w-name').value=w.name;
-  document.getElementById('w-date').value=w.date;
-  document.getElementById('w-amount').value=+w.amount>0?(+w.amount).toLocaleString('fa-IR'):'';
-  document.getElementById('w-desc').value=w.desc||'';
-  document.getElementById('w-title').textContent='✏️ ویرایش پرداختی';
-  document.getElementById('w-save').textContent='ذخیره ✅';
-  document.getElementById('wageOverlay').classList.add('open');
-}
-function cancelWageEdit(){
-  wageEditId=null;
-  document.getElementById('w-name').value='';
-  document.getElementById('w-date').value=todayJalali();
-  document.getElementById('w-amount').value='';
-  document.getElementById('w-desc').value='';
-  document.getElementById('w-title').textContent='💰 ثبت پرداختی';
-  document.getElementById('w-save').textContent='ثبت ✅';
-  document.getElementById('wageOverlay').classList.remove('open');
-}
-function delWage(id){
-  if(!confirm('این پرداخت پاک شه؟'))return;
-  S.wages=S.wages.filter(w=>w.id!==id);save();renderAll();
-}
-
-/* ─── tab5: received (global, from company / contractor) ─── */
-let recvEditId=null;
-function renderRecv(){
-  const box=document.getElementById('rList');
-  const sum=document.getElementById('rSum');
-  if(!Array.isArray(S.receipts))S.receipts=[];
-  const sel=document.getElementById('r-proj');
-  if(sel){
-    const cur=recvEditId?((S.receipts||[]).find(x=>x.id===recvEditId)||{}).pid||'':(sel.value||recvPrefillPid||'');
-    sel.innerHTML='<option value="">عمومی (بدون پروژه)</option>'+S.projects.map(pr=>`<option value="${pr.id}">${pr.name}</option>`).join('');
-    sel.value=(cur&&S.projects.some(pr=>pr.id===cur))?cur:'';
-  }
-  if(!recvEditId){
-    const di=document.getElementById('r-date');
-    if(!di.value)di.value=todayJalali();
-    if(sel&&recvPrefillPid){sel.value=recvPrefillPid;recvPrefillPid='';}
-  }
-  const gR=receivedTotal();
-  sum.innerHTML=`<div class="proj-stats" style="margin-top:10px">
-    <div class="stat"><div class="n">${faN(gR)}</div><div class="t">💵 جمع دریافتی</div></div>
-    <div class="stat"><div class="n">${faN(S.receipts.length)}</div><div class="t">تعداد</div></div></div>`;
-  const rows=[...S.receipts].reverse().map(r=>{
-    const pn=r.pid?projName(r.pid):'';
-    return `<div class="ent"><div><div class="q">${faD(r.source||'—')}${pn?' • 🏗️ '+faD(pn):''} • ${faN(r.amount)} تومان${r.desc?' • '+faD(r.desc):''}</div><div class="d">${faD(r.date)}</div></div>
-    <div class="ops"><button class="op-edit" onclick="editRecv('${r.id}')">✏️</button><button class="op-del" onclick="delRecv('${r.id}')">🗑️</button></div></div>`;}).join('');
-  box.innerHTML=rows||'<div class="empty">هنوز دریافتی ثبت نشده</div>';
-}
-function saveRecv(){
-  const source=document.getElementById('r-source').value.trim();
-  if(!source){toast('بنویس از کی گرفتی');return;}
-  const amount=num(document.getElementById('r-amount').value);
-  if(!amount){toast('مبلغ رو وارد کن');return;}
-  const rec={source,date:normDate(document.getElementById('r-date').value),amount,pid:(document.getElementById('r-proj')||{}).value||'',desc:document.getElementById('r-desc').value.trim()};
-  if(!Array.isArray(S.receipts))S.receipts=[];
-  if(recvEditId){
-    const r=S.receipts.find(x=>x.id===recvEditId);
-    if(r)Object.assign(r,rec);
-  }else{
-    rec.id=uid();S.receipts.push(rec);
-  }
-  cancelRecvEdit();save();renderAll();renderRecv();
-  toast('ثبت شد ✅');
-}
-function openRecv(){const keep=recvPrefillPid;cancelRecvEdit();recvPrefillPid=keep;renderRecv();document.getElementById('recvOverlay').classList.add('open');}
-function closeRecv(){cancelRecvEdit();document.getElementById('recvOverlay').classList.remove('open');}
-function editRecv(rid){
-  const r=(S.receipts||[]).find(x=>x.id===rid);if(!r)return;
-  recvEditId=rid;
-  document.getElementById('r-source').value=r.source||'';
-  document.getElementById('r-date').value=r.date;
-  renderRecv();
-  const ps=document.getElementById('r-proj');if(ps)ps.value=r.pid||'';
-  document.getElementById('r-amount').value=+r.amount>0?(+r.amount).toLocaleString('fa-IR'):'';
-  document.getElementById('r-desc').value=r.desc||'';
-  document.getElementById('r-title').textContent='✏️ ویرایش دریافتی';
-  document.getElementById('r-save').textContent='ذخیره ✅';
-  document.getElementById('recvOverlay').classList.add('open');
-}
-function cancelRecvEdit(){
-  recvEditId=null;recvPrefillPid='';
-  const ps0=document.getElementById('r-proj');if(ps0)ps0.value='';
-  document.getElementById('r-source').value='';
-  document.getElementById('r-date').value=todayJalali();
-  document.getElementById('r-amount').value='';
-  document.getElementById('r-desc').value='';
-  document.getElementById('r-title').textContent='💵 ثبت دریافتی';
-  document.getElementById('r-save').textContent='ثبت ✅';
-  document.getElementById('recvOverlay').classList.remove('open');
-}
-function delRecv(rid){
-  if(!confirm('این دریافتی پاک شه؟'))return;
-  S.receipts=(S.receipts||[]).filter(r=>r.id!==rid);save();renderAll();renderRecv();
-}
-
-/* ─── tab6: costs (مصالح / کرایه / ابزار) ─── */
-let costEditId=null;
-function projName(pid){const p=S.projects.find(x=>x.id===pid);return p?p.name:'';}
-function costsOf(pid){return (S.costs||[]).filter(c=>!pid||c.pid===pid).reduce((a,c)=>a+(+c.amount||0),0);}
-function costsTotal(){return (S.costs||[]).reduce((a,c)=>a+(+c.amount||0),0);}
-function renderCosts(){
-  const sel=document.getElementById('c-proj');
-  sel.innerHTML='<option value="">عمومی (بدون پروژه)</option>'+S.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
-  if(!costEditId){
-    const di=document.getElementById('c-date');
-    if(!di.value)di.value=todayJalali();
-  }
-  if(!Array.isArray(S.costs))S.costs=[];
-  const by={};
-  S.costs.forEach(c=>{const k=c.cat||'متفرقه';by[k]=by[k]||{total:0,n:0};by[k].total+=+c.amount||0;by[k].n++;});
-  const cats=Object.keys(by);
-  document.getElementById('cSum').innerHTML=(cats.length?('<div class="proj-stats" style="margin-top:10px">'+cats.map(k=>
-    `<div class="stat"><div class="n">${faN(by[k].total)}</div><div class="t">${faD(k)} • ${faN(by[k].n)}</div></div>`).join('')+'</div>'):'<div class="empty">هنوز هزینه‌ای ثبت نشده</div>')
-    +`<div class="inv-total"><div style="font-size:13px;color:var(--text2)">جمع کل هزینه‌ها</div><div class="v">${faN(costsTotal())} تومان</div></div>`;
-  const rows=[...S.costs].reverse().map(c=>{
-    const pn=c.pid?projName(c.pid):'';
-    return `<div class="ent"><div><div class="q">${faD(c.cat||'متفرقه')}${pn?' • '+faD(pn):''} • ${faN(c.amount)} تومان${c.desc?' • '+faD(c.desc):''}</div><div class="d">${faD(c.date)}</div></div>
-    <div class="ops"><button class="op-edit" onclick="editCost('${c.id}')">✏️</button><button class="op-del" onclick="delCost('${c.id}')">🗑️</button></div></div>`;}).join('');
-  document.getElementById('cList').innerHTML=rows||'<div class="empty">سوابقی نیست</div>';
-}
-function saveCost(){
-  const amount=num(document.getElementById('c-amount').value);
-  if(!amount){toast('مبلغ رو وارد کن');return;}
-  const rec={cat:document.getElementById('c-cat').value,pid:document.getElementById('c-proj').value||'',date:normDate(document.getElementById('c-date').value),amount,desc:document.getElementById('c-desc').value.trim()};
-  if(!Array.isArray(S.costs))S.costs=[];
-  if(costEditId){
-    const c=S.costs.find(x=>x.id===costEditId);
-    if(c)Object.assign(c,rec);
-  }else{
-    rec.id=uid();S.costs.push(rec);
-  }
-  cancelCostEdit();save();renderAll();renderCosts();
-  toast('ثبت شد ✅');
-}
-function openCost(){cancelCostEdit();renderCosts();document.getElementById('costOverlay').classList.add('open');}
-function closeCost(){cancelCostEdit();document.getElementById('costOverlay').classList.remove('open');}
-function editCost(id){
-  const c=(S.costs||[]).find(x=>x.id===id);if(!c)return;
-  costEditId=id;
-  document.getElementById('c-cat').value=c.cat||'متفرقه';
-  renderCosts();
-  document.getElementById('c-proj').value=c.pid||'';
-  document.getElementById('c-date').value=c.date;
-  document.getElementById('c-amount').value=+c.amount>0?(+c.amount).toLocaleString('fa-IR'):'';
-  document.getElementById('c-desc').value=c.desc||'';
-  document.getElementById('c-title').textContent='✏️ ویرایش هزینه';
-  document.getElementById('c-save').textContent='ذخیره ✅';
-  document.getElementById('costOverlay').classList.add('open');
-}
-function cancelCostEdit(){
-  costEditId=null;
-  document.getElementById('c-cat').value='غذا';
-  document.getElementById('c-date').value=todayJalali();
-  document.getElementById('c-amount').value='';
-  document.getElementById('c-desc').value='';
-  document.getElementById('c-title').textContent='🧰 ثبت هزینه';
-  document.getElementById('c-save').textContent='ثبت ✅';
-  document.getElementById('costOverlay').classList.remove('open');
-}
-function delCost(id){
-  if(!confirm('این هزینه پاک شه؟'))return;
-  S.costs=(S.costs||[]).filter(c=>c.id!==id);save();renderAll();renderCosts();
-}
-
-/* ─── boot ─── */
-function renderAll(){
-  renderProjects();
-  if(curPid)renderDetail();
-  if(document.getElementById('pg-bills').classList.contains('active'))renderBills();
-  if(document.getElementById('pg-wages').classList.contains('active'))renderWages();
-  if(document.getElementById('pg-recv').classList.contains('active'))renderRecv();
-  if(document.getElementById('pg-costs').classList.contains('active'))renderCosts();
-  requestAnimationFrame(()=>{countUp(document.getElementById('projList'));countUp(document.getElementById('detailBox'));});
-}
-try{document.getElementById('themeBtn').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'🌙':'☀️';}catch(e){}
-/* keep bottom nav pinned: hide fixed chrome while keyboard is open */
-(function(){var kb=false;function setKb(v){if(v===kb)return;kb=v;try{document.body.classList.toggle('kb',v);}catch(e){}}
-if(window.visualViewport&&window.visualViewport.addEventListener){window.visualViewport.addEventListener('resize',function(){try{setKb(window.visualViewport.height<window.innerHeight*0.8);}catch(e){}});}
-document.addEventListener('focusin',function(e){var t=e.target;if(t&&(t.tagName==='INPUT'||t.tagName==='SELECT'||t.tagName==='TEXTAREA'))setKb(true);});
-document.addEventListener('focusout',function(){setKb(false);});})();
-/* lock background scroll while any sheet is open (stops page sliding under header) */
-new MutationObserver(()=>{try{document.body.classList.toggle('lock',!!document.querySelector('.overlay.open'));}catch(e){}}).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class']});
-renderAll();
-/* ripple + haptic feedback on buttons */
-document.addEventListener('pointerdown',function(ev){
-  const b=ev.target.closest('.btn,.fab,.navbtn,.cal-d');
-  if(!b)return;
-  if(navigator.vibrate){try{navigator.vibrate(8);}catch(e){}}
-  if(!b.classList.contains('btn')&&!b.classList.contains('fab'))return;
-  const r=b.getBoundingClientRect();
-  const d=Math.max(r.width,r.height);
-  const s=document.createElement('span');
-  s.className='ripple';
-  s.style.width=s.style.height=d+'px';
-  s.style.left=(ev.clientX-r.left-d/2)+'px';
-  s.style.top=(ev.clientY-r.top-d/2)+'px';
-  b.appendChild(s);
-  setTimeout(()=>s.remove(),520);
-},{passive:true});
-</script>
+<script src="js/util.js"></script>
+<script src="js/store.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/views.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
